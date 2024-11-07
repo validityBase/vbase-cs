@@ -1,0 +1,13 @@
+# Build artifacts
+bin/
+obj/
+debug/
+*.user
+*.suo
+*.dll
+
+# VS
+.vs/
+/vBase.ComShim/vBase.tlb
+/vBase.ComShim.Setup/Release
+/vBase.Core.Tests/settings.local.yml
