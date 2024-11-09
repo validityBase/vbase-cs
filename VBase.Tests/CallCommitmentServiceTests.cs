@@ -26,11 +26,8 @@ namespace VBase.Tests
             string functionName = "addObject";
 
             // Generate a random 32-byte objectCid.
-            // byte[] randomBytes = new byte[32];
-            // new Random().NextBytes(randomBytes);
-            // string hexString = BitConverter.ToString(randomBytes);
-            // objectCid = new HexBigInteger(hexString);
-            string objectCid = "0x1";
+            byte[] objectCid = new byte[32];
+            new Random().NextBytes(objectCid);
 
             // Set up function input.
             object[] functionInput = { objectCid };
