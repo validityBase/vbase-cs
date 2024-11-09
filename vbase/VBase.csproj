@@ -1,9 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+	<TargetFramework>net48</TargetFramework>
+	<LangVersion>10.0</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<PackageReference Include="Nethereum.Web3" Version="4.26.0" />
+	<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <PropertyGroup>
+	<RegisterForComInterop>true</RegisterForComInterop>
+	<ComVisible>true</ComVisible>
+	<AssemblyOriginatorKeyFile>VBaseKey.snk</AssemblyOriginatorKeyFile>
+	<SignAssembly>true</SignAssembly>
   </PropertyGroup>
 
 </Project>
