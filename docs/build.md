@@ -104,9 +104,8 @@ This should register your assembly without the warning. The strong name ensures 
    - Open Command Prompt as Administrator.
    - Run the following command to register your DLL for COM interop:
      ```cmd
-     regasm /codebase "path_to_your_dll\VBase.dll"
+     regasm /codebase bin\Debug\net48\VBase.dll
      ```
-     Replace `path_to_your_dll` with the actual path to your DLL.
 
 ## Test the DLL
 

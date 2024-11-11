@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using Nethereum.Web3;
 using Nethereum.Hex.HexTypes;
@@ -8,15 +9,33 @@ using System.Threading.Tasks;
 
 namespace VBase
 {
+    public class JsonLoader
+    {
+        public static string LoadCommitmentServiceJson()
+        {
+            // Get the current assembly.
+            var assembly = Assembly.GetExecutingAssembly();
+
+            // Define the fully qualified resource name.
+            string resourceName = "VBase.abi.CommitmentService.json";
+
+            // Open the resource stream and read its contents into a string
+            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                return reader.ReadToEnd();
+            }
+        }
+    }
+
     [ComVisible(true)]
     [ClassInterface(ClassInterfaceType.AutoDual)]
     public class CallCommitmentService
     {
         private async Task<string> CallFunctionAsync(string rpcUrl, string contractAddress, string functionName, object[] functionInput, string privateKey)
         {
-            // Read the ABI from the local file.
-            string abiFilePath = Path.Combine(Directory.GetCurrentDirectory(), "abi", "CommitmentService.json");
-            string abi = File.ReadAllText(abiFilePath);
+            // Read the ABI from the JSON resource.
+            string abi = JsonLoader.LoadCommitmentServiceJson();
 
             // Initialize Web3 and get the contract and function.
             var web3 = new Web3(new Nethereum.Web3.Accounts.Account(privateKey), rpcUrl);

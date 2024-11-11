@@ -6,9 +6,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+	<EmbeddedResource Include="abi\CommitmentService.json" />
+	<PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18" />
 	<PackageReference Include="Nethereum.Web3" Version="4.26.0" />
 	<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
+
+  <Target Name="ILRepacker" AfterTargets="Build">
+	<ItemGroup>
+	 <InputAssemblies Include="$(TargetPath)" />
+	 <InputAssemblies Include="$(TargetDir)Newtonsoft.Json.dll" />
+	</ItemGroup>
+
+	<ILRepack
+     Parallel="true"
+     Internalize="true"
+     InputAssemblies="@(InputAssemblies)"
+     TargetKind="Dll"
+	 KeyFile="VBaseKey.snk"
+     OutputFile="$(OutputPath)\$(AssemblyName).dll"
+    />	
+  </Target>
 
   <PropertyGroup>
 	<RegisterForComInterop>true</RegisterForComInterop>
@@ -16,5 +34,21 @@
 	<AssemblyOriginatorKeyFile>VBaseKey.snk</AssemblyOriginatorKeyFile>
 	<SignAssembly>true</SignAssembly>
   </PropertyGroup>
+
+  <Target Name="ClearOutput">
+	<RemoveDir Directories="$(BaseOutputPath)bin;$(BaseIntermediateOutputPath)obj" />
+  </Target>
+	
+  <Target Name="NuGetCleanRestore">
+	<Exec Command="dotnet nuget locals all --clear" />
+	<Exec Command="dotnet restore" />
+  </Target>
+
+  <Target Name="CleanBuild" DependsOnTargets="ClearOutput;NuGetCleanRestore;Build" />
+
+  <Target Name="DllCleanReregister">
+	<Exec Command="regasm /u &quot;$(OutputPath)VBase.dll&quot;" />
+	<Exec Command="regasm /codebase &quot;$(OutputPath)VBase.dll&quot;" />
+  </Target>
 
 </Project>
