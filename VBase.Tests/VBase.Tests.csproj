@@ -2,16 +2,18 @@
 
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
-	<LangVersion>10.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+    <RunSettingsFile>$(MSBuildProjectDirectory)\runsettings.config</RunSettingsFile>
+	<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="6.0.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-    <PackageReference Include="xunit" Version="2.5.3" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
+    <PackageReference Include="coverlet.collector" Version="6.0.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,24 +25,24 @@
   </ItemGroup>
 
   <Target Name="ClearOutput">
-	<RemoveDir Directories="$(BaseOutputPath)bin;$(BaseIntermediateOutputPath)obj" />
+    <RemoveDir Directories="$(BaseOutputPath);$(BaseIntermediateOutputPath)" />
   </Target>
 
   <Target Name="NuGetCleanRestore">
-	<Exec Command="dotnet nuget locals all --clear" />
-	<Exec Command="dotnet restore" />
+    <Exec Command="dotnet nuget locals all --clear" />
+    <Exec Command="dotnet restore" />
   </Target>
 
   <PropertyGroup>
-	<!-- Define path to vstest.console.exe if needed -->
-	<VsTestConsolePath>C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\TestPlatform\vstest.console.exe</VsTestConsolePath>
+    <!-- Define path to vstest.console.exe if needed -->
+    <VsTestConsolePath>C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\TestPlatform\vstest.console.exe</VsTestConsolePath>
   </PropertyGroup>
 
   <Target Name="BuildAndTest" DependsOnTargets="Build">
-	<!-- Run the tests after building -->
-	<Exec Command="&quot;$(VsTestConsolePath)&quot; &quot;$(OutputPath)VBase.Tests.dll&quot;" />
+    <!-- Run the tests after building -->
+    <Exec Command="&quot;$(VsTestConsolePath)&quot; &quot;$(OutputPath)VBase.Tests.dll&quot;" />
   </Target>
 
   <Target Name="CleanBuildAndTest" DependsOnTargets="ClearOutput;NuGetCleanRestore;BuildAndTest" />
-	
+
 </Project>
