@@ -89,6 +89,16 @@ public class Eip712Signer
 
 namespace VBase
 {
+    [ComVisible(true)]
+    [ClassInterface(ClassInterfaceType.AutoDual)]
+    public class ForwarderCommitmentServiceFactory
+    {
+        // COM visible methods can't be static.
+        public ForwarderCommitmentService Create(string forwarderUrl, string apiKey, string privateKey)
+        {
+            return new ForwarderCommitmentService(forwarderUrl, apiKey, privateKey);
+        }
+    }
 
     [ComVisible(true)]
     [ClassInterface(ClassInterfaceType.AutoDual)]
@@ -221,7 +231,7 @@ namespace VBase
             }
 
             // TODO: Add proper debug logging
-            Console.WriteLine($"ForwarderCommitmentService:CallForwarderApiAsync(): dataDictionary = {dataDictionary}");
+            Console.WriteLine($"ForwarderCommitmentService:CallForwarderApiAsync(): dataDictionary = {JsonSerializer.Serialize(dataDictionary)}");
 
             return dataDictionary;
         }
@@ -254,7 +264,7 @@ namespace VBase
             }
 
             // TODO: Add proper debug logging
-            Console.WriteLine($"ForwarderCommitmentService:CallFunctionAsync(): signatureData = {signatureData}");
+            Console.WriteLine($"ForwarderCommitmentService:CallFunctionAsync(): signatureData = {JsonSerializer.Serialize(signatureData)}");
 
             // Set up the call.
 
@@ -264,7 +274,7 @@ namespace VBase
             var function = commitmentServiceContract.GetFunction(fnName);
             var functionData = function.GetData(args);
             // TODO: Add proper debug logging
-            Console.WriteLine($"ForwarderCommitmentService:CallFunctionAsync(): functionData = {functionData}");
+            Console.WriteLine($"ForwarderCommitmentService:CallFunctionAsync(): functionData = {JsonSerializer.Serialize(functionData)}");
 
             // Sign the meta-transaction for the call.
             var eip712Signer = new Eip712Signer(privateKey, new System.Numerics.BigInteger(Convert.ToInt32(domain["chainId"].ToString())), domain["verifyingContract"].ToString());
@@ -295,7 +305,7 @@ namespace VBase
                 data
             );
             // TODO: Add proper debug logging
-            Console.WriteLine($"ForwarderCommitmentService:CallFunctionAsync(): receipt = {receipt}");
+            Console.WriteLine($"ForwarderCommitmentService:CallFunctionAsync(): receipt = {JsonSerializer.Serialize(receipt)}");
 
             // TODO: Check request status.
 

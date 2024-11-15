@@ -6,6 +6,18 @@ using Nethereum.Contracts;
 
 namespace VBase
 {
+    [ComVisible(true)]
+    [ClassInterface(ClassInterfaceType.AutoDual)]
+    public class Web3CommitmentServiceFactory
+    {
+        // COM visible methods can't be static.
+        public Web3CommitmentService Create(string rpcUrl,
+            string contractAddress,
+            string privateKey)
+        {
+            return new Web3CommitmentService(rpcUrl, contractAddress, privateKey);
+        }
+    }
 
     [ComVisible(true)]
     [ClassInterface(ClassInterfaceType.AutoDual)]

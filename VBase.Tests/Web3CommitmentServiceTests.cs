@@ -13,11 +13,9 @@ namespace VBase.Tests
         // Private Key: 0xdf57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e
         private const string PrivateKey = "0xdf57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e";
 
-        [Fact]
-        public void CallAddObjectFunction_ReturnsTransactionHash()
+        private void CallAddObjectFunction_ReturnsTransactionHash_Worker(Web3CommitmentService client)
         {
             // Test addObject().
-            Web3CommitmentService client = new Web3CommitmentService(LocalhostRpcUrl, ContractAddress, PrivateKey);
 
             // Generate a random 32-byte objectCid.
             byte[] objectCid = new byte[32];
@@ -26,7 +24,7 @@ namespace VBase.Tests
             // Set up function call.
             string functionName = "addObject";
             object[] functionInput = { objectCid };
-            
+
             string transactionHash = client.CallFunction(
                 functionName,
                 functionInput
@@ -34,6 +32,21 @@ namespace VBase.Tests
 
             Assert.False(string.IsNullOrEmpty(transactionHash), "Transaction hash should not be empty.");
             Console.WriteLine($"Transaction Hash: {transactionHash}");
+        }
+
+        [Fact]
+        public void CallAddObjectFunction_ReturnsTransactionHash()
+        {
+            Web3CommitmentService client = new Web3CommitmentService(LocalhostRpcUrl, ContractAddress, PrivateKey);
+            CallAddObjectFunction_ReturnsTransactionHash_Worker(client);
+        }
+
+        [Fact]
+        public void CallAddObjectFunctionViaFactory_ReturnsTransactionHash()
+        {
+            var fact = new Web3CommitmentServiceFactory();
+            Web3CommitmentService client = fact.Create(LocalhostRpcUrl, ContractAddress, PrivateKey);
+            CallAddObjectFunction_ReturnsTransactionHash_Worker(client);
         }
     }
 }

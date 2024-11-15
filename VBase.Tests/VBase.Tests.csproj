@@ -34,14 +34,8 @@
     <Exec Command="dotnet restore" />
   </Target>
 
-  <PropertyGroup>
-    <!-- Define path to vstest.console.exe if needed -->
-    <VsTestConsolePath>C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\TestPlatform\vstest.console.exe</VsTestConsolePath>
-  </PropertyGroup>
-
   <Target Name="BuildAndTest" DependsOnTargets="Build">
-    <!-- Run the tests after building -->
-    <Exec Command="&quot;$(VsTestConsolePath)&quot; &quot;$(OutputPath)VBase.Tests.dll&quot;" />
+    <Exec Command="$(OutputPath)VBase.Tests.exe" />
   </Target>
 
   <Target Name="CleanBuildAndTest" DependsOnTargets="ClearOutput;NuGetCleanRestore;BuildAndTest" />

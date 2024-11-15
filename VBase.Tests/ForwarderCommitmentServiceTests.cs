@@ -30,11 +30,9 @@ namespace VBase.Tests
             }
         }
 
-        [Fact]
-        public void CallAddObjectFunction_ReturnsTransactionHash()
+        private void CallAddObjectFunction_ReturnsTransactionHash_Worker(ForwarderCommitmentService client)
         {
             // Test addObject().
-            ForwarderCommitmentService client = new ForwarderCommitmentService(VBaseForwarderUrl, VBaseApiKey, PrivateKey);
 
             // Generate a random 32-byte objectCid.
             byte[] objectCid = new byte[32];
@@ -43,7 +41,7 @@ namespace VBase.Tests
             // Set up function call.
             string functionName = "addObject";
             object[] functionInput = { objectCid };
-            
+
             string transactionHash = client.CallFunction(
                 functionName,
                 functionInput
@@ -51,6 +49,21 @@ namespace VBase.Tests
 
             Assert.False(string.IsNullOrEmpty(transactionHash), "Transaction hash should not be empty.");
             Console.WriteLine($"Transaction Hash: {transactionHash}");
+        }
+
+        [Fact]
+        public void CallAddObjectFunction_ReturnsTransactionHash()
+        {
+            ForwarderCommitmentService client = new ForwarderCommitmentService(VBaseForwarderUrl, VBaseApiKey, PrivateKey);
+            CallAddObjectFunction_ReturnsTransactionHash_Worker(client);
+        }
+
+        [Fact]
+        public void CallAddObjectFunctionViaForwarder_ReturnsTransactionHash()
+        {
+            var fact = new ForwarderCommitmentServiceFactory();
+            ForwarderCommitmentService client = fact.Create(VBaseForwarderUrl, VBaseApiKey, PrivateKey);
+            CallAddObjectFunction_ReturnsTransactionHash_Worker(client);
         }
     }
 }
