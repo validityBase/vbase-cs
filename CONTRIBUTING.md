@@ -1,6 +1,6 @@
-# Contributing to vBase Python Samples
+# Contributing to the vBase C# Software Development Kit
 
-Thank you for considering contributing to vBase Python Samples!
+Thank you for considering contributing to the vBase C# Software Development Kit!
 
 # How to Contribute
 
