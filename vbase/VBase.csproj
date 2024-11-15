@@ -8,9 +8,15 @@
 
   <ItemGroup>
     <EmbeddedResource Include="abi\CommitmentService.json" />
-    <PackageReference Include="Nethereum.Web3" Version="4.26.0" />
+	<PackageReference Include="DotNetEnv" Version="3.1.1" />
+	<PackageReference Include="Nethereum.Web3" Version="4.26.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Text.Json" Version="9.0.0" />
     <!-- Add specific dependencies -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Web" />
   </ItemGroup>
 
   <PropertyGroup>

@@ -1,6 +1,4 @@
 ﻿using System.Runtime.InteropServices;
-using Nethereum.Contracts;
-using Nethereum.Web3;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -8,10 +6,85 @@ using System.Text.Json;
 using System.Web;
 using System;
 
+using Nethereum.ABI.EIP712;
+using Nethereum.Contracts;
+using Nethereum.Signer;
+using Nethereum.Signer.EIP712;
+using Nethereum.Util;
+using Nethereum.Web3;
+using Nethereum.Hex.HexConvertors.Extensions;
+
 public enum RequestType
 {
     GET,
     POST
+}
+
+public class Eip712Signer
+{
+    private readonly string privateKey;
+    private readonly System.Numerics.BigInteger chainId;
+    private readonly string verifyingContract;
+
+    public Eip712Signer(string privateKey, System.Numerics.BigInteger chainId, string verifyingContract)
+    {
+        this.privateKey = privateKey;
+        this.chainId = chainId;
+        this.verifyingContract = verifyingContract;
+    }
+
+    public string SignForwardRequest(string fromAddress, int nonce, string functionData)
+    {
+        // Define the Typed Data structure for the ForwardRequest.
+        TypedData<Domain> typedData = new TypedData<Domain>
+        {
+            Domain = new Domain
+            {
+                // TODO: Initialize this object using the returned domain object.
+                // We had signatureData and domain returned from the forwarder
+                // and should initialize using the returned domain.
+                Name = "CommitmentService",
+                Version = "0.0.1",
+                ChainId = chainId,
+                VerifyingContract = verifyingContract
+            },
+            Types = new Dictionary<string, MemberDescription[]>
+            {
+                ["EIP712Domain"] = new[]
+                {
+                    new MemberDescription { Name = "name", Type = "string" },
+                    new MemberDescription { Name = "version", Type = "string" },
+                    new MemberDescription { Name = "chainId", Type = "uint256" },
+                    new MemberDescription { Name = "verifyingContract", Type = "address" }
+                },
+                ["ForwardRequest"] = new[]
+                {
+                    new MemberDescription { Name = "from", Type = "address" },
+                    new MemberDescription { Name = "nonce", Type = "uint256" },
+                    new MemberDescription { Name = "data", Type = "bytes" }
+                }
+            },
+            PrimaryType = "ForwardRequest",
+            Message = new[]
+            {
+                new MemberValue { TypeName = "address", Value = fromAddress },
+                new MemberValue { TypeName = "uint256", Value = nonce },
+                new MemberValue { TypeName = "bytes", Value = functionData }
+            }
+        };
+
+        // Encode the typed data.
+        var signer = new Eip712TypedDataSigner();
+        byte[] encodedData = signer.EncodeTypedData(typedData);
+        byte[] hashedData = Sha3Keccack.Current.CalculateHash(encodedData);
+
+        // Sign the hash with the private key.
+        var key = new EthECKey(privateKey);
+        EthECDSASignature signature = key.SignAndCalculateV(hashedData);
+        string signatureStr = EthECDSASignature.CreateStringSignature(signature);
+
+        return signatureStr;
+    }
 }
 
 namespace VBase
@@ -28,9 +101,9 @@ namespace VBase
         private readonly Nethereum.Web3.Accounts.Account account;
         private readonly Web3 web3;
         private readonly Contract commitmentServiceContract;
-        private object signatureData;
+        private Dictionary<string, object> signatureData;
+        private Dictionary<string, object> domain;
         private int? nonce;
-        private int? chainId;
 
         public ForwarderCommitmentService(
             string forwarderUrl,
@@ -40,9 +113,6 @@ namespace VBase
             this.forwarderUrl = forwarderUrl;
             this.apiKey = apiKey;
             this.privateKey = privateKey;
-            signatureData = null;
-            nonce = null;
-            chainId = null;
 
             // Read the ABI from the JSON resource.
             abi = JsonLoader.LoadCommitmentServiceJson();
@@ -74,10 +144,10 @@ namespace VBase
             string api,
             RequestType requestType = RequestType.GET,
             Dictionary<string, string> parameters = null,
-            Dictionary<string, string> data = null)
+            Dictionary<string, object> data = null)
         {
             parameters ??= new Dictionary<string, string>();
-            data ??= new Dictionary<string, string>();
+            data ??= new Dictionary<string, object>();
 
             // Set the user address.
             parameters["from"] = account.Address;
@@ -161,21 +231,26 @@ namespace VBase
             // Get signature data and nonce from the API endpoint if necessary.
             if (signatureData == null || nonce == null)
             {
-                Dictionary<string, object> signatureData = await CallForwarderApiAsync("signature-data");
+                // Get current signatureData from the API server.
+                signatureData = await CallForwarderApiAsync("signature-data");
                 if (signatureData == null || !signatureData.ContainsKey("domain"))
                 {
                     throw new InvalidOperationException("Unexpected signature_data or missing domain field.");
                 }
-                Dictionary<string, object> domain = (Dictionary<string, object>)signatureData["domain"];
-                if (domain == null || !domain.ContainsKey("chainId"))
+
+                // Initialize nonce.
+                if (!signatureData.ContainsKey("nonce"))
                 {
-                    throw new InvalidOperationException("Missing chainId field in signature_data[\"domain\"]");
+                    throw new InvalidOperationException("Missing nonce field in signatureData.");
                 }
                 nonce = Convert.ToInt32(signatureData["nonce"]);
 
-                // Convert chainId to integer to make it compatible with consumer APIs.
-                // Technically it is an uint256 and is sent as a string.
-                chainId = Convert.ToInt32(signatureData["chainId"].ToString());
+                // Initialize domain.
+                domain = (Dictionary<string, object>)signatureData["domain"];
+                if (domain == null)
+                {
+                    throw new InvalidOperationException("Missing domain in signature_data.");
+                }
             }
 
             // TODO: Add proper debug logging
@@ -184,10 +259,53 @@ namespace VBase
             // Set up the call.
 
             // Encode the CommitmentService smart contract call.
-            var functionData = commitmentServiceContract.encode_abi(fn_name = fnName, args = args);
+            // The following is a Netethereum equivalent to:
+            // commitmentServiceContract.encode_abi(fn_name = fnName, args = args);
+            var function = commitmentServiceContract.GetFunction(fnName);
+            var functionData = function.GetData(args);
+            // TODO: Add proper debug logging
+            Console.WriteLine($"ForwarderCommitmentService:CallFunctionAsync(): functionData = {functionData}");
 
-            // Return dummy transaction hash for testing.
-            return "0x1234";
+            // Sign the meta-transaction for the call.
+            var eip712Signer = new Eip712Signer(privateKey, new System.Numerics.BigInteger(Convert.ToInt32(domain["chainId"].ToString())), domain["verifyingContract"].ToString());
+            string fromAddress = account.Address;
+            string signature = eip712Signer.SignForwardRequest(fromAddress, nonce.Value, functionData);
+            Console.WriteLine($"Signature: {signature}");
+
+            // Format the ForwardRequest object.
+            var forwardRequest = new Dictionary<string, object>
+            {
+                { "from", fromAddress },
+                { "nonce", nonce.Value },
+                { "data", functionData }
+            };
+            var data = new Dictionary<string, object>
+            {
+                { "forwardRequest", forwardRequest },
+                { "signature", signature }
+            };
+
+            // TODO: Add exception and error handling.
+
+            // Make the forwarder request.
+            var receipt = await CallForwarderApiAsync(
+                "execute",
+                RequestType.POST,
+                null,
+                data
+            );
+            // TODO: Add proper debug logging
+            Console.WriteLine($"ForwarderCommitmentService:CallFunctionAsync(): receipt = {receipt}");
+
+            // TODO: Check request status.
+
+            // TODO: Process and return the tx receipt.
+
+            // If the tx succeeded, increment the nonce.
+            nonce++;
+
+            // TODO: Return the transaction receipt.
+            return receipt["transactionHash"].ToString();
         }
 
         // Synchronous wrapper for VBA compatibility
