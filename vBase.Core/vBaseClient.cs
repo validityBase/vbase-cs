@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Xml.Linq;
-using ADRaffy.ENSNormalize;
-using Microsoft.Extensions.Configuration;
 using vBase.Core.Base;
 
 namespace vBase.Core
@@ -21,7 +16,7 @@ namespace vBase.Core
       _commitmentService = commitmentService;
     }
 
-    public async Task<Dictionary<string, string>> AddSetObject(string cid, string recordCid)
+    public async Task<Dictionary<string, string>> AddSetObject(byte[] cid, byte[] recordCid)
     {
      return await _commitmentService.AddSetObject(cid, recordCid);
     }

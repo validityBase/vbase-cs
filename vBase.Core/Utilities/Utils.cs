@@ -27,4 +27,18 @@ public static class Utils
         uriBuilder.Query = queryString;
         return uriBuilder.Uri;
     }
+
+    public static string LoadEmbeddedJson(string path)
+    {
+      var assembly = typeof(Utils).Assembly;
+      var resourceName = assembly.GetManifestResourceNames().FirstOrDefault(x => x.EndsWith(path));
+      if (resourceName == null)
+      {
+        throw new InvalidOperationException($"Resource {path} not found in assembly {assembly.FullName}");
+      }
+
+      using var stream = assembly.GetManifestResourceStream(resourceName);
+      using var reader = new System.IO.StreamReader(stream.AsserNotNull());
+      return reader.ReadToEnd();
+    }
 }

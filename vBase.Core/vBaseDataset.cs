@@ -15,7 +15,7 @@ public class vBaseDataset<TDataType>
     _name = name;
   }
 
-  public string Cid => CryptoUtils.HashTypedValues(_name);
+  public byte[] Cid => _name.GetCid();
 
   public async Task<Dictionary<string, string>> AddRecord(TDataType recordData)
   {

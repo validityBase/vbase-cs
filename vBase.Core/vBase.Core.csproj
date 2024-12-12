@@ -8,11 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\Shared\AssemblyInfoShared.cs" Link="AssemblyInfoShared.cs" />
+    <None Remove="Base\ContractDefinitions\CommitmentService.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.0" />
+    <Compile Include="..\Shared\AssemblyInfoShared.cs" Link="AssemblyInfoShared.cs" />
+    <EmbeddedResource Include="Base\ContractDefinitions\CommitmentService.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Nethereum.Web3" Version="4.26.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>

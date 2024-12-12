@@ -8,7 +8,8 @@ public class CommitmentServiceBuilder
   public static CommitmentService BuildForwarderCommitmentService(string forwarderUrl, string apiKey, string privateKey)
   {
     return new CommitmentService(
-      new ForwarderCommunicationChannel(forwarderUrl, apiKey, privateKey)
+      new ForwarderCommunicationChannel(forwarderUrl, apiKey, privateKey),
+      privateKey
     );
   }
 }

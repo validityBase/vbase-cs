@@ -51,4 +51,17 @@ public class UtilsTests
     // Assert
     result.Should().Be(new Uri("http://test.com/api/test?key1=%26value1&key2=value2"));
   }
+
+  [Test]
+  public void LoadEmbeddedJson_WhenResourceExists_ReturnsJson()
+  {
+    // Arrange
+    var path = "vBase.Core.Base.ContractDefinitions.CommitmentService.json";
+
+    // Act
+    var result = Utilities.Utils.LoadEmbeddedJson(path);
+
+    // Assert
+    result.Should().NotBeEmpty();
+  }
 }
