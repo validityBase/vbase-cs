@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Nethereum.ABI.FunctionEncoding;
+using Nethereum.Contracts;
 
 namespace vBase.Core.Utilities;
 
@@ -40,5 +42,18 @@ public static class Utils
       using var stream = assembly.GetManifestResourceStream(resourceName);
       using var reader = new System.IO.StreamReader(stream.AsserNotNull());
       return reader.ReadToEnd();
+    }
+
+    public static T GetResult<T>(this EventLog<List<ParameterOutput>> @event, string paramName)
+    {
+      var param = @event.Event.Cast<ParameterOutput>()
+        .SingleOrDefault(p => p.Parameter.Name == paramName);
+
+      if (param == null)
+      {
+        throw new InvalidOperationException($"Parameter {paramName} not found in event");
+      }
+
+      return (T)param.Result;
     }
 }

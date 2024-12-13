@@ -1,11 +1,16 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ADRaffy.ENSNormalize;
+using Nethereum.ABI.FunctionEncoding;
+using Nethereum.ABI.Model;
 using Nethereum.Contracts;
 using Nethereum.Web3;
 using Nethereum.Web3.Accounts;
+using Newtonsoft.Json.Linq;
 using vBase.Core.DTOs;
 using vBase.Core.Exceptions;
+using vBase.Core.Utilities;
 
 namespace vBase.Core.Base;
 
@@ -27,8 +32,46 @@ public class CommitmentService
 
   public async Task<Dictionary<string, string>> AddSetObject(byte[] setCid, byte[] recordCid)
   {
-    var contractMethodExecuteRes = await CallContractFunction("addSetObject", setCid, recordCid);
+    var contractMethodExecutionRes = await CallContractFunction("addSetObject", setCid, recordCid);
     return new Dictionary<string, string>();
+  }
+
+  public async Task<bool> UserSetExists(byte[] setCid)
+  {
+    var contractMethodExecutionRes = await CallContractFunction("userSetCommitments", _account.ChecksumAddress(), setCid);
+    return contractMethodExecutionRes.Status.StartsWith("1");
+  }
+
+  /// <summary>
+  /// Creates a new set with the specified setCid.
+  /// If the set already exists, no action will be taken.
+  /// </summary>
+  /// <param name="setCid">The CID representing the name of the new set.</param>
+  public async Task AddSet(byte[] setCid)
+  {
+    var contractMethodExecutionRes = await CallContractFunction("addSet", setCid);
+    var addSetEvents = _commitmentServiceContract.GetEvent("AddSet")
+      .DecodeAllEventsDefaultForEvent(contractMethodExecutionRes.Logs);
+
+    var setCreationEvent = addSetEvents.SingleOrDefault();
+    if (setCreationEvent != null)
+    {
+      // a new set has been created
+      EventLog<List<ParameterOutput>> a  = setCreationEvent;
+      string userAddress = setCreationEvent.GetResult<string>("user");
+      byte[] newSetCid = setCreationEvent.GetResult<byte[]>("setCid");
+
+      // let's do some crosscheck
+      if (userAddress != _account.ChecksumAddress())
+      {
+        throw new vBaseException("The user address in the event does not match the account address");
+      }
+
+      if (!newSetCid.SequenceEqual(setCid))
+      {
+        throw new vBaseException("The set CID in the event does not match the requested set CID");
+      }
+    }
   }
 
   private async Task<ContractMethodExecuteResultDto> CallContractFunction(string functionName, params object[] functionInput)
@@ -42,4 +85,6 @@ public class CommitmentService
     }
     return receipt.Data;
   }
+
+  
 }

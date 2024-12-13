@@ -118,27 +118,27 @@ public class ForwarderCommunicationChannel: ICommunicationChannel
       Domain = _signatureData.AsserNotNull().Domain,
       Types = new Dictionary<string, MemberDescription[]>
       {
-        ["EIP712Domain"] = new[]
-        {
+        ["EIP712Domain"] =
+        [
           new MemberDescription { Name = "name", Type = "string" },
           new MemberDescription { Name = "version", Type = "string" },
           new MemberDescription { Name = "chainId", Type = "uint256" },
           new MemberDescription { Name = "verifyingContract", Type = "address" }
-        },
-        ["ForwardRequest"] = new[]
-        {
+        ],
+        ["ForwardRequest"] =
+        [
           new MemberDescription { Name = "from", Type = "address" },
           new MemberDescription { Name = "nonce", Type = "uint256" },
           new MemberDescription { Name = "data", Type = "bytes" }
-        }
+        ]
       },
       PrimaryType = "ForwardRequest",
-      Message = new[]
-      {
+      Message =
+      [
         new MemberValue { TypeName = "address", Value = _account.Address },
         new MemberValue { TypeName = "uint256", Value = _signatureData.Nonce },
         new MemberValue { TypeName = "bytes", Value = functionData }
-      }
+      ]
     };
   }
 

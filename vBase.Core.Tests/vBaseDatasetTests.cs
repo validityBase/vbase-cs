@@ -1,4 +1,6 @@
-﻿namespace vBase.Core.Tests;
+﻿using NUnit.Framework.Internal;
+
+namespace vBase.Core.Tests;
 
 public class vBaseDatasetTests
 {
@@ -17,8 +19,19 @@ public class vBaseDatasetTests
 
       var client = new vBaseClient(commitmentService);
 
-      var dataset = new vBaseDataset<string>(client, "TestDataSet");
-      var reciept = await dataset.AddRecord("TestRecord");
+      await client.AddNamedSet("sddsfdqwd2223sd112ssdfdfdsa");
+
+      //bool ds1 = await client.UserNamedSetExists("TestDataSet1111");
+
+      //bool ds2 = await client.UserNamedSetExists("TestDataSet1111");
+      //bool ds3 = await client.UserNamedSetExists("TestDataSet1111");
+      //bool ds4 = await client.UserNamedSetExists("Test11212DataSet1111");
+      //bool ds5 = await client.UserNamedSetExists("TestRecord");
+
+
+
+      //var dataset = new vBaseDataset<string>(client, "TestDataSet");
+      //var reciept = await dataset.AddRecord("TestRecord");
 
     }
     catch (Exception e)
