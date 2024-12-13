@@ -53,7 +53,9 @@ public class CommitmentService
     var addSetEvents = _commitmentServiceContract.GetEvent("AddSet")
       .DecodeAllEventsDefaultForEvent(contractMethodExecutionRes.Logs);
 
+    // of no event is found, the set already exists
     var setCreationEvent = addSetEvents.SingleOrDefault();
+
     if (setCreationEvent != null)
     {
       // a new set has been created

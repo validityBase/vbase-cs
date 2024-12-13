@@ -19,7 +19,7 @@ public class vBaseDatasetTests
 
       var client = new vBaseClient(commitmentService);
 
-      await client.AddNamedSet("sddsfdqwd2223sd112ssdfdfdsa");
+      await client.AddNamedSet("sddsfdqwd2222223sd112ssdfdfdsa");
 
       //bool ds1 = await client.UserNamedSetExists("TestDataSet1111");
 
