@@ -1,6 +1,4 @@
-﻿using NUnit.Framework.Internal;
-
-namespace vBase.Core.Tests;
+﻿namespace vBase.Core.Tests;
 
 public class vBaseDatasetTests
 {
@@ -19,8 +17,9 @@ public class vBaseDatasetTests
 
       var client = new vBaseClient(commitmentService);
 
-      await client.AddNamedSet("sddsfdqwd2222223sd112ssdfdfdsa");
+      //await client.AddNamedSet("sddsfdqwd2222223sd112ssdfdfdsa");
       bool ds1 = await client.UserNamedSetExists("sddsfdqwd2222223sd112ssdfdfdsa");
+      bool ds2 = await client.UserNamedSetExists("sddsfdqwdsdfsd112ssdfdfdsa");
 
       //bool ds2 = await client.UserNamedSetExists("TestDataSet1111");
       //bool ds3 = await client.UserNamedSetExists("TestDataSet1111");

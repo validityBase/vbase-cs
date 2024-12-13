@@ -1,13 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ADRaffy.ENSNormalize;
-using Nethereum.ABI.FunctionEncoding;
-using Nethereum.ABI.Model;
 using Nethereum.Contracts;
 using Nethereum.Web3;
 using Nethereum.Web3.Accounts;
-using Newtonsoft.Json.Linq;
 using vBase.Core.DTOs;
 using vBase.Core.Exceptions;
 using vBase.Core.Utilities;
@@ -26,7 +22,7 @@ public class CommitmentService
     _communicationChannel = communicationChannel;
     _account = new Account(privateKey);
     _web3 = new Web3(_account);
-    var contractDefinitionJson = Utilities.Utils.LoadEmbeddedJson("CommitmentService.json");
+    var contractDefinitionJson = Utils.LoadEmbeddedJson("CommitmentService.json");
     _commitmentServiceContract = _web3.Eth.GetContract(contractDefinitionJson, "0x1234");
   }
 
@@ -38,8 +34,9 @@ public class CommitmentService
 
   public async Task<bool> UserSetExists(byte[] setCid)
   {
-    var contractMethodExecutionRes = await CallContractFunction("userSetCommitments", _account.ChecksumAddress(), setCid);
-    return contractMethodExecutionRes.Status.StartsWith("1");
+    var res = await CallStateVariable<string>("userSetCommitments", _account.ChecksumAddress(), setCid);
+    int parsedRes = (int)(new System.ComponentModel.Int32Converter()).ConvertFromString(res);
+    return parsedRes == 1;
   }
 
   /// <summary>
@@ -59,7 +56,6 @@ public class CommitmentService
     if (setCreationEvent != null)
     {
       // a new set has been created
-      EventLog<List<ParameterOutput>> a  = setCreationEvent;
       string userAddress = setCreationEvent.GetResult<string>("user");
       byte[] newSetCid = setCreationEvent.GetResult<byte[]>("setCid");
 
@@ -87,6 +83,18 @@ public class CommitmentService
 
     if (!receipt.Success)
       throw new vBaseException($"Failed to call contract function {functionName}");
+
+    return receipt.Data;
+  }
+
+  private async Task<TResultType> CallStateVariable<TResultType>(string stateVariableName, params object[] functionInput)
+  {
+    var function = _commitmentServiceContract.GetFunction(stateVariableName);
+    var functionData = function.GetData(functionInput);
+    var receipt = await _communicationChannel.CallStateVariable<TResultType>(functionData);
+
+    if (!receipt.Success)
+      throw new vBaseException($"Failed to call state variable {stateVariableName}");
 
     return receipt.Data;
   }

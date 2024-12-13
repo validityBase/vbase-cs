@@ -30,7 +30,6 @@ public class ForwarderCommunicationChannel: ICommunicationChannel
     _apiKey = apiKey;
     _account = new Account(privateKey);
   }
-
   public async Task<ReceiptDto<ContractMethodExecuteResultDto>> CallContractFunction(Function function, string functionData)
   {
     await EnsureSignatureData();
@@ -39,7 +38,7 @@ public class ForwarderCommunicationChannel: ICommunicationChannel
     var signedMetaTransactionTypedData = SignMetaTransactionTypedData(metaTransactionTypedData);
 
     return await CallForwarderApi <ReceiptDto<ContractMethodExecuteResultDto>>("execute", HttpMethod.Post,
-      new
+      payload:new
       {
         ForwardRequest = new
         {
@@ -49,6 +48,13 @@ public class ForwarderCommunicationChannel: ICommunicationChannel
         },
         Signature = signedMetaTransactionTypedData
       });
+  }
+
+  public async Task<ReceiptDto<TResultType>> CallStateVariable<TResultType>(string functionData)
+  {
+    var callParams = new Dictionary<string, string>();
+    callParams["data"] = functionData;
+    return await CallForwarderApi<ReceiptDto<TResultType>>("call", HttpMethod.Get, callParams);
   }
 
   private async Task EnsureSignatureData()
@@ -64,11 +70,15 @@ public class ForwarderCommunicationChannel: ICommunicationChannel
     }
   }
 
-  private async Task<TResult> CallForwarderApi<TResult>(string apiMethodName, HttpMethod? method = null, object? payload = null)
+  private async Task<TResult> CallForwarderApi<TResult>(
+    string apiMethodName,
+    HttpMethod? method = null,
+    Dictionary<string, string>? requestParameters = null,
+    object? payload = null)
   {
-    var requestParameters = new Dictionary<string, string>();
+    requestParameters ??= new Dictionary<string, string>();
     requestParameters.Add("from", _account.Address);
-
+    
     var apiUrl = Utils.BuildUri(_forwarderUrl, apiMethodName, requestParameters);
 
     var request = new HttpRequestMessage(method ?? HttpMethod.Get, apiUrl);
