@@ -5,6 +5,7 @@ namespace vBase.Core.Tests;
 [TestFixture("https://dev.api.vbase.com/forwarder/",
   "hPnKt94hz2CbZMmj6iz_4tWV0q21hQ3JOif02hOu6UU",
   "0x4d22553b6559103d337144874ce13489583de4a12516b0575840c0d6199cb296")]
+[Category(Constants.TestCategoryIntegration)]
 public class vBaseClientTests
 {
   private vBaseClient _client;
