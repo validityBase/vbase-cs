@@ -10,7 +10,7 @@ public class UtilsTests
   {
     // Arrange
     string? value = null;
-    string? message = "Test message";
+    string message = "Test message";
 
     // Act
     Action act = () => value.AsserNotNull(message);
@@ -23,8 +23,8 @@ public class UtilsTests
   public void AsserNotNull_WhenValueIsNotNull_ReturnsValue()
   {
     // Arrange
-    string? value = "Test value";
-    string? message = "Test message";
+    string value = "Test value";
+    string message = "Test message";
 
     // Act
     var result = value.AsserNotNull(message);
@@ -46,7 +46,7 @@ public class UtilsTests
     };
 
     // Act
-    var result = Utilities.Utils.BuildUri(baseUri, path, queryParams);
+    var result = Utils.BuildUri(baseUri, path, queryParams);
 
     // Assert
     result.Should().Be(new Uri("http://test.com/api/test?key1=%26value1&key2=value2"));
@@ -59,7 +59,7 @@ public class UtilsTests
     var path = "vBase.Core.Base.ContractDefinitions.CommitmentService.json";
 
     // Act
-    var result = Utilities.Utils.LoadEmbeddedJson(path);
+    var result = Utils.LoadEmbeddedJson(path);
 
     // Assert
     result.Should().NotBeEmpty();

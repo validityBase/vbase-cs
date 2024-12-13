@@ -46,7 +46,7 @@ public static class Utils
 
     public static T GetEventParameterValue<T>(this EventLog<List<ParameterOutput>> @event, string paramName)
     {
-      var param = @event.Event.Cast<ParameterOutput>()
+      var param = @event.Event
         .SingleOrDefault(p => p.Parameter.Name == paramName);
 
       if (param == null)
