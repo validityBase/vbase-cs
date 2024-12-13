@@ -43,7 +43,7 @@ public class CommitmentService
   }
 
   /// <summary>
-  /// Creates a new set with the specified setCid.
+  /// Creates a new data set with the specified setCid.
   /// If the set already exists, no action will be taken.
   /// </summary>
   /// <param name="setCid">The CID representing the name of the new set.</param>
@@ -65,28 +65,29 @@ public class CommitmentService
 
       // let's do some crosscheck
       if (userAddress != _account.ChecksumAddress())
-      {
         throw new vBaseException("The user address in the event does not match the account address");
-      }
 
       if (!newSetCid.SequenceEqual(setCid))
-      {
         throw new vBaseException("The set CID in the event does not match the requested set CID");
-      }
     }
   }
 
+  /// <summary>
+  /// Calls the specified contract function.
+  /// </summary>
+  /// <param name="functionName">The name of the function to call.</param>
+  /// <param name="functionInput">The input parameters for the function.</param>
+  /// <returns>The result of the contract function execution.</returns>
+  /// <exception cref="vBaseException">Thrown when there is an issue with the contract function execution.</exception>
   private async Task<ContractMethodExecuteResultDto> CallContractFunction(string functionName, params object[] functionInput)
   {
     var function = _commitmentServiceContract.GetFunction(functionName);
     var functionData = function.GetData(functionInput);
     var receipt = await _communicationChannel.CallContractFunction(function, functionData);
+
     if (!receipt.Success)
-    {
       throw new vBaseException($"Failed to call contract function {functionName}");
-    }
+
     return receipt.Data;
   }
-
-  
 }
