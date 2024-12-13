@@ -44,7 +44,7 @@ public static class Utils
       return reader.ReadToEnd();
     }
 
-    public static T GetResult<T>(this EventLog<List<ParameterOutput>> @event, string paramName)
+    public static T GetEventParameterValue<T>(this EventLog<List<ParameterOutput>> @event, string paramName)
     {
       var param = @event.Event.Cast<ParameterOutput>()
         .SingleOrDefault(p => p.Parameter.Name == paramName);

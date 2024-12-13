@@ -56,8 +56,8 @@ public class CommitmentService
     if (setCreationEvent != null)
     {
       // a new set has been created
-      string userAddress = setCreationEvent.GetResult<string>("user");
-      byte[] newSetCid = setCreationEvent.GetResult<byte[]>("setCid");
+      string userAddress = setCreationEvent.GetEventParameterValue<string>("user");
+      byte[] newSetCid = setCreationEvent.GetEventParameterValue<byte[]>("setCid");
 
       // let's do some crosscheck
       if (userAddress != _account.ChecksumAddress())

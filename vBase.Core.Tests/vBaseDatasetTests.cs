@@ -1,41 +1,44 @@
-﻿namespace vBase.Core.Tests;
+﻿using FluentAssertions;
 
-public class vBaseDatasetTests
+namespace vBase.Core.Tests;
+
+[TestFixture("https://dev.api.vbase.com/forwarder/",
+  "hPnKt94hz2CbZMmj6iz_4tWV0q21hQ3JOif02hOu6UU",
+  "0x4d22553b6559103d337144874ce13489583de4a12516b0575840c0d6199cb296")]
+public class vBaseClientTests(string ForwarderUrl, string ApiKey, string PrivateKey)
 {
-  [Test]
-  public async Task RunE2ETest()
+  private vBaseClient _client;
+
+  [SetUp]
+  public void Setup()
   {
-    try
-    {
+    var commitmentService = CommitmentServiceBuilder.BuildForwarderCommitmentService(
+      ForwarderUrl,
+      ApiKey,
+      PrivateKey
+    );
 
+    _client = new vBaseClient(commitmentService);
+  }
 
-      var commitmentService = CommitmentServiceBuilder.BuildForwarderCommitmentService(
-        "https://dev.api.vbase.com/forwarder/",
-        "hPnKt94hz2CbZMmj6iz_4tWV0q21hQ3JOif02hOu6UU",
-        "0x4d22553b6559103d337144874ce13489583de4a12516b0575840c0d6199cb296"
-      );
+  [Test]
+  public async Task UserNamedSetExists_SentDoesNotExists_Test()
+  {
+    bool exists = await _client.UserNamedSetExists(
+      TestContext.CurrentContext.Random.GetString(50));
+    exists.Should().BeFalse();
+  }
 
-      var client = new vBaseClient(commitmentService);
+  [Test]
+  public async Task AddNamedSet_Test()
+  {
+    string setName = TestContext.CurrentContext.Random.GetString(50);
 
-      //await client.AddNamedSet("sddsfdqwd2222223sd112ssdfdfdsa");
-      bool ds1 = await client.UserNamedSetExists("sddsfdqwd2222223sd112ssdfdfdsa");
-      bool ds2 = await client.UserNamedSetExists("sddsfdqwdsdfsd112ssdfdfdsa");
+    bool existedBefore = await _client.UserNamedSetExists(setName);
+    await _client.AddNamedSet(setName);
+    bool existsAfter = await _client.UserNamedSetExists(setName);
 
-      //bool ds2 = await client.UserNamedSetExists("TestDataSet1111");
-      //bool ds3 = await client.UserNamedSetExists("TestDataSet1111");
-      //bool ds4 = await client.UserNamedSetExists("Test11212DataSet1111");
-      //bool ds5 = await client.UserNamedSetExists("TestRecord");
-
-
-
-      //var dataset = new vBaseDataset<string>(client, "TestDataSet");
-      //var reciept = await dataset.AddRecord("TestRecord");
-
-    }
-    catch (Exception e)
-    {
-      Console.WriteLine(e.Message);
-      Assert.Fail();
-    }
+    existedBefore.Should().BeFalse();
+    existsAfter.Should().BeTrue();
   }
 }
