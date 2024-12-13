@@ -31,7 +31,7 @@ public class vBaseClientTests
   }
 
   [Test]
-  public async Task UserNamedSetExists_Test()
+  public async Task UserNamedSetExistsTest()
   {
     bool exists = await _client.UserNamedSetExists(
       TestContext.CurrentContext.Random.GetString(50));
@@ -39,7 +39,7 @@ public class vBaseClientTests
   }
 
   [Test]
-  public async Task AddNamedSet_Test()
+  public async Task AddNamedSetTest()
   {
     string setName = TestContext.CurrentContext.Random.GetString(50);
 
