@@ -91,7 +91,7 @@ public class CommitmentService
   {
     var function = _commitmentServiceContract.GetFunction(stateVariableName);
     var functionData = function.GetData(functionInput);
-    var receipt = await _communicationChannel.CallStateVariable<TResultType>(functionData);
+    var receipt = await _communicationChannel.FetchStateVariable<TResultType>(functionData);
 
     if (!receipt.Success)
       throw new vBaseException($"Failed to call state variable {stateVariableName}");

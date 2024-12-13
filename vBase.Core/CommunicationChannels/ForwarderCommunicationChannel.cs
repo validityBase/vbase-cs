@@ -50,7 +50,7 @@ public class ForwarderCommunicationChannel: ICommunicationChannel
       });
   }
 
-  public async Task<ReceiptDto<TResultType>> CallStateVariable<TResultType>(string functionData)
+  public async Task<ReceiptDto<TResultType>> FetchStateVariable<TResultType>(string functionData)
   {
     var callParams = new Dictionary<string, string>();
     callParams["data"] = functionData;
