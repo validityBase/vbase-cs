@@ -1,33 +1,30 @@
 ﻿using FluentAssertions;
+using Microsoft.Extensions.Configuration;
+using vBase.Core.Utilities;
 
 namespace vBase.Core.Tests;
 
-[TestFixture("https://dev.api.vbase.com/forwarder/",
-  "hPnKt94hz2CbZMmj6iz_4tWV0q21hQ3JOif02hOu6UU",
-  "0x4d22553b6559103d337144874ce13489583de4a12516b0575840c0d6199cb296")]
 [Category(Constants.TestCategoryIntegration)]
 public class vBaseClientTests
 {
   private vBaseClient _client;
+  private IConfiguration _configuration;
 
-  private readonly string _forwarderUrl;
-  private readonly string _apiKey;
-  private readonly string _privateKey;
-
-  public vBaseClientTests(string forwarderUrl, string apiKey, string privateKey)
-  {
-    _forwarderUrl = forwarderUrl;
-    _apiKey = apiKey;
-    _privateKey = privateKey;
-  }
+  public string ForwarderUrl => _configuration[nameof(ForwarderUrl)].AsserNotNull();
+  public string ApiKey => _configuration[nameof(ApiKey)].AsserNotNull();
+  private string PrivateKey => _configuration[nameof(PrivateKey)].AsserNotNull();
 
   [SetUp]
   public void Setup()
   {
+    _configuration = new ConfigurationBuilder()
+      .AddYamlFile("settings.yml")
+      .Build();
+
     var commitmentService = CommitmentServiceBuilder.BuildForwarderCommitmentService(
-      _forwarderUrl,
-      _apiKey,
-      _privateKey
+      ForwarderUrl,
+      ApiKey,
+      PrivateKey
     );
 
     _client = new vBaseClient(commitmentService);
