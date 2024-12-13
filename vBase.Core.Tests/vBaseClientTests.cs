@@ -31,7 +31,7 @@ public class vBaseClientTests
   }
 
   [Test]
-  public async Task UserNamedSetExists_SentDoesNotExists_Test()
+  public async Task UserNamedSetExists_Test()
   {
     bool exists = await _client.UserNamedSetExists(
       TestContext.CurrentContext.Random.GetString(50));
