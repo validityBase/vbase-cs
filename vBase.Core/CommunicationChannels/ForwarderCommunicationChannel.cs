@@ -43,7 +43,7 @@ public class ForwarderCommunicationChannel: ICommunicationChannel
         ForwardRequest = new
         {
           From = _account.Address,
-          _signatureData.AsserNotNull().Nonce,
+          Nonce = _signatureData.AsserNotNull().Nonce,
           Data = functionData
         },
         Signature = signedMetaTransactionTypedData

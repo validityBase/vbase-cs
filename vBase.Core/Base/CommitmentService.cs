@@ -82,7 +82,7 @@ public class CommitmentService
     var receipt = await _communicationChannel.CallContractFunction(function, functionData);
 
     if (!receipt.Success)
-      throw new vBaseException($"Failed to call contract function {functionName}");
+      throw new vBaseException($"Failed to call a contract function {functionName}");
 
     return receipt.Data;
   }
@@ -94,7 +94,7 @@ public class CommitmentService
     var receipt = await _communicationChannel.FetchStateVariable<TResultType>(functionData);
 
     if (!receipt.Success)
-      throw new vBaseException($"Failed to call state variable {stateVariableName}");
+      throw new vBaseException($"Failed to call a contract state variable {stateVariableName}");
 
     return receipt.Data;
   }

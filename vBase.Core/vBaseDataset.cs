@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using vBase.Core.Utilities;
 
@@ -19,7 +20,7 @@ public class vBaseDataset<TDataType>
 
   public async Task Initialize()
   {
-    if (! await _vBaseClient.UserNamedSetExists(_name))
+    if (!await _vBaseClient.UserNamedSetExists(_name))
     {
       await _vBaseClient.AddNamedSet(_name);
     }
@@ -29,6 +30,11 @@ public class vBaseDataset<TDataType>
 
   public async Task<Dictionary<string, string>> AddRecord(TDataType recordData)
   {
+    if(recordData == null)
+    {
+      throw new ArgumentNullException(nameof(recordData));
+    }
+
     var recordCid = recordData.GetCid();
     var commitmentLog = await _vBaseClient.AddSetObject(DataSetCid, recordCid);
     //_add_record_worker
