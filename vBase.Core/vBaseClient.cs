@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using vBase.Core.Base;
-using vBase.Core.Utilities;
 
 namespace vBase.Core
 {
@@ -17,19 +15,19 @@ namespace vBase.Core
       _commitmentService = commitmentService;
     }
 
-    public async Task<Dictionary<string, string>> AddSetObject(byte[] cid, byte[] recordCid)
+    public async Task AddSetObject(string datasetName, object record)
     {
-     return await _commitmentService.AddSetObject(cid, recordCid);
+      await _commitmentService.AddSetObject(datasetName, record);
     }
 
     public async Task<bool> UserNamedSetExists(string datasetName)
     {
-      return await _commitmentService.UserSetExists(datasetName.GetCid());
+      return await _commitmentService.UserSetExists(datasetName);
     }
 
     public async Task AddNamedSet(string datasetName)
     {
-      await _commitmentService.AddSet(datasetName.GetCid());
+      await _commitmentService.AddSet(datasetName);
     }
   }
 }

@@ -37,7 +37,7 @@ public class ForwarderCommunicationChannel: ICommunicationChannel
     var metaTransactionTypedData = CreateMetaTransactionTypedData(functionData);
     var signedMetaTransactionTypedData = SignMetaTransactionTypedData(metaTransactionTypedData);
 
-    return await CallForwarderApi <ReceiptDto<ContractMethodExecuteResultDto>>("execute", HttpMethod.Post,
+    var result = await CallForwarderApi <ReceiptDto<ContractMethodExecuteResultDto>>("execute", HttpMethod.Post,
       payload:new
       {
         ForwardRequest = new
@@ -48,6 +48,10 @@ public class ForwarderCommunicationChannel: ICommunicationChannel
         },
         Signature = signedMetaTransactionTypedData
       });
+
+    _signatureData.AsserNotNull().Nonce++;
+
+    return result;
   }
 
   public async Task<ReceiptDto<TResultType>> FetchStateVariable<TResultType>(string functionData)
@@ -94,27 +98,38 @@ public class ForwarderCommunicationChannel: ICommunicationChannel
     }
 
     using HttpClient client = new HttpClient();
-    using var response = await client.SendAsync(request);
-
-    var responseContent = await response.Content.ReadAsStringAsync();
-
-    response.EnsureSuccessStatusCode();
 
     try
     {
-      TResult? receipt = JsonConvert.DeserializeObject<TResult>(responseContent, new JsonSerializerSettings());
-      if (receipt != null)
-      {
-        return receipt;
-      }
+      using var response = await client.SendAsync(request);
 
-      throw new vBaseException($"Unexpected response structure received from forwarder API {apiMethodName}");
+      var responseContent = await response.Content.ReadAsStringAsync();
+
+      response.EnsureSuccessStatusCode();
+
+      try
+      {
+        TResult? receipt = JsonConvert.DeserializeObject<TResult>(responseContent, new JsonSerializerSettings());
+        if (receipt != null)
+        {
+          return receipt;
+        }
+
+        throw new vBaseException($"Unexpected response structure received from forwarder API {apiMethodName}");
+      }
+      catch (JsonReaderException ex)
+      {
+        throw new vBaseException(
+          $"Result received from forwarder API {apiMethodName} is not a valid JSON string. ({responseContent})",
+          ex);
+      }
     }
-    catch (JsonReaderException ex)
+    catch (Exception)
     {
-      throw new vBaseException(
-        $"Result received from forwarder API {apiMethodName} is not a valid JSON string. ({responseContent})",
-        ex);
+      // If the transaction failed, nonce may be invalid.
+      // Force these to be reloaded on the next call.
+      _signatureData = null;
+      throw;
     }
   }
 

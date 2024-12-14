@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.Configuration;
+using vBase.Core.Exceptions;
 using vBase.Core.Utilities;
 
 namespace vBase.Core.Tests;
@@ -31,7 +32,7 @@ public class vBaseClientTests
   }
 
   [Test]
-  public async Task UserNamedSetExistsTest()
+  public async Task UserNamedSetExists_SetDoesNotExistTest()
   {
     bool exists = await _client.UserNamedSetExists(
       TestContext.CurrentContext.Random.GetString(50));
@@ -49,5 +50,24 @@ public class vBaseClientTests
 
     existedBefore.Should().BeFalse();
     existsAfter.Should().BeTrue();
+  }
+
+  [Test]
+  public async Task AddSetObject_HappyPathTest()
+  {
+    string setName = TestContext.CurrentContext.Random.GetString(50);
+    await _client.AddNamedSet(setName);
+    await _client.AddSetObject(setName, "ObjectToAdd");
+  }
+
+  [Test]
+  public async Task AddSetObject_SetDoesNotExistTest()
+  {
+    string setName = TestContext.CurrentContext.Random.GetString(50);
+    var action = async () => await _client.AddSetObject(setName, "ObjectToAdd");
+
+    await action.Should()
+      .ThrowAsync<vBaseException>()
+      .WithMessage($"*Please make sure that the set with the specified name exists*");
   }
 }

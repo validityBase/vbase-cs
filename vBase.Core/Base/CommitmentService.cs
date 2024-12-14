@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Nethereum.ABI.FunctionEncoding;
 using Nethereum.Contracts;
 using Nethereum.Web3;
 using Nethereum.Web3.Accounts;
@@ -26,46 +27,65 @@ public class CommitmentService
     _commitmentServiceContract = _web3.Eth.GetContract(contractDefinitionJson, "0x1234");
   }
 
-  public async Task<Dictionary<string, string>> AddSetObject(byte[] setCid, byte[] recordCid)
+  /// <summary>
+  /// Checks if the specified set exists.
+  /// </summary>
+  /// <param name="setName">Name of the set.</param>
+  public async Task<bool> UserSetExists(string setName)
   {
-    var contractMethodExecutionRes = await CallContractFunction("addSetObject", setCid, recordCid);
-    return new Dictionary<string, string>();
-  }
-
-  public async Task<bool> UserSetExists(byte[] setCid)
-  {
-    var res = await CallStateVariable<string>("userSetCommitments", _account.ChecksumAddress(), setCid);
+    var res = await CallStateVariable<string>("userSetCommitments", _account.ChecksumAddress(), setName.GetCid());
     int parsedRes = (int)(new System.ComponentModel.Int32Converter()).ConvertFromString(res);
     return parsedRes == 1;
   }
 
   /// <summary>
-  /// Creates a new data set with the specified setCid.
+  /// Creates a new data set with the specified set name.
   /// If the set already exists, no action will be taken.
   /// </summary>
-  /// <param name="setCid">The CID representing the name of the new set.</param>
-  public async Task AddSet(byte[] setCid)
+  /// <param name="setName">The name of the new set.</param>
+  public async Task AddSet(string setName)
   {
-    var contractMethodExecutionRes = await CallContractFunction("addSet", setCid);
+    var setNameCid = setName.GetCid();
+    var contractMethodExecutionRes = await CallContractFunction("addSet", setNameCid);
     var addSetEvents = _commitmentServiceContract.GetEvent("AddSet")
       .DecodeAllEventsDefaultForEvent(contractMethodExecutionRes.Logs);
 
     // of no event is found, the set already exists
-    var setCreationEvent = addSetEvents.SingleOrDefault();
+    var operationEvent = addSetEvents.SingleOrDefault();
 
-    if (setCreationEvent != null)
+    if (operationEvent != null)
     {
-      // a new set has been created
-      string userAddress = setCreationEvent.GetEventParameterValue<string>("user");
-      byte[] newSetCid = setCreationEvent.GetEventParameterValue<byte[]>("setCid");
-
-      // let's do some crosscheck
-      if (userAddress != _account.ChecksumAddress())
-        throw new vBaseException("The user address in the event does not match the account address");
-
-      if (!newSetCid.SequenceEqual(setCid))
-        throw new vBaseException("The set CID in the event does not match the requested set CID");
+      // a new set has been created, let's do some crosscheck
+      OperationEventCrossCheckUserAddress(operationEvent);
+      OperationEventCrossCheckSetCid(operationEvent, setNameCid);
     }
+  }
+
+  /// <summary>
+  /// Adds a objectToAdd to the specified set.
+  /// </summary>
+  /// <param name="setName">Name of the set where the objectToAdd will be added.</param>
+  /// <param name="objectToAdd">Object to add.</param>
+  public async Task AddSetObject(string setName, object objectToAdd)
+  {
+    var setNameCid = setName.GetCid();
+    var objectCid = objectToAdd.GetCid();
+    var contractMethodExecutionRes = await CallContractFunction("addSetObject", setNameCid, objectCid);
+    var operationsEvents = _commitmentServiceContract.GetEvent("AddSetObject")
+      .DecodeAllEventsDefaultForEvent(contractMethodExecutionRes.Logs);
+
+    if (!operationsEvents.Any())
+    {
+      // no events emitted - the objectToAdd has not been added
+      throw new vBaseException($"Failed to add a objectToAdd to set '{setName}'. Please make sure that the set with the specified name exists.");
+    }
+
+    EventLog<List<ParameterOutput>> operationEvent = operationsEvents.Single();
+
+    // object added, let's do some crosscheck
+    OperationEventCrossCheckUserAddress(operationEvent);
+    OperationEventCrossCheckSetCid(operationEvent, setNameCid);
+    OperationEventCrossCheckAddedRecordCid(operationEvent, objectCid);
   }
 
   /// <summary>
@@ -74,7 +94,6 @@ public class CommitmentService
   /// <param name="functionName">The name of the function to call.</param>
   /// <param name="functionInput">The input parameters for the function.</param>
   /// <returns>The result of the contract function execution.</returns>
-  /// <exception cref="vBaseException">Thrown when there is an issue with the contract function execution.</exception>
   private async Task<ContractMethodExecuteResultDto> CallContractFunction(string functionName, params object[] functionInput)
   {
     var function = _commitmentServiceContract.GetFunction(functionName);
@@ -87,6 +106,13 @@ public class CommitmentService
     return receipt.Data;
   }
 
+  /// <summary>
+  /// Fetches the specified state variable from the contract.
+  /// </summary>
+  /// <typeparam name="TResultType">Expected variable type</typeparam>
+  /// <param name="stateVariableName">Name of the variable to fetch</param>
+  /// <param name="functionInput">Context identifying the set</param>
+  /// <returns>Variable value</returns>
   private async Task<TResultType> CallStateVariable<TResultType>(string stateVariableName, params object[] functionInput)
   {
     var function = _commitmentServiceContract.GetFunction(stateVariableName);
@@ -97,5 +123,23 @@ public class CommitmentService
       throw new vBaseException($"Failed to call a contract state variable {stateVariableName}");
 
     return receipt.Data;
+  }
+
+  private void OperationEventCrossCheckUserAddress(EventLog<List<ParameterOutput>> operationEvent)
+  {
+    if (operationEvent.GetEventParameterValue<string>("user") != _account.ChecksumAddress())
+      throw new vBaseException("The user address in the event does not match the account address");
+  }
+
+  private void OperationEventCrossCheckSetCid(EventLog<List<ParameterOutput>> operationEvent, byte[] setNameCid)
+  {
+    if (!operationEvent.GetEventParameterValue<byte[]>("setCid").SequenceEqual(setNameCid))
+      throw new vBaseException("The set CID in the event does not match the requested set CID");
+  }
+
+  private void OperationEventCrossCheckAddedRecordCid(EventLog<List<ParameterOutput>> operationEvent, byte[] addedObjectCid)
+  {
+    if (!operationEvent.GetEventParameterValue<byte[]>("objectCid").SequenceEqual(addedObjectCid))
+      throw new vBaseException("The object CID in the event does not match the added object CID");
   }
 }
