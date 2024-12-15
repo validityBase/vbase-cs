@@ -53,11 +53,22 @@ public class vBaseClientTests
   }
 
   [Test]
-  public async Task AddSetObject_HappyPathTest()
+  public async Task AddSetObject_VerifyUserObject_HappyPathTest()
   {
     string setName = TestContext.CurrentContext.Random.GetString(50);
     await _client.AddNamedSet(setName);
-    await _client.AddSetObject(setName, "ObjectToAdd");
+    var objectToAdd = "ObjectToAdd";
+    var timestamp = await _client.AddSetObject(setName, objectToAdd);
+    bool objectAdded = await _client.VerifyUserObject(objectToAdd.GetCid(), timestamp);
+    objectAdded.Should().BeTrue();
+    
+    bool objectVerifiedWrongStamp = await _client.VerifyUserObject(objectToAdd.GetCid(), timestamp + TimeSpan.FromSeconds(10));
+    objectVerifiedWrongStamp.Should().BeFalse();
+
+    bool objectVerifiedWrongCid = await _client.VerifyUserObject(
+      TestContext.CurrentContext.Random.GetString(50).GetCid(),
+      timestamp);
+    objectVerifiedWrongCid.Should().BeFalse();
   }
 
   [Test]

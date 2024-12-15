@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using Nethereum.ABI.FunctionEncoding;
 using Nethereum.Contracts;
@@ -34,7 +37,20 @@ public class CommitmentService
   public async Task<bool> UserSetExists(string setName)
   {
     var res = await CallStateVariable<string>("userSetCommitments", _account.ChecksumAddress(), setName.GetCid());
-    int parsedRes = (int)(new System.ComponentModel.Int32Converter()).ConvertFromString(res);
+    int parsedRes = (int)(new Int32Converter()).ConvertFromString(res);
+    return parsedRes == 1;
+  }
+
+  /// <summary>
+  /// Checks whether the object with the specified CID was stamped at the given time.
+  /// </summary>
+  /// <param name="objectCid">The CID of the object.</param>
+  /// <param name="timestamp">The timestamp of the transaction.</param>
+  /// <returns>True if the object was stamped, otherwise false.</returns>
+  public async Task<bool> VerifyUserObject(byte[] objectCid, DateTimeOffset timestamp)
+  {
+    var res = await CallStateVariable<string>("verifyUserObject", _account.ChecksumAddress(), objectCid, timestamp.ToUnixTimeSeconds());
+    int parsedRes = (int)(new Int32Converter()).ConvertFromString(res);
     return parsedRes == 1;
   }
 
@@ -66,7 +82,7 @@ public class CommitmentService
   /// </summary>
   /// <param name="setName">Name of the set where the objectToAdd will be added.</param>
   /// <param name="objectToAdd">Object to add.</param>
-  public async Task AddSetObject(string setName, object objectToAdd)
+  public async Task<DateTimeOffset> AddSetObject(string setName, object objectToAdd)
   {
     var setNameCid = setName.GetCid();
     var objectCid = objectToAdd.GetCid();
@@ -86,6 +102,8 @@ public class CommitmentService
     OperationEventCrossCheckUserAddress(operationEvent);
     OperationEventCrossCheckSetCid(operationEvent, setNameCid);
     OperationEventCrossCheckAddedRecordCid(operationEvent, objectCid);
+
+    return DateTimeOffset.FromUnixTimeSeconds((long)operationEvent.GetEventParameterValue<BigInteger>("timestamp"));
   }
 
   /// <summary>

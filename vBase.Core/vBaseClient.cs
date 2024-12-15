@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using vBase.Core.Base;
 
 namespace vBase.Core
@@ -15,9 +16,9 @@ namespace vBase.Core
       _commitmentService = commitmentService;
     }
 
-    public async Task AddSetObject(string datasetName, object record)
+    public async Task<DateTimeOffset> AddSetObject(string datasetName, object record)
     {
-      await _commitmentService.AddSetObject(datasetName, record);
+      return await _commitmentService.AddSetObject(datasetName, record);
     }
 
     public async Task<bool> UserNamedSetExists(string datasetName)
@@ -28,6 +29,11 @@ namespace vBase.Core
     public async Task AddNamedSet(string datasetName)
     {
       await _commitmentService.AddSet(datasetName);
+    }
+
+    public async Task<bool> VerifyUserObject(byte[] objectCid, DateTimeOffset timestamp)
+    {
+      return await _commitmentService.VerifyUserObject(objectCid, timestamp);
     }
   }
 }
