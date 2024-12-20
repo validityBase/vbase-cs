@@ -42,6 +42,11 @@ jobs:
         vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath
         echo "::set-output name=vs-path::$(vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath)"
 
+    - name: Disable Out of Proc Build (fix for HRESULT = 8000000A)
+      run: |
+        $vsPath = '${{ steps.vs.outputs.vs-path }}'
+        & "$vsPath\Common7\IDE\CommonExtensions\Microsoft\VSI\DisableOutOfProcBuild\DisableOutOfProcBuild.exe"
+
     - name: Build Solution
       run: |
         $vsPath = '${{ steps.vs.outputs.vs-path }}'
@@ -51,4 +56,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: vBase Setup
-        path: vBase.ComShim.Setup/Release/
+        path: vBase.ComShim.Setup\Release\
