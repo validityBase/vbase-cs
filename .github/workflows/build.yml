@@ -46,7 +46,7 @@ jobs:
       run: |
         $vsPath = '${{ steps.vs.outputs.vs-path }}'
         & cd "$vsPath\Common7\IDE\CommonExtensions\Microsoft\VSI\DisableOutOfProcBuild"
-        & DisableOutOfProcBuild.exe
+        & call DisableOutOfProcBuild.exe
 
     - name: Build Solution
       run: |
