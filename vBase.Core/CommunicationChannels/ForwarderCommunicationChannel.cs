@@ -26,6 +26,15 @@ public class ForwarderCommunicationChannel: ICommunicationChannel
 
   public ForwarderCommunicationChannel(string forwarderUrl, string apiKey, string privateKey)
   {
+    if(string.IsNullOrWhiteSpace(forwarderUrl))
+      throw new ArgumentException("Forwarder URL is required.", nameof(forwarderUrl));
+
+    if (string.IsNullOrWhiteSpace(apiKey))
+      throw new ArgumentException("API key is required.", nameof(apiKey));
+
+    if (string.IsNullOrWhiteSpace(privateKey))
+      throw new ArgumentException("Private key is required.", nameof(privateKey));
+
     _forwarderUrl = new Uri(forwarderUrl);
     _apiKey = apiKey;
     _account = new Account(privateKey);

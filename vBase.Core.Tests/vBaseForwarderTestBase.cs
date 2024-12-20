@@ -17,6 +17,7 @@ public abstract class vBaseForwarderTestBase
   public void Setup()
   {
     _configuration = new ConfigurationBuilder()
+      .AddEnvironmentVariables()
       .AddYamlFile("settings.yml")
       .Build();
 
