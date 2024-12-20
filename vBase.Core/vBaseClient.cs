@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Numerics;
 using System.Threading.Tasks;
+using Nethereum.Web3.Accounts;
 using vBase.Core.Base;
 
 namespace vBase.Core
@@ -16,14 +18,16 @@ namespace vBase.Core
       _commitmentService = commitmentService;
     }
 
+    public Account Account => _commitmentService.Account;
+
     public async Task<DateTimeOffset> AddSetObject(string datasetName, object record)
     {
       return await _commitmentService.AddSetObject(datasetName, record);
     }
 
-    public async Task<bool> UserNamedSetExists(string datasetName)
+    public async Task<bool> UserNamedSetExists(string owner, string datasetName)
     {
-      return await _commitmentService.UserSetExists(datasetName);
+      return await _commitmentService.UserSetExists(owner, datasetName);
     }
 
     public async Task AddNamedSet(string datasetName)
@@ -31,9 +35,14 @@ namespace vBase.Core
       await _commitmentService.AddSet(datasetName);
     }
 
-    public async Task<bool> VerifyUserObject(byte[] objectCid, DateTimeOffset timestamp)
+    public async Task<bool> VerifyUserObject(string owner, byte[] objectCid, DateTimeOffset timestamp)
     {
-      return await _commitmentService.VerifyUserObject(objectCid, timestamp);
+      return await _commitmentService.VerifyUserObject(owner, objectCid, timestamp);
+    }
+
+    public async Task<bool> VerifyUserSetObjects(string owner, byte[] objectCid, BigInteger setObjectCidSum)
+    {
+      return await _commitmentService.VerifyUserSetObjects(owner, objectCid, setObjectCidSum);
     }
   }
 }

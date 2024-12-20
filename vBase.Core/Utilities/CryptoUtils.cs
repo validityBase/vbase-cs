@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using Nethereum.RLP;
 using Nethereum.Util;
 using Nethereum.Web3.Accounts;
 using Org.BouncyCastle.Crypto.Digests;
@@ -29,26 +30,57 @@ public static class CryptoUtils
   /// <returns>SHA3 256 hash bytes</returns>
   public static byte[] GetCid(this BigInteger value, uint size = 256)
   {
-    if (size % 8 != 0)
-    {
-      throw new ArgumentException("Size must be a multiple of 8.");
-    }
+    var intBytes = value.BigIntToEthereumBytes(size);
+    return GetSha3Hash(intBytes);
+  }
 
-    var sizeInBytes = size / 8;
+  public static BigInteger Normalize256(this BigInteger number)
+  {
+    return number % BigInteger.Pow(2, 256);
+  }
 
-    byte[] intBytes = value.ToByteArray().Reverse().ToArray();
-    if (intBytes.Length > sizeInBytes)
-    {
-      throw new ArgumentException($"Integer value {value} is too large for {size} bits.");
-    }
-    byte[] intResult = new byte[sizeInBytes];
-    intBytes.CopyTo(intResult, sizeInBytes - intBytes.Length);
-    return GetSha3Hash(intResult);
+  public static BigInteger Add(this BigInteger a, BigInteger b)
+  {
+    return (a + b).Normalize256();
   }
 
   public static string ChecksumAddress(this Account account)
   {
     return AddressUtil.Current.ConvertToChecksumAddress(account.Address);
+  }
+
+  public static byte[] BigIntToEthereumBytes(this BigInteger value, uint size)
+  {
+    if (size % 8 != 0)
+    {
+      throw new ArgumentException("Size must be a multiple of 8.");
+    }
+
+    if (value < 0)
+    {
+      throw new ArgumentException("Negative values are not supported.");
+    }
+
+    var sizeInBytes = size / 8;
+
+    byte[] intBytes = value.ToByteArray().Reverse().ToArray().TrimZeroBytes();
+    if (intBytes.Length > sizeInBytes)
+    {
+      throw new ArgumentException($"Integer value {value} is too large for {size} bits.");
+    }
+
+    byte[] intResult = new byte[sizeInBytes];
+    intBytes.CopyTo(intResult, sizeInBytes - intBytes.Length);
+
+    return intResult;
+  }
+
+  public static BigInteger EthereumBytesToBigInt(byte[] bytes)
+  {
+    var bigIntBytes = bytes.SkipWhile(b => b == 0).Reverse().ToList();
+    bigIntBytes.Add(0); // add sign byte
+    var bigInt = new BigInteger(bigIntBytes.ToArray());
+    return  bigInt;
   }
 
   private static byte[] GetSha3Hash(byte[] input)

@@ -35,6 +35,7 @@ public class vBaseClientTests
   public async Task UserNamedSetExists_SetDoesNotExistTest()
   {
     bool exists = await _client.UserNamedSetExists(
+      _client.Account.ChecksumAddress(),
       TestContext.CurrentContext.Random.GetString(50));
     exists.Should().BeFalse();
   }
@@ -44,31 +45,59 @@ public class vBaseClientTests
   {
     string setName = TestContext.CurrentContext.Random.GetString(50);
 
-    bool existedBefore = await _client.UserNamedSetExists(setName);
+    bool existedBefore = await _client.UserNamedSetExists(_client.Account.ChecksumAddress(), setName);
     await _client.AddNamedSet(setName);
-    bool existsAfter = await _client.UserNamedSetExists(setName);
+    bool existsAfter = await _client.UserNamedSetExists(_client.Account.ChecksumAddress(),setName);
 
     existedBefore.Should().BeFalse();
     existsAfter.Should().BeTrue();
   }
 
   [Test]
-  public async Task AddSetObject_VerifyUserObject_HappyPathTest()
+  public async Task ComplexScenario_HappyPathTest()
   {
     string setName = TestContext.CurrentContext.Random.GetString(50);
     await _client.AddNamedSet(setName);
     var objectToAdd = "ObjectToAdd";
+
+    // add and verify just added object
     var timestamp = await _client.AddSetObject(setName, objectToAdd);
-    bool objectAdded = await _client.VerifyUserObject(objectToAdd.GetCid(), timestamp);
+    bool objectAdded = await _client.VerifyUserObject(
+      _client.Account.ChecksumAddress(),
+      objectToAdd.GetCid(), timestamp);
     objectAdded.Should().BeTrue();
-    
-    bool objectVerifiedWrongStamp = await _client.VerifyUserObject(objectToAdd.GetCid(), timestamp + TimeSpan.FromSeconds(10));
+
+    // verify object with invalid timestamp
+    bool objectVerifiedWrongStamp = await _client.VerifyUserObject(
+      _client.Account.ChecksumAddress(),
+      objectToAdd.GetCid(), timestamp + TimeSpan.FromSeconds(10));
     objectVerifiedWrongStamp.Should().BeFalse();
 
+    // verify object with invalid CID
     bool objectVerifiedWrongCid = await _client.VerifyUserObject(
+      _client.Account.ChecksumAddress(),
       TestContext.CurrentContext.Random.GetString(50).GetCid(),
       timestamp);
     objectVerifiedWrongCid.Should().BeFalse();
+
+    // verify set with 1 object
+    bool setObjectsVerified = await _client.VerifyUserSetObjects(
+      _client.Account.ChecksumAddress(),
+      setName.GetCid(),
+      CryptoUtils.EthereumBytesToBigInt(objectToAdd.GetCid())
+    );
+    setObjectsVerified.Should().BeTrue();
+
+    // add one more object, and verify set of two records
+    var objectToAdd2 = "ObjectToAdd2";
+    await _client.AddSetObject(setName, objectToAdd2);
+    setObjectsVerified = await _client.VerifyUserSetObjects(
+      _client.Account.ChecksumAddress(),
+      setName.GetCid(),
+      CryptoUtils.EthereumBytesToBigInt(objectToAdd.GetCid())
+        .Add(CryptoUtils.EthereumBytesToBigInt(objectToAdd2.GetCid()))
+    );
+    setObjectsVerified.Should().BeTrue();
   }
 
   [Test]

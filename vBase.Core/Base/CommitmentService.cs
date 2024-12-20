@@ -30,13 +30,16 @@ public class CommitmentService
     _commitmentServiceContract = _web3.Eth.GetContract(contractDefinitionJson, "0x1234");
   }
 
+  public Account Account => _account;
+
   /// <summary>
   /// Checks if the specified set exists.
   /// </summary>
+  /// <param name="owner">User set owner.</param>
   /// <param name="setName">Name of the set.</param>
-  public async Task<bool> UserSetExists(string setName)
+  public async Task<bool> UserSetExists(string owner, string setName)
   {
-    var res = await CallStateVariable<string>("userSetCommitments", _account.ChecksumAddress(), setName.GetCid());
+    var res = await CallStateVariable<string>("userSetCommitments", owner, setName.GetCid());
     int parsedRes = (int)(new Int32Converter()).ConvertFromString(res);
     return parsedRes == 1;
   }
@@ -44,12 +47,20 @@ public class CommitmentService
   /// <summary>
   /// Checks whether the object with the specified CID was stamped at the given time.
   /// </summary>
+  /// <param name="owner">Object owner.</param>
   /// <param name="objectCid">The CID of the object.</param>
   /// <param name="timestamp">The timestamp of the transaction.</param>
   /// <returns>True if the object was stamped, otherwise false.</returns>
-  public async Task<bool> VerifyUserObject(byte[] objectCid, DateTimeOffset timestamp)
+  public async Task<bool> VerifyUserObject(string owner, byte[] objectCid, DateTimeOffset timestamp)
   {
-    var res = await CallStateVariable<string>("verifyUserObject", _account.ChecksumAddress(), objectCid, timestamp.ToUnixTimeSeconds());
+    var res = await CallStateVariable<string>("verifyUserObject", owner, objectCid, timestamp.ToUnixTimeSeconds());
+    int parsedRes = (int)(new Int32Converter()).ConvertFromString(res);
+    return parsedRes == 1;
+  }
+
+  public async Task<bool> VerifyUserSetObjects(string owner, byte[] setCid, BigInteger setObjectCidSum)
+  {
+    var res = await CallStateVariable<string>("verifyUserSetObjectsCidSum", owner, setCid, setObjectCidSum);
     int parsedRes = (int)(new Int32Converter()).ConvertFromString(res);
     return parsedRes == 1;
   }

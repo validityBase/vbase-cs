@@ -30,4 +30,23 @@ public class CryptoUtilsTests
   }
 
 
+  [TestCase(
+    "0x0000000000000000000000000000000000000000000000000000000000000001",
+    "0x0000000000000000000000000000000000000000000000000000000000000002",
+    "0x0000000000000000000000000000000000000000000000000000000000000003",
+    TestName = "Int 256 Addition 1 + 2.")]
+
+  [TestCase(
+    "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "0x85f62bc4cb22ef8d59817dafc9fbf13222f18a114834437524478eb105f1d6aa",
+    "0x85f62bc4cb22ef8d59817dafc9fbf13222f18a114834437524478eb105f1d6aa",
+    TestName = "Int 256 Addition. 0 + BigNumber")]
+
+  public void AddInt256Test(string aHex, string bHex, string expectedResHx)
+  {
+    var a = CryptoUtils.EthereumBytesToBigInt(aHex.HexToByteArray());
+    var b = CryptoUtils.EthereumBytesToBigInt(bHex.HexToByteArray());
+    var res = a.Add(b).BigIntToEthereumBytes(256).ToHex(true);
+    res.Should().Be(expectedResHx);
+  }
 }
