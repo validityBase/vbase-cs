@@ -45,8 +45,8 @@ jobs:
     - name: Disable Out of Proc Build (fix for HRESULT = 8000000A)
       run: |
         $vsPath = '${{ steps.vs.outputs.vs-path }}'
-        & "cd $vsPath\Common7\IDE\CommonExtensions\Microsoft\VSI\DisableOutOfProcBuild"
-        & "DisableOutOfProcBuild.exe"
+        & cd "$vsPath\Common7\IDE\CommonExtensions\Microsoft\VSI\DisableOutOfProcBuild"
+        & DisableOutOfProcBuild.exe
 
     - name: Build Solution
       run: |
