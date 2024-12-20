@@ -1,6 +1,11 @@
 [
   {
     "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [],
     "name": "ExcessiveInvalidation",
     "type": "error"
   },
@@ -256,24 +261,6 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "objectCid",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "uint256",
-        "name": "timestamp",
-        "type": "uint256"
-      }
-    ],
-    "name": "addObjectWithTimestamp",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
         "name": "setCid",
         "type": "bytes32"
       }
@@ -309,58 +296,12 @@
         "type": "bytes32"
       },
       {
-        "internalType": "bytes32",
-        "name": "objectCid",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "uint256",
-        "name": "timestamp",
-        "type": "uint256"
-      }
-    ],
-    "name": "addSetObjectWithTimestamp",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "setCid",
-        "type": "bytes32"
-      },
-      {
         "internalType": "bytes32[]",
         "name": "objectCids",
         "type": "bytes32[]"
       }
     ],
     "name": "addSetObjectsBatch",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "setCid",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes32[]",
-        "name": "objectCids",
-        "type": "bytes32[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "timestamps",
-        "type": "uint256[]"
-      }
-    ],
-    "name": "addSetObjectsWithTimestampsBatch",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -386,29 +327,6 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32[]",
-        "name": "setCids",
-        "type": "bytes32[]"
-      },
-      {
-        "internalType": "bytes32[]",
-        "name": "objectCids",
-        "type": "bytes32[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "timestamps",
-        "type": "uint256[]"
-      }
-    ],
-    "name": "addSetsObjectsWithTimestampsBatch",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "address",
         "name": "user",
         "type": "address"
@@ -420,29 +338,6 @@
       }
     ],
     "name": "addUserObject",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "objectCid",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "uint256",
-        "name": "timestamp",
-        "type": "uint256"
-      }
-    ],
-    "name": "addUserObjectWithTimestamp",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -501,68 +396,12 @@
         "type": "bytes32"
       },
       {
-        "internalType": "bytes32",
-        "name": "objectCid",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "uint256",
-        "name": "timestamp",
-        "type": "uint256"
-      }
-    ],
-    "name": "addUserSetObjectWithTimestamp",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "setCid",
-        "type": "bytes32"
-      },
-      {
         "internalType": "bytes32[]",
         "name": "objectCids",
         "type": "bytes32[]"
       }
     ],
     "name": "addUserSetObjectsBatch",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "setCid",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes32[]",
-        "name": "objectCids",
-        "type": "bytes32[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "timestamps",
-        "type": "uint256[]"
-      }
-    ],
-    "name": "addUserSetObjectsWithTimestampsBatch",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -593,34 +432,6 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes32[]",
-        "name": "setCids",
-        "type": "bytes32[]"
-      },
-      {
-        "internalType": "bytes32[]",
-        "name": "objectCids",
-        "type": "bytes32[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "timestamps",
-        "type": "uint256[]"
-      }
-    ],
-    "name": "addUserSetsObjectsWithTimestampsBatch",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "address[]",
         "name": "users",
         "type": "address[]"
@@ -644,34 +455,6 @@
   {
     "inputs": [
       {
-        "internalType": "address[]",
-        "name": "users",
-        "type": "address[]"
-      },
-      {
-        "internalType": "bytes32[]",
-        "name": "setCids",
-        "type": "bytes32[]"
-      },
-      {
-        "internalType": "bytes32[]",
-        "name": "objectCids",
-        "type": "bytes32[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "timestamps",
-        "type": "uint256[]"
-      }
-    ],
-    "name": "addUsersSetsObjectsWithTimestampsBatch",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "address",
         "name": "user",
         "type": "address"
@@ -686,70 +469,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "setCid",
-        "type": "bytes32"
-      }
-    ],
-    "name": "clearSet",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "setCid",
-        "type": "bytes32"
-      }
-    ],
-    "name": "clearSetObjects",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "clearSets",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "setCid",
-        "type": "bytes32"
-      }
-    ],
-    "name": "clearUserSetObjects",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      }
-    ],
-    "name": "clearUserSets",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -1074,30 +793,6 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "userSets",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
       }
     ],
     "stateMutability": "view",

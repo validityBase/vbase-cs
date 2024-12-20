@@ -1,10 +1,10 @@
 # Build artifacts
 bin/
 obj/
+debug/
 *.user
 *.suo
 *.dll
 
 # VS
 .vs/
-
