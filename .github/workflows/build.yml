@@ -20,7 +20,10 @@ jobs:
     env:
       Solution_Name: vBase.sln
       Test_Project_Path: vBase.Core.Tests\vBase.Core.Tests.csproj
-      
+      ForwarderUrl: https://dev.api.vbase.com/forwarder
+      ApiKey: ${{ secrets.API_KEY }}
+      PrivateKey: ${{ secrets.PRIVATE_KEY }}
+
     steps:
     - name: Checkout
       uses: actions/checkout@v4

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vBase.Core", "vBase.Core\vBase.Core.csproj", "{40C03B9F-9788-4DBD-AD68-65C88F4C73A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "vBase.Core", "vBase.Core\vBase.Core.csproj", "{40C03B9F-9788-4DBD-AD68-65C88F4C73A6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vBase.ComShim", "vBase.ComShim\vBase.ComShim.csproj", "{74CAD00C-A45D-4292-9070-5C579DE47B64}"
 EndProject
@@ -12,9 +12,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{BC5245
 		Shared\AssemblyInfoShared.cs = Shared\AssemblyInfoShared.cs
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vBase.Core.Tests", "vBase.Core.Tests\vBase.Core.Tests.csproj", "{B35239D7-4C32-483A-B741-4DB6C5C13D73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "vBase.Core.Tests", "vBase.Core.Tests\vBase.Core.Tests.csproj", "{B35239D7-4C32-483A-B741-4DB6C5C13D73}"
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "vBase.ComShim.Setup", "vBase.ComShim.Setup\vBase.ComShim.Setup.vdproj", "{44888E99-2A62-4B57-B5DF-34D806739328}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{067C7925-ED0A-42F6-92FB-6160CFD7E549}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{0179EE78-7C40-4A7F-BEBC-81B45B6A6C93}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build.yml = .github\workflows\build.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +46,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0179EE78-7C40-4A7F-BEBC-81B45B6A6C93} = {067C7925-ED0A-42F6-92FB-6160CFD7E549}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3EC99843-781B-4349-8B3A-FE99CCF33025}
