@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
+using Nethereum.Hex.HexConvertors.Extensions;
 using vBase.Core.Utilities;
 
 namespace vBase.Core.Dataset;
@@ -51,22 +52,35 @@ public class vBaseDataset<TDataType>
     {
         var verificationResult = new VerificationResult();
         BigInteger objectCidSum = BigInteger.Zero;
-    
+
         foreach (var record in _records)
         {
-            objectCidSum += new BigInteger(record.Data.AsserNotNull()!.GetCid());
+          objectCidSum = objectCidSum.Add(CryptoUtils.EthereumBytesToBigInt(record.Data.AsserNotNull()!.GetCid()));
 
-            if (!await _vBaseClient.VerifyUserObject(_owner, record.Data.AsserNotNull()!.GetCid(), record.Timestamp))
-            {
-              verificationResult.AddFinding($"Invalid record: " +
-                                            $"Failed object verification: " +
-                                            $"owner = {_owner}, " +
-                                            $"timestamp = {record.Timestamp}, " +
-                                            $"object_cid = {record.Data.AsserNotNull()!.GetCid()}");
-            }
+          if (!await _vBaseClient.VerifyUserObject(_owner, record.Data.AsserNotNull()!.GetCid(), record.Timestamp))
+          {
+            verificationResult.AddFinding(
+              $"""
+               Invalid record:
+               Failed object verification:
+               Owner = {_owner},
+               Timestamp = {record.Timestamp},
+               ObjectCid = {record.Data.AsserNotNull()!.GetCid().ToHex(true)}
+               """);
+          }
         }
 
-
+        if (!await _vBaseClient.VerifyUserSetObjects(_owner, _name.GetCid(), objectCidSum))
+        {
+          verificationResult.AddFinding(
+            $"""
+             Invalid records:
+             Failed object set verification:
+             Owner = {_owner},
+             SetCid = {_name.GetCid().ToHex(true)},
+             ObjectCidSum = {objectCidSum.BigIntToEthereumBytes(256).ToHex(true)}
+             """);
+        }
 
         return verificationResult;
     }
