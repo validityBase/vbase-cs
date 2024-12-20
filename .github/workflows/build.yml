@@ -42,7 +42,13 @@ jobs:
         vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath
         echo "::set-output name=vs-path::$(vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath)"
 
-    - name: Build vdproj project
+    - name: Build Solution
       run: |
         $vsPath = '${{ steps.vs.outputs.vs-path }}'
         & "$vsPath\Common7\IDE\devenv.com" vBase.sln /Build "Release"
+
+    - name: Publish Installer
+      uses: actions/upload-artifact@v4
+      with:
+        name: Installer
+        path: vBase.ComShim.Setup\Release\*.msi
