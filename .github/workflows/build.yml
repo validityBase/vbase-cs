@@ -50,5 +50,5 @@ jobs:
     - name: Publish Installer
       uses: actions/upload-artifact@v4
       with:
-        name: Installer
-        path: vBase.ComShim.Setup\Release\*.msi
+        name: vBase Setup
+        path: vBase.ComShim.Setup/Release/
