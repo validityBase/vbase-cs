@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Collections;
+using Microsoft.Extensions.Configuration;
 using vBase.Core.Utilities;
 
 namespace vBase.Core.Tests;
@@ -16,6 +17,11 @@ public abstract class vBaseForwarderTestBase
   [SetUp]
   public void Setup()
   {
+    foreach (DictionaryEntry v in Environment.GetEnvironmentVariables())
+    {
+      Console.WriteLine($"{v.Key}={v.Value}");
+    }
+
     _configuration = new ConfigurationBuilder()
       .AddEnvironmentVariables()
       .AddYamlFile("settings.yml")
