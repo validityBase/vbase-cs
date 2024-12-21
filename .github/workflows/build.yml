@@ -47,6 +47,12 @@ jobs:
       shell: cmd
       run: DisableOutOfProcBuild.exe
 
+    - name: Run Tests
+      run: |
+        $vsPath = '${{ steps.vs.outputs.vs-path }}'
+        & "$vsPath\Common7\IDE\devenv.com" vBase.sln /Build "Release"
+        & "$vsPath\Common7\IDE\devenv.com" vBase.Core.Tests\vBase.Core.Tests.csproj /RunTests /TestAdapterPath:"$vsPath\Common7\IDE\CommonExtensions\Microsoft\TestWindow"
+
     - name: Build Solution
       run: |
         $vsPath = '${{ steps.vs.outputs.vs-path }}'
