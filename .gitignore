@@ -8,3 +8,5 @@ debug/
 
 # VS
 .vs/
+/vBase.ComShim/vBase.tlb
+/vBase.ComShim.Setup/Release

@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>vBase</RootNamespace>
-    <AssemblyName>vBase.ComShim</AssemblyName>
+    <AssemblyName>vBase</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -34,6 +34,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -45,7 +46,31 @@
     <Compile Include="..\Shared\AssemblyInfoShared.cs">
       <Link>AssemblyInfoShared.cs</Link>
     </Compile>
+    <Compile Include="ComGuids.cs" />
+    <Compile Include="Infrastructure\AssemblyResolver.cs" />
+    <Compile Include="Infrastructure\ShimInstaller.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="IvBaseBuilder.cs" />
+    <Compile Include="IvBaseClient.cs" />
+    <Compile Include="IvBaseStringDataset.cs" />
+    <Compile Include="IVerificationResult.cs" />
+    <Compile Include="vBaseBuilder.cs" />
+    <Compile Include="vBaseClient.cs" />
+    <Compile Include="vBaseStringDataset.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VerificationResult.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\vBase.Core\vBase.Core.csproj">
+      <Project>{40C03B9F-9788-4DBD-AD68-65C88F4C73A6}</Project>
+      <Name>vBase.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>call "$(DevEnvDir)..\Tools\VsDevCmd.bat"
+tlbexp.exe "$(TargetPath)" /out:"$(ProjectDir)vBase.tlb"</PostBuildEvent>
+  </PropertyGroup>
 </Project>
