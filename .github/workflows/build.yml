@@ -16,22 +16,30 @@ jobs:
         configuration: [Release]
 
     runs-on: windows-latest 
-    
-    env:
-      Solution_Name: vBase.sln
-      Test_Project_Path: vBase.Core.Tests\vBase.Core.Tests.csproj
-      ForwarderUrl: https://dev.api.vbase.com/forwarder
-      ApiKey: ${{ secrets.API_KEY }}
-      PrivateKey: ${{ secrets.PRIVATE_KEY }}
-
+   
     steps:
     - name: Checkout
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
     
-    - name: Set up Visual Studio
-      uses: microsoft/setup-msbuild@v1
+    # - name: Set up Visual Studio
+    #   uses: microsoft/setup-msbuild@v2
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+          dotnet-version: 8.0.x
+
+    - name: Restore Dependencies
+      run: dotnet restore
+
+    - name: Run Tests
+      run: dotnet test --logger:"console;verbosity=normal"
+      env:
+        ForwarderUrl: https://dev.api.vbase.com/forwarder
+        ApiKey: ${{ secrets.API_KEY }}
+        PrivateKey: ${{ secrets.PRIVATE_KEY }}
 
     - name: Install vswhere
       run: choco install vswhere
