@@ -35,7 +35,7 @@ jobs:
       run: dotnet restore
 
     - name: Run Tests
-      run: dotnet test
+      run: dotnet test --logger:"console;verbosity=normal"
       env:
         ForwarderUrl: https://dev.api.vbase.com/forwarder
         ApiKey: ${{ secrets.API_KEY }}
