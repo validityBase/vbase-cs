@@ -35,7 +35,11 @@ jobs:
       run: dotnet restore
 
     - name: Run Tests
-      run: dotnet test
+      run: |
+          set ForwarderUrl="https://dev.api.vbase.com/forwarder"
+          set ApiKey="${{ secrets.API_KEY }}"
+          set PrivateKey="${{ secrets.PRIVATE_KEY }}"
+          dotnet test
       env:
         ForwarderUrl: https://dev.api.vbase.com/forwarder
         ApiKey: ${{ secrets.API_KEY }}
