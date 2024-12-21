@@ -1,0 +1,44 @@
+﻿using System;
+using System.Runtime.InteropServices;
+using vBase.Core.Base;
+
+namespace vBase
+{
+  [ClassInterface(ClassInterfaceType.None)]
+  [Guid(ComGuids.vBaseClient)]
+  public class vBaseClient: IvBaseClient
+  {
+    private readonly Core.vBaseClient _coreClient;
+
+    internal vBaseClient(ICommunicationChannel channel, string privateKey)
+    {
+      _coreClient = new Core.vBaseClient(new CommitmentService(channel, privateKey));
+    }
+
+    internal Core.vBaseClient GetCoreClient()
+    {
+      return _coreClient;
+    }
+
+    public long AddSetObject(string datasetName, object record)
+    {
+      return _coreClient.AddSetObject(datasetName, record).Result.ToUnixTimeSeconds();
+    }
+
+    public bool UserNamedSetExists(string owner, string datasetName)
+    {
+      return _coreClient.UserNamedSetExists(owner, datasetName).Result;
+    }
+
+    public void AddNamedSet(string datasetName)
+    {
+      _coreClient.AddNamedSet(datasetName).Wait();
+    }
+
+    public bool VerifyUserObject(string owner, byte[] objectCid, long timestamp)
+    {
+      return _coreClient.VerifyUserObject(owner, objectCid, DateTimeOffset.FromUnixTimeSeconds(timestamp))
+        .Result;
+    }
+  }
+}
