@@ -22,6 +22,12 @@ public abstract class vBaseForwarderTestBase
       .AddYamlFile("settings.yml")
       .Build();
 
+    Console.WriteLine("ENV _ VAR START");
+    Console.WriteLine(Environment.GetEnvironmentVariable(nameof(ForwarderUrl)));
+    Console.WriteLine(Environment.GetEnvironmentVariable(nameof(ApiKey)));
+    Console.WriteLine(Environment.GetEnvironmentVariable(nameof(PrivateKey)));
+    Console.WriteLine("ENV _ VAR END");
+
     var commitmentService = CommitmentServiceBuilder.BuildForwarderCommitmentService(
       ForwarderUrl,
       ApiKey,
