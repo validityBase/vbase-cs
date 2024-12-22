@@ -55,3 +55,12 @@ End Sub
 
 # How to Sign an MSI Using a Code Signing Certificate
 
+1. Install the [Windows SDK](https://developer.microsoft.com/en-us/windows/downloads/windows-sdk/)
+1. Make sure that the ceritficate is installed in the certificate store.
+1. run the comand
+```cmd
+signtool sign /fd SHA256 /n "<CERTIFICATE_NAME>" /t http://timestamp.url.com /v "vBase.msi"
+```
+
+# Known issues
+1. The MSI installer installsd the SDK library in the `Program Files (x86)` directory instead of `Program Files`.
