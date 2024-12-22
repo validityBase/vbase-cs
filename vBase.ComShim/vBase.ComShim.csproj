@@ -53,11 +53,12 @@
     </Compile>
     <Compile Include="IvBaseBuilder.cs" />
     <Compile Include="IvBaseClient.cs" />
-    <Compile Include="IvBaseStringDataset.cs" />
+    <Compile Include="IvBaseDataset.cs" />
     <Compile Include="IVerificationResult.cs" />
     <Compile Include="vBaseBuilder.cs" />
     <Compile Include="vBaseClient.cs" />
-    <Compile Include="vBaseStringDataset.cs" />
+    <Compile Include="vBaseDatasetRecordTypes.cs" />
+    <Compile Include="vBaseDataset.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VerificationResult.cs" />
   </ItemGroup>

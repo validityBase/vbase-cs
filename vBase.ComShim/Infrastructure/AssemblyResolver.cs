@@ -20,11 +20,13 @@ namespace vBase.Infrastructure
       AppDomain currentDomain = AppDomain.CurrentDomain;
       currentDomain.AssemblyResolve += OnAssemblyResolve;
     }
+
     private static Assembly OnAssemblyResolve(object sender, ResolveEventArgs args)
     {
       AssemblyName assemblyName = new AssemblyName(args.Name);
       if (assemblyName.Name.Contains("Newtonsoft.Json"))
       {
+        // if the assembly is Newtonsoft.Json, load the latest version from the application folder
         string directory = Path.GetDirectoryName(typeof(AssemblyResolver).Assembly.Location);
         string path = Path.Combine(directory.AsserNotNull(), "Newtonsoft.Json.dll");
         return Assembly.LoadFrom(path);

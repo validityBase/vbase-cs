@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using vBase.Core.Dataset;
 
 namespace vBase
 {
