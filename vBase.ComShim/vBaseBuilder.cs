@@ -20,9 +20,9 @@ namespace vBase
       return new vBaseClient(channel, privateKey);
     }
 
-    public IvBaseStringDataset CreateStringDataset(IvBaseClient client, string name)
+    public IvBaseDataset CreateDataset(IvBaseClient client, string name, vBaseDatasetRecordTypes recordType)
     {
-      return new vBaseStringDataset(client, name);
+      return new vBaseDataset(client, name, recordType);
     }
   }
 }

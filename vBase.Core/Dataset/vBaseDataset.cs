@@ -17,8 +17,8 @@ public class vBaseDataset<TDataType>
 
     private readonly vBaseClient _vBaseClient;
     private readonly string _name;
-    private string _owner;
-    private readonly List<Record> _records = new();
+    private readonly string _owner;
+    private readonly List<Record> _records = [];
 
     public vBaseDataset(vBaseClient vBaseClient, string name)
     {

@@ -1,0 +1,25 @@
+@startuml
+
+class "CommitmentService" as S
+interface "ICommunicationChannel" as CC
+class "ForwarderCommunicationChannel" as FCC
+class "HttpCommunicationChannel" as HCC
+class "vBaseClient" as C
+class "vBaseDataset<TDataType>" as D
+
+S *-- CC
+CC <|-- FCC
+CC <|-- HCC
+C *-- S
+D *-- C
+
+note right of S
+  Proxy to vBase smart contract.
+end note
+
+note right of CC
+  Allows to communicate with a smart contract
+  deployed to Ethereum blockchain.
+end note
+
+@enduml

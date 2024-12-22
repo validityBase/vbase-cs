@@ -14,6 +14,10 @@ using vBase.Core.Utilities;
 
 namespace vBase.Core.Base;
 
+
+/// <summary>
+/// Provides access to the CommitmentService smart contract.
+/// </summary>
 public class CommitmentService
 {
   private readonly Contract _commitmentServiceContract;
