@@ -4,11 +4,33 @@ using System.Linq;
 using System.Web;
 using Nethereum.ABI.FunctionEncoding;
 using Nethereum.Contracts;
+using Nethereum.JsonRpc.Client;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace vBase.Core.Utilities;
 
 public static class Utils
 {
+  public static readonly JsonSerializerSettings DefaultJsonSerializerSettings = new JsonSerializerSettings
+  {
+    ContractResolver = new CamelCasePropertyNamesContractResolver
+    {
+      NamingStrategy = new SnakeCaseNamingStrategy(),
+    },
+    DateFormatString = "yyyy-MM-dd HH:mm:sszzz"
+  };
+
+  public static string SerializeObject(object @object)
+  {
+    return JsonConvert.SerializeObject(@object, DefaultJsonSerializerSettings);
+  }
+
+  public static T DeserializeObject<T>(string json)
+  {
+    return JsonConvert.DeserializeObject<T>(json, DefaultJsonSerializerSettings).AsserNotNull();
+  }
+
   public static T AsserNotNull<T>(this T? value, string? message = null)
   {
     if (value == null)
@@ -56,5 +78,15 @@ public static class Utils
     }
 
     return (T)param.Result;
+  }
+
+  public static string TypeTovBaseTypeName(Type type)
+  {
+    if (type == typeof(string))
+    {
+      return "VBaseStringObject";
+    }
+
+    throw new NotSupportedException($"Type {type.Name} is not supported vBase type.");
   }
 }

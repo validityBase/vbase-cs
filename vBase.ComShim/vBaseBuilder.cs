@@ -24,5 +24,10 @@ namespace vBase
     {
       return new vBaseDataset(client, name, recordType);
     }
+
+    public IvBaseDataset CreateDatasetFromJson(IvBaseClient client, string json)
+    {
+      return new vBaseDataset(client, json);
+    }
   }
 }
