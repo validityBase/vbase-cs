@@ -11,7 +11,7 @@
 # How to use the COM library
 
 1. Uninstall the library if you have it installed already on your machine.
-1. 1. Locate the output files in the setup project's output directory: `vBase.msi` and `setup.exe`.
+1. Locate the output files in the setup project's output directory: `vBase.msi` and `setup.exe`.
    - The purpose of the EXE file is to check for prerequisites on the target machine (e.g., .NET Framework).
    - The MSI file is the actual installer.
 1. Install the new version using `setup.exe`
@@ -22,6 +22,8 @@
 
 ```vbnet
 Sub BuildAndVerifyDataset()
+
+    
     Dim vBaseBuidler As New vBase.vBaseBuilder
     Dim vBaseClient As vBase.vBaseClient
     Dim vBaseDataset As vBase.vBaseDataset
@@ -81,11 +83,11 @@ End Sub
 # How to Sign an MSI Using a Code Signing Certificate
 
 1. Install the [Windows SDK](https://developer.microsoft.com/en-us/windows/downloads/windows-sdk/)
-1. Make sure that the ceritficate is installed in the certificate store.
-1. run the comand
+1. Make sure that the certificate is installed in the certificate store.
+1. Run the command
 ```cmd
 signtool sign /fd SHA256 /n "<CERTIFICATE_NAME>" /t http://timestamp.url.com /v "vBase.msi"
 ```
 
 # Known issues
-1. The MSI installer installsd the SDK library in the `Program Files (x86)` directory instead of `Program Files`.
+1. The MSI installer installs the SDK library in the `Program Files (x86)` directory instead of `Program Files`.
