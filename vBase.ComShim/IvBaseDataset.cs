@@ -26,5 +26,11 @@ namespace vBase
     /// than exist in this client-side dataset.
     /// </returns>
     IVerificationResult VerifyCommitments();
+
+    /// <summary>
+    /// Serializes the dataset to a JSON string.
+    /// </summary>
+    /// <returns>JSON string that can be deserialized using vBase SDK on any other platform.</returns>
+    string ToJson();
   }
 }

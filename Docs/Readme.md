@@ -40,7 +40,7 @@ Sub BuildAndVerifyDataset()
     privateKey = "<PRIVATE KEY>"
 
     Set vBaseClient = vBaseBuidler.CreateForwarderClient(forwarderUrl, apiKey, privateKey)
-    Set vBaseDataset = vBaseBuidler.CreateDataset(vBaseClient, datasetName, vBase.vBaseDatasetRecordTypes_String)
+    Set vBaseDataset = vBaseBuidler.CreateDataset(vBaseClient, datasetName, vBase.vBaseDatasetRecordTypes.vBaseDatasetRecordTypes_vBaseStringObject)
 
     vBaseDataset.AddRecord ("<Record 1 Data>")
     ' Add more records
@@ -49,7 +49,34 @@ Sub BuildAndVerifyDataset()
     Set verificationResult = vBaseDataset.VerifyCommitments()
 
     MsgBox MsgBox "Verification passed: " & verificationResult.VerificationPassed
+End Sub
+```
 
+or
+
+```vbnet
+Sub VerifyDataset()
+
+    Dim vBaseBuidler As New vBase.vBaseBuilder
+    Dim vBaseClient As vBase.vBaseClient
+    Dim vBaseDataset As vBase.vBaseDataset
+    Dim verificationResult As vBase.verificationResult
+
+    Dim forwarderUrl As String
+    Dim apiKey As String
+    Dim privateKey As String
+
+    datasetName = "<DATASET NAME>"
+    forwarderUrl = "<FORWARDER URL>"
+    apiKey = "<API KEY>"
+    privateKey = "<PRIVATE KEY>"
+
+    Set vBaseClient = vBaseBuidler.CreateForwarderClient(forwarderUrl, apiKey, privateKey)
+    Set vBaseDataset = vBaseBuidler.CreateDatasetFromJson(vBaseClient, "<Dataset JSON>")
+
+    Set verificationResult = vBaseDataset.VerifyCommitments()
+
+    MsgBox MsgBox "Verification passed: " & verificationResult.VerificationPassed
 End Sub
 ```
 

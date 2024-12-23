@@ -26,5 +26,13 @@ namespace vBase
     /// <param name="recordType">Type of the records that will be stored in the dataset.</param>
     /// <returns>Newly created dataset object.</returns>
     IvBaseDataset CreateDataset(IvBaseClient client, string name, vBaseDatasetRecordTypes recordType);
+
+    /// <summary>
+    /// Create a COM visible dataset object.
+    /// </summary>
+    /// <param name="client">vBase client.</param>
+    /// <param name="json">Json that contains all data records, and dataset properties.</param>
+    /// <returns>Newly created dataset object.</returns>
+    IvBaseDataset CreateDatasetFromJson(IvBaseClient client, string json);
   }
 }
