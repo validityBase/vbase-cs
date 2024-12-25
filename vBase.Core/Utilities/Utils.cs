@@ -4,7 +4,6 @@ using System.Linq;
 using System.Web;
 using Nethereum.ABI.FunctionEncoding;
 using Nethereum.Contracts;
-using Nethereum.JsonRpc.Client;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -78,15 +77,5 @@ public static class Utils
     }
 
     return (T)param.Result;
-  }
-
-  public static string TypeTovBaseTypeName(Type type)
-  {
-    if (type == typeof(string))
-    {
-      return "VBaseStringObject";
-    }
-
-    throw new NotSupportedException($"Type {type.Name} is not supported vBase type.");
   }
 }

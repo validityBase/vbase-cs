@@ -4,6 +4,9 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Nethereum.Hex.HexConvertors.Extensions;
+using Nethereum.Util;
+using vBase.Core.Dataset.vBaseObjects;
+using vBase.Core.Exceptions;
 using vBase.Core.Utilities;
 
 namespace vBase.Core.Dataset;
@@ -14,7 +17,7 @@ public class vBaseDataset
 {
   private class Record
   {
-    public object Data { get; set; }
+    public vBaseObject vBaseObject { get; set; }
     public DateTimeOffset Timestamp { get; set; }
   }
 
@@ -28,7 +31,13 @@ public class vBaseDataset
   {
     _vBaseClient = vBaseClient;
     _name = name;
-    _owner = vBaseClient.Account.ChecksumAddress();
+    _owner = vBaseClient.Account.Address.ConvertToEthereumChecksumAddress();
+
+    if (!vBaseObjectFactory.IsTypeRegistered(recordTypeName))
+    {
+      throw new InvalidOperationException($"Unknown vBase object type {recordTypeName}.");
+    }
+
     _recordTypeName = recordTypeName;
 
     Initialize().Wait();
@@ -44,9 +53,19 @@ public class vBaseDataset
 
     for (int i = 0; i < dto.Records.Length; i++)
     {
+      var dtoRecord = dto.Records[i];
+      var data = vBaseObjectFactory.Create(dto.RecordTypeName);
+      data.InitFromJson(dtoRecord.Data);
+
+      // crosscheck
+      if (dtoRecord.Cid != data.GetCid().ToHex())
+      {
+        throw new vBaseException($"Dataset loading error: CID mismatch for data {dtoRecord.Data} and CID {dtoRecord.Cid}");
+      }
+
       _records.Add(new Record
       {
-        Data = StringToRecordData(dto.Records[i].Data, dto.RecordTypeName),
+        vBaseObject = data,
         Timestamp = dto.Timestamps[i]
       });
     }
@@ -62,13 +81,9 @@ public class vBaseDataset
 
   public async Task AddRecord(object recordData)
   {
-    if (recordData == null)
-    {
-      throw new ArgumentNullException(nameof(recordData));
-    }
-
-    var timestamp = await _vBaseClient.AddSetObject(_name, recordData);
-    _records.Add(new Record { Data = recordData, Timestamp = timestamp });
+    var obj = vBaseObjectFactory.Create(_recordTypeName, recordData);
+    var timestamp = await _vBaseClient.AddSetObject(_name, obj.GetCid());
+    _records.Add(new Record { vBaseObject = obj, Timestamp = timestamp });
   }
 
   public async Task<VerificationResult> VerifyCommitments()
@@ -76,11 +91,14 @@ public class vBaseDataset
     var verificationResult = new VerificationResult();
     BigInteger objectCidSum = BigInteger.Zero;
 
+    var maxSum = BigInteger.Pow(2, 256);
+
     foreach (var record in _records)
     {
-      objectCidSum = objectCidSum.Add(CryptoUtils.EthereumBytesToBigInt(record.Data.AsserNotNull()!.GetCid()));
+      objectCidSum += record.vBaseObject.GetCid().CidToBigInt();
+      objectCidSum %= maxSum;
 
-      if (!await _vBaseClient.VerifyUserObject(_owner, record.Data.AsserNotNull()!.GetCid(), record.Timestamp))
+      if (!await _vBaseClient.VerifyUserObject(_owner, record.vBaseObject.GetCid(), record.Timestamp))
       {
         verificationResult.AddFinding(
           $"""
@@ -88,7 +106,7 @@ public class vBaseDataset
            Failed object verification:
            Owner = {_owner},
            Timestamp = {record.Timestamp},
-           ObjectCid = {record.Data.AsserNotNull()!.GetCid().ToHex(true)}
+           ObjectCid = {record.vBaseObject.GetCid().ToHex()}
            """);
       }
     }
@@ -100,8 +118,8 @@ public class vBaseDataset
          Invalid records:
          Failed object set verification:
          Owner = {_owner},
-         SetCid = {_name.GetCid().ToHex(true)},
-         ObjectCidSum = {objectCidSum.BigIntToEthereumBytes(256).ToHex(true)}
+         SetCid = {_name.GetCid().ToHex()},
+         ObjectCidSum = {objectCidSum.BigIntToEthereumBytes(256).ToHex()}
          """);
     }
 
@@ -113,32 +131,17 @@ public class vBaseDataset
     JsonSerializationDto serializationDto = new JsonSerializationDto
     {
       Name = _name,
+      Cid = _name.GetCid().ToHex(),
       Owner = _owner,
       RecordTypeName = _recordTypeName,
-      Records = _records.Select(r => new JsonSerializationRecord { Data = RecordDataToString(r.Data!) }).ToArray(),
+      Records = _records.Select(r => new JsonSerializationRecord
+      {
+        Data = r.vBaseObject.GetJson(),
+        Cid = r.vBaseObject.GetCid().ToHex()
+      }).ToArray(),
       Timestamps = _records.Select(r => r.Timestamp).ToArray()
     };
 
     return Utils.SerializeObject(serializationDto);
-  }
-
-  private string RecordDataToString(object data)
-  {
-    if (_recordTypeName == vBaseRecordTypes.vBaseStringObject)
-    {
-      return data.AsserNotNull()!.ToString();
-    }
-
-    throw new NotSupportedException($"Type {_recordTypeName} is not supported data type.");
-  }
-
-  private static object StringToRecordData(string data, string recordType)
-  {
-    if (recordType == vBaseRecordTypes.vBaseStringObject)
-    {
-      return data;
-    }
-
-    throw new NotSupportedException($"Type {recordType} is not supported data type.");
   }
 }

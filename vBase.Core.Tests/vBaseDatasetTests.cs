@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using vBase.Core.Dataset;
+using vBase.Core.Dataset.vBaseObjects;
 
 namespace vBase.Core.Tests
 {
@@ -11,14 +12,12 @@ namespace vBase.Core.Tests
       var dataset = new vBaseDataset(
         Client, 
         TestContext.CurrentContext.Random.GetString(50),
-        vBaseRecordTypes.vBaseStringObject);
+        vBaseStringObject.vBaseObjectType);
 
       await dataset.AddRecord(TestContext.CurrentContext.Random.GetString(50));
       await dataset.AddRecord(TestContext.CurrentContext.Random.GetString(50));
 
       var verificationResult = await dataset.VerifyCommitments();
-
-      string a = dataset.ToJson();
 
       verificationResult.VerificationPassed.Should().BeTrue();
     }

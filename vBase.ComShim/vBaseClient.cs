@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using vBase.Core;
 using vBase.Core.Base;
 
 namespace vBase
@@ -20,9 +21,9 @@ namespace vBase
       return _coreClient;
     }
 
-    public long AddSetObject(string datasetName, object record)
+    public long AddSetObject(string datasetName, byte[] record)
     {
-      return _coreClient.AddSetObject(datasetName, record).Result.ToUnixTimeSeconds();
+      return _coreClient.AddSetObject(datasetName, new Cid(record)).Result.ToUnixTimeSeconds();
     }
 
     public bool UserNamedSetExists(string owner, string datasetName)
@@ -37,7 +38,7 @@ namespace vBase
 
     public bool VerifyUserObject(string owner, byte[] objectCid, long timestamp)
     {
-      return _coreClient.VerifyUserObject(owner, objectCid, DateTimeOffset.FromUnixTimeSeconds(timestamp))
+      return _coreClient.VerifyUserObject(owner, new Cid(objectCid), DateTimeOffset.FromUnixTimeSeconds(timestamp))
         .Result;
     }
   }

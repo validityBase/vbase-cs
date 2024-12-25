@@ -1,4 +1,7 @@
-﻿using FluentAssertions;
+﻿using System.Numerics;
+using FluentAssertions;
+using Nethereum.Util;
+using vBase.Core.Dataset.vBaseObjects;
 using vBase.Core.Exceptions;
 using vBase.Core.Utilities;
 
@@ -10,7 +13,7 @@ public class vBaseClientTests: vBaseForwarderTestBase
   public async Task UserNamedSetExists_SetDoesNotExistTest()
   {
     bool exists = await Client.UserNamedSetExists(
-      Client.Account.ChecksumAddress(),
+      Client.Account.Address.ConvertToEthereumChecksumAddress(),
       TestContext.CurrentContext.Random.GetString(50));
     exists.Should().BeFalse();
   }
@@ -20,9 +23,9 @@ public class vBaseClientTests: vBaseForwarderTestBase
   {
     string setName = TestContext.CurrentContext.Random.GetString(50);
 
-    bool existedBefore = await Client.UserNamedSetExists(Client.Account.ChecksumAddress(), setName);
+    bool existedBefore = await Client.UserNamedSetExists(Client.Account.Address.ConvertToEthereumChecksumAddress(), setName);
     await Client.AddNamedSet(setName);
-    bool existsAfter = await Client.UserNamedSetExists(Client.Account.ChecksumAddress(),setName);
+    bool existsAfter = await Client.UserNamedSetExists(Client.Account.Address.ConvertToEthereumChecksumAddress(), setName);
 
     existedBefore.Should().BeFalse();
     existsAfter.Should().BeTrue();
@@ -33,45 +36,49 @@ public class vBaseClientTests: vBaseForwarderTestBase
   {
     string setName = TestContext.CurrentContext.Random.GetString(50);
     await Client.AddNamedSet(setName);
-    var objectToAdd = TestContext.CurrentContext.Random.GetString(50);
+    var objectToAdd = new vBaseStringObject(TestContext.CurrentContext.Random.GetString(50));
 
     // add and verify just added object
-    var timestamp = await Client.AddSetObject(setName, objectToAdd);
+    var timestamp = await Client.AddSetObject(setName, objectToAdd.GetCid());
     bool objectAdded = await Client.VerifyUserObject(
-      Client.Account.ChecksumAddress(),
+      Client.Account.Address.ConvertToEthereumChecksumAddress(),
       objectToAdd.GetCid(), timestamp);
     objectAdded.Should().BeTrue();
 
     // verify object with invalid timestamp
     bool objectVerifiedWrongStamp = await Client.VerifyUserObject(
-      Client.Account.ChecksumAddress(),
+      Client.Account.Address.ConvertToEthereumChecksumAddress(),
       objectToAdd.GetCid(), timestamp + TimeSpan.FromSeconds(10));
     objectVerifiedWrongStamp.Should().BeFalse();
 
     // verify object with invalid CID
     bool objectVerifiedWrongCid = await Client.VerifyUserObject(
-      Client.Account.ChecksumAddress(),
+      Client.Account.Address.ConvertToEthereumChecksumAddress(),
       TestContext.CurrentContext.Random.GetString(50).GetCid(),
       timestamp);
     objectVerifiedWrongCid.Should().BeFalse();
 
     // verify set with 1 object
     bool setObjectsVerified = await Client.VerifyUserSetObjects(
-      Client.Account.ChecksumAddress(),
+      Client.Account.Address.ConvertToEthereumChecksumAddress(),
       setName.GetCid(),
-      CryptoUtils.EthereumBytesToBigInt(objectToAdd.GetCid())
+      Utilities.Convert.EthereumBytesToBigInt(objectToAdd.GetCid().Data)
     );
     setObjectsVerified.Should().BeTrue();
 
     // add one more object, and verify set of two records
-    var objectToAdd2 = TestContext.CurrentContext.Random.GetString(50);
-    await Client.AddSetObject(setName, objectToAdd2);
+    var objectToAdd2 = new vBaseStringObject(TestContext.CurrentContext.Random.GetString(50));
+    await Client.AddSetObject(setName, objectToAdd2.GetCid());
+    var maxSum = BigInteger.Pow(2, 256);
+
+    var sum = Utilities.Convert.EthereumBytesToBigInt(objectToAdd.GetCid().Data)
+              +
+              Utilities.Convert.EthereumBytesToBigInt(objectToAdd2.GetCid().Data);
+    sum %= maxSum;
+
     setObjectsVerified = await Client.VerifyUserSetObjects(
-      Client.Account.ChecksumAddress(),
-      setName.GetCid(),
-      CryptoUtils.EthereumBytesToBigInt(objectToAdd.GetCid())
-        .Add(CryptoUtils.EthereumBytesToBigInt(objectToAdd2.GetCid()))
-    );
+      Client.Account.Address.ConvertToEthereumChecksumAddress(),
+      setName.GetCid(), sum);
     setObjectsVerified.Should().BeTrue();
   }
 
@@ -79,7 +86,7 @@ public class vBaseClientTests: vBaseForwarderTestBase
   public async Task AddSetObject_SetDoesNotExistTest()
   {
     string setName = TestContext.CurrentContext.Random.GetString(50);
-    var action = async () => await Client.AddSetObject(setName, "ObjectToAdd");
+    var action = async () => await Client.AddSetObject(setName, new vBaseStringObject("ObjectToAdd").GetCid());
 
     await action.Should()
       .ThrowAsync<vBaseException>()
