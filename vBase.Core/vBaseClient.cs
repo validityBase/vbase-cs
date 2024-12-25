@@ -20,9 +20,9 @@ namespace vBase.Core
 
     public Account Account => _commitmentService.Account;
 
-    public async Task<DateTimeOffset> AddSetObject(string datasetName, object record)
+    public async Task<DateTimeOffset> AddSetObject(string datasetName, Cid objectToAddCid)
     {
-      return await _commitmentService.AddSetObject(datasetName, record);
+      return await _commitmentService.AddSetObject(datasetName, objectToAddCid);
     }
 
     public async Task<bool> UserNamedSetExists(string owner, string datasetName)
@@ -35,14 +35,14 @@ namespace vBase.Core
       await _commitmentService.AddSet(datasetName);
     }
 
-    public async Task<bool> VerifyUserObject(string owner, byte[] objectCid, DateTimeOffset timestamp)
+    public async Task<bool> VerifyUserObject(string owner, Cid objectCid, DateTimeOffset timestamp)
     {
       return await _commitmentService.VerifyUserObject(owner, objectCid, timestamp);
     }
 
-    public async Task<bool> VerifyUserSetObjects(string owner, byte[] objectCid, BigInteger setObjectCidSum)
+    public async Task<bool> VerifyUserSetObjects(string owner, Cid objectCid, BigInteger setObjectsCidSum)
     {
-      return await _commitmentService.VerifyUserSetObjects(owner, objectCid, setObjectCidSum);
+      return await _commitmentService.VerifyUserSetObjects(owner, objectCid, setObjectsCidSum);
     }
   }
 }

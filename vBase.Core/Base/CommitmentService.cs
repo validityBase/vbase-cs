@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Nethereum.ABI.FunctionEncoding;
 using Nethereum.Contracts;
+using Nethereum.Util;
 using Nethereum.Web3;
 using Nethereum.Web3.Accounts;
 using vBase.Core.DTOs;
@@ -43,7 +44,7 @@ public class CommitmentService
   /// <param name="setName">Name of the set.</param>
   public async Task<bool> UserSetExists(string owner, string setName)
   {
-    var res = await CallStateVariable<string>("userSetCommitments", owner, setName.GetCid());
+    var res = await CallStateVariable<string>("userSetCommitments", owner, setName.GetCid().Data);
     int parsedRes = (int)(new Int32Converter()).ConvertFromString(res);
     return parsedRes == 1;
   }
@@ -55,16 +56,16 @@ public class CommitmentService
   /// <param name="objectCid">The CID of the object.</param>
   /// <param name="timestamp">The timestamp of the transaction.</param>
   /// <returns>True if the object was stamped, otherwise false.</returns>
-  public async Task<bool> VerifyUserObject(string owner, byte[] objectCid, DateTimeOffset timestamp)
+  public async Task<bool> VerifyUserObject(string owner, Cid objectCid, DateTimeOffset timestamp)
   {
-    var res = await CallStateVariable<string>("verifyUserObject", owner, objectCid, timestamp.ToUnixTimeSeconds());
+    var res = await CallStateVariable<string>("verifyUserObject", owner, objectCid.Data, timestamp.ToUnixTimeSeconds());
     int parsedRes = (int)(new Int32Converter()).ConvertFromString(res);
     return parsedRes == 1;
   }
 
-  public async Task<bool> VerifyUserSetObjects(string owner, byte[] setCid, BigInteger setObjectCidSum)
+  public async Task<bool> VerifyUserSetObjects(string owner, Cid setCid, BigInteger setObjectsCidSum)
   {
-    var res = await CallStateVariable<string>("verifyUserSetObjectsCidSum", owner, setCid, setObjectCidSum);
+    var res = await CallStateVariable<string>("verifyUserSetObjectsCidSum", owner, setCid.Data, setObjectsCidSum);
     int parsedRes = (int)(new Int32Converter()).ConvertFromString(res);
     return parsedRes == 1;
   }
@@ -77,7 +78,7 @@ public class CommitmentService
   public async Task AddSet(string setName)
   {
     var setNameCid = setName.GetCid();
-    var contractMethodExecutionRes = await CallContractFunction("addSet", setNameCid);
+    var contractMethodExecutionRes = await CallContractFunction("addSet", setNameCid.Data);
     var addSetEvents = _commitmentServiceContract.GetEvent("AddSet")
       .DecodeAllEventsDefaultForEvent(contractMethodExecutionRes.Logs);
 
@@ -96,12 +97,11 @@ public class CommitmentService
   /// Adds a objectToAdd to the specified set.
   /// </summary>
   /// <param name="setName">Name of the set where the objectToAdd will be added.</param>
-  /// <param name="objectToAdd">Object to add.</param>
-  public async Task<DateTimeOffset> AddSetObject(string setName, object objectToAdd)
+  /// <param name="cidToAdd">Object CID to add.</param>
+  public async Task<DateTimeOffset> AddSetObject(string setName, Cid cidToAdd)
   {
     var setNameCid = setName.GetCid();
-    var objectCid = objectToAdd.GetCid();
-    var contractMethodExecutionRes = await CallContractFunction("addSetObject", setNameCid, objectCid);
+    var contractMethodExecutionRes = await CallContractFunction("addSetObject", setNameCid.Data, cidToAdd.Data);
     var operationsEvents = _commitmentServiceContract.GetEvent("AddSetObject")
       .DecodeAllEventsDefaultForEvent(contractMethodExecutionRes.Logs);
 
@@ -116,7 +116,7 @@ public class CommitmentService
     // object added, let's do some crosscheck
     OperationEventCrossCheckUserAddress(operationEvent);
     OperationEventCrossCheckSetCid(operationEvent, setNameCid);
-    OperationEventCrossCheckAddedRecordCid(operationEvent, objectCid);
+    OperationEventCrossCheckAddedRecordCid(operationEvent, cidToAdd);
 
     return DateTimeOffset.FromUnixTimeSeconds((long)operationEvent.GetEventParameterValue<BigInteger>("timestamp"));
   }
@@ -160,19 +160,19 @@ public class CommitmentService
 
   private void OperationEventCrossCheckUserAddress(EventLog<List<ParameterOutput>> operationEvent)
   {
-    if (operationEvent.GetEventParameterValue<string>("user") != _account.ChecksumAddress())
+    if (operationEvent.GetEventParameterValue<string>("user") != _account.Address.ConvertToEthereumChecksumAddress())
       throw new vBaseException("The user address in the event does not match the account address");
   }
 
-  private void OperationEventCrossCheckSetCid(EventLog<List<ParameterOutput>> operationEvent, byte[] setNameCid)
+  private void OperationEventCrossCheckSetCid(EventLog<List<ParameterOutput>> operationEvent, Cid setNameCid)
   {
-    if (!operationEvent.GetEventParameterValue<byte[]>("setCid").SequenceEqual(setNameCid))
+    if (!operationEvent.GetEventParameterValue<byte[]>("setCid").SequenceEqual(setNameCid.Data))
       throw new vBaseException("The set CID in the event does not match the requested set CID");
   }
 
-  private void OperationEventCrossCheckAddedRecordCid(EventLog<List<ParameterOutput>> operationEvent, byte[] addedObjectCid)
+  private void OperationEventCrossCheckAddedRecordCid(EventLog<List<ParameterOutput>> operationEvent, Cid addedObjectCid)
   {
-    if (!operationEvent.GetEventParameterValue<byte[]>("objectCid").SequenceEqual(addedObjectCid))
+    if (!operationEvent.GetEventParameterValue<byte[]>("objectCid").SequenceEqual(addedObjectCid.Data))
       throw new vBaseException("The object CID in the event does not match the added object CID");
   }
 }

@@ -14,9 +14,9 @@ namespace vBase
     /// Adds a record to the dataset.
     /// </summary>
     /// <param name="datasetName">The name of the dataset.</param>
-    /// <param name="record">The record to add.</param>
+    /// <param name="recordCid">CID to add.</param>
     /// <returns>The transaction timestamp of the record addition in Unix time format (seconds).</returns>
-    long AddSetObject(string datasetName, object record);
+    long AddSetObject(string datasetName, byte[] recordCid);
 
     /// <summary>
     /// Checks if a named dataset exists.

@@ -65,8 +65,10 @@ public class ForwarderCommunicationChannel: ICommunicationChannel
 
   public async Task<ReceiptDto<TResultType>> FetchStateVariable<TResultType>(string functionData)
   {
-    var callParams = new Dictionary<string, string>();
-    callParams["data"] = functionData;
+    var callParams = new Dictionary<string, string>
+    {
+      ["data"] = functionData
+    };
     return await CallForwarderApi<ReceiptDto<TResultType>>("call", HttpMethod.Get, callParams);
   }
 

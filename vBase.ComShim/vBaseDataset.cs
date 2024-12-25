@@ -1,7 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using vBase.Core.Utilities;
+﻿using System.Runtime.InteropServices;
 
 namespace vBase
 {
@@ -53,7 +50,7 @@ namespace vBase
       switch (vBaseRecordType)
       {
         case vBaseDatasetRecordTypes.vBaseStringObject:
-          return Core.Dataset.vBaseRecordTypes.vBaseStringObject;
+          return Core.Dataset.vBaseObjects.vBaseStringObject.vBaseObjectType;
         default:
           throw new System.ArgumentException("Unknown record type: " + vBaseRecordType);
       }
