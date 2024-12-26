@@ -13,29 +13,46 @@ using vBase.Core.DTOs;
 using vBase.Core.Exceptions;
 using vBase.Core.Utilities;
 
-namespace vBase.Core.Base;
+namespace vBase.Core.Web3CommitmentService;
 
 
 /// <summary>
 /// Provides access to the CommitmentService smart contract.
 /// </summary>
-public class CommitmentService
+public abstract class Web3CommitmentService: ICommitmentService
 {
   private readonly Contract _commitmentServiceContract;
-  private readonly ICommunicationChannel _communicationChannel;
-  private readonly Account _account;
+  protected readonly Account Account;
   private readonly Web3 _web3;
 
-  public CommitmentService(ICommunicationChannel communicationChannel, string privateKey)
+  public Web3CommitmentService(string privateKey)
   {
-    _communicationChannel = communicationChannel;
-    _account = new Account(privateKey);
-    _web3 = new Web3(_account);
+    if (string.IsNullOrWhiteSpace(privateKey))
+      throw new ArgumentException("Private key is required.", nameof(privateKey));
+
+    Account = new Account(privateKey);
+    _web3 = new Web3(Account);
     var contractDefinitionJson = Utils.LoadEmbeddedJson("CommitmentService.json");
     _commitmentServiceContract = _web3.Eth.GetContract(contractDefinitionJson, "0x1234");
   }
 
-  public Account Account => _account;
+  public string AccountIdentifier => Account.Address.ConvertToEthereumChecksumAddress();
+
+  /// <summary>
+  /// Executes Smart Contract function.
+  /// </summary>
+  /// <param name="function">Function descriptor.</param>
+  /// <param name="functionData">Data which will be passed as a function arguments.</param>
+  /// <returns></returns>
+  protected abstract Task<ReceiptDto<ContractMethodExecuteResultDto>> CallContractFunction(Function function, string functionData);
+
+  /// <summary>
+  /// Fetches state variable from the Smart Contract.
+  /// </summary>
+  /// <typeparam name="TResultType">Expected result type</typeparam>
+  /// <param name="functionData">Encoded state variable</param>
+  /// <returns>Variable value</returns>
+  protected abstract Task<ReceiptDto<TResultType>> FetchStateVariable<TResultType>(string functionData);
 
   /// <summary>
   /// Checks if the specified set exists.
@@ -131,7 +148,7 @@ public class CommitmentService
   {
     var function = _commitmentServiceContract.GetFunction(functionName);
     var functionData = function.GetData(functionInput);
-    var receipt = await _communicationChannel.CallContractFunction(function, functionData);
+    var receipt = await CallContractFunction(function, functionData);
 
     if (!receipt.Success)
       throw new vBaseException($"Failed to call a contract function {functionName}");
@@ -150,7 +167,7 @@ public class CommitmentService
   {
     var function = _commitmentServiceContract.GetFunction(stateVariableName);
     var functionData = function.GetData(functionInput);
-    var receipt = await _communicationChannel.FetchStateVariable<TResultType>(functionData);
+    var receipt = await FetchStateVariable<TResultType>(functionData);
 
     if (!receipt.Success)
       throw new vBaseException($"Failed to call a contract state variable {stateVariableName}");
@@ -160,7 +177,7 @@ public class CommitmentService
 
   private void OperationEventCrossCheckUserAddress(EventLog<List<ParameterOutput>> operationEvent)
   {
-    if (operationEvent.GetEventParameterValue<string>("user") != _account.Address.ConvertToEthereumChecksumAddress())
+    if (operationEvent.GetEventParameterValue<string>("user") != Account.Address.ConvertToEthereumChecksumAddress())
       throw new vBaseException("The user address in the event does not match the account address");
   }
 

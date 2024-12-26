@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Numerics;
 using System.Threading.Tasks;
-using Nethereum.Web3.Accounts;
-using vBase.Core.Base;
 
 namespace vBase.Core
 {
@@ -11,14 +9,14 @@ namespace vBase.Core
   /// </summary>
   public class vBaseClient
   {
-    private readonly CommitmentService _commitmentService;
+    private readonly ICommitmentService _commitmentService;
 
-    public vBaseClient(CommitmentService commitmentService)
+    public vBaseClient(ICommitmentService commitmentService)
     {
       _commitmentService = commitmentService;
     }
 
-    public Account Account => _commitmentService.Account;
+    public string AccountIdentifier => _commitmentService.AccountIdentifier;
 
     public async Task<DateTimeOffset> AddSetObject(string datasetName, Cid objectToAddCid)
     {

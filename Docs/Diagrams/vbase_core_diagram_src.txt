@@ -1,25 +1,35 @@
 @startuml
 
-class "CommitmentService" as S
-interface "ICommunicationChannel" as CC
-class "ForwarderCommunicationChannel" as FCC
-class "HttpCommunicationChannel" as HCC
+interface "ICommitmentService" as CS
+abstract class "Web3CommitmentService" as W3CS
+class "ForwarderCommitmentService" as FCS
+class "HttpCommitmentService" as HCS #dadada ##[dotted]
 class "vBaseClient" as C
-class "vBaseDataset<TDataType>" as D
+class "vBaseDataset" as D
 
-S *-- CC
-CC <|-- FCC
-CC <|-- HCC
-C *-- S
-D *-- C
+abstract class "vBaseObject" as VBO
+abstract class "vBaseStringObject" as VBO_S
 
-note right of S
-  Proxy to vBase smart contract.
+CS <|-- W3CS
+W3CS <|-- FCS
+W3CS <|-- HCS
+D "1" *-- "1" C
+C *-- CS
+D "1" *-- "many" VBO
+
+VBO <|-- VBO_S
+
+note left of CS
+  Represents base commitment operations.
 end note
 
-note right of CC
-  Allows to communicate with a smart contract
-  deployed to Ethereum blockchain.
+note left of W3CS
+  Ethereum blockchain commitment service,
+  based on the vBase Smart Contract.
+  This class is abstract because it
+  does not define the actual implementation
+  for delivering messages to the Smart Contract.
 end note
+
 
 @enduml

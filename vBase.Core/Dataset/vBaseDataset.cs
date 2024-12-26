@@ -4,7 +4,6 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using Nethereum.Hex.HexConvertors.Extensions;
-using Nethereum.Util;
 using vBase.Core.Dataset.vBaseObjects;
 using vBase.Core.Exceptions;
 using vBase.Core.Utilities;
@@ -31,7 +30,7 @@ public class vBaseDataset
   {
     _vBaseClient = vBaseClient;
     _name = name;
-    _owner = vBaseClient.Account.Address.ConvertToEthereumChecksumAddress();
+    _owner = vBaseClient.AccountIdentifier;
 
     if (!vBaseObjectFactory.IsTypeRegistered(recordTypeName))
     {

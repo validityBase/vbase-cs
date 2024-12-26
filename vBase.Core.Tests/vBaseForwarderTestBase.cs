@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using vBase.Core.Utilities;
+using vBase.Core.Web3CommitmentService;
 
 namespace vBase.Core.Tests;
 
@@ -22,7 +22,7 @@ public abstract class vBaseForwarderTestBase
       .AddEnvironmentVariables()
       .Build();
 
-    var commitmentService = CommitmentServiceBuilder.BuildForwarderCommitmentService(
+    var commitmentService = new ForwarderCommitmentService(
       ForwarderUrl,
       ApiKey,
       PrivateKey

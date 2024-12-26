@@ -56,7 +56,7 @@ public class UtilsTests
   public void LoadEmbeddedJson_WhenResourceExists_ReturnsJson()
   {
     // Arrange
-    var path = "vBase.Core.Base.ContractDefinitions.CommitmentService.json";
+    var path = "CommitmentService.json";
 
     // Act
     var result = Utils.LoadEmbeddedJson(path);

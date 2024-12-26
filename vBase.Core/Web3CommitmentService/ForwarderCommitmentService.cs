@@ -4,54 +4,48 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Nethereum.ABI.EIP712;
 using Nethereum.Contracts;
-using Nethereum.Signer;
 using Nethereum.Signer.EIP712;
+using Nethereum.Signer;
 using Nethereum.Util;
-using Nethereum.Web3.Accounts;
 using Newtonsoft.Json;
-using vBase.Core.Base;
 using vBase.Core.DTOs;
 using vBase.Core.Exceptions;
 using vBase.Core.Utilities;
 
-namespace vBase.Core.CommunicationChannels;
+namespace vBase.Core.Web3CommitmentService;
 
-public class ForwarderCommunicationChannel: ICommunicationChannel
+public class ForwarderCommitmentService: Web3CommitmentService
 {
   private readonly Uri _forwarderUrl;
   private readonly string _apiKey;
-  private readonly Account _account;
-
   private SignatureDataDto? _signatureData;
 
-  public ForwarderCommunicationChannel(string forwarderUrl, string apiKey, string privateKey)
+  public ForwarderCommitmentService(string forwarderUrl, string apiKey, string privateKey) : base(privateKey)
   {
-    if(string.IsNullOrWhiteSpace(forwarderUrl))
+    if (string.IsNullOrWhiteSpace(forwarderUrl))
       throw new ArgumentException("Forwarder URL is required.", nameof(forwarderUrl));
 
     if (string.IsNullOrWhiteSpace(apiKey))
       throw new ArgumentException("API key is required.", nameof(apiKey));
 
-    if (string.IsNullOrWhiteSpace(privateKey))
-      throw new ArgumentException("Private key is required.", nameof(privateKey));
-
     _forwarderUrl = new Uri(forwarderUrl);
     _apiKey = apiKey;
-    _account = new Account(privateKey);
   }
-  public async Task<ReceiptDto<ContractMethodExecuteResultDto>> CallContractFunction(Function function, string functionData)
+
+  protected override async Task<ReceiptDto<ContractMethodExecuteResultDto>> CallContractFunction(Function function, string functionData)
   {
     await EnsureSignatureData();
 
     var metaTransactionTypedData = CreateMetaTransactionTypedData(functionData);
     var signedMetaTransactionTypedData = SignMetaTransactionTypedData(metaTransactionTypedData);
 
-    var result = await CallForwarderApi <ReceiptDto<ContractMethodExecuteResultDto>>("execute", HttpMethod.Post,
-      payload:new
+    var result = await CallForwarderApi<ReceiptDto<ContractMethodExecuteResultDto>>("execute", HttpMethod.Post,
+      payload: new
       {
         ForwardRequest = new
         {
-          From = _account.Address,
+          From = Account.Address,
+          // ReSharper disable once RedundantAnonymousTypePropertyName
           Nonce = _signatureData.AsserNotNull().Nonce,
           Data = functionData
         },
@@ -63,7 +57,7 @@ public class ForwarderCommunicationChannel: ICommunicationChannel
     return result;
   }
 
-  public async Task<ReceiptDto<TResultType>> FetchStateVariable<TResultType>(string functionData)
+  protected override async Task<ReceiptDto<TResultType>> FetchStateVariable<TResultType>(string functionData)
   {
     var callParams = new Dictionary<string, string>
     {
@@ -92,14 +86,14 @@ public class ForwarderCommunicationChannel: ICommunicationChannel
     object? payload = null)
   {
     requestParameters ??= new Dictionary<string, string>();
-    requestParameters.Add("from", _account.Address);
-    
+    requestParameters.Add("from", Account.Address);
+
     var apiUrl = Utils.BuildUri(_forwarderUrl, apiMethodName, requestParameters);
 
     var request = new HttpRequestMessage(method ?? HttpMethod.Get, apiUrl);
     request.Headers.Add("x-api-key", _apiKey);
 
-    if(payload != null)
+    if (payload != null)
     {
       var jsonPayload = JsonConvert.SerializeObject(payload, new JsonSerializerSettings
       {
@@ -171,7 +165,7 @@ public class ForwarderCommunicationChannel: ICommunicationChannel
       PrimaryType = "ForwardRequest",
       Message =
       [
-        new MemberValue { TypeName = "address", Value = _account.Address },
+        new MemberValue { TypeName = "address", Value = Account.Address },
         new MemberValue { TypeName = "uint256", Value = _signatureData.Nonce },
         new MemberValue { TypeName = "bytes", Value = functionData }
       ]
@@ -190,7 +184,7 @@ public class ForwarderCommunicationChannel: ICommunicationChannel
     byte[] hashedData = Sha3Keccack.Current.CalculateHash(encodedData);
 
     // Sign the hash with the private key.
-    var key = new EthECKey(_account.PrivateKey);
+    var key = new EthECKey(Account.PrivateKey);
     EthECDSASignature signature = key.SignAndCalculateV(hashedData);
     string signatureStr = EthECDSASignature.CreateStringSignature(signature);
 

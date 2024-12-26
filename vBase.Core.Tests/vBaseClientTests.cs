@@ -1,6 +1,5 @@
 ﻿using System.Numerics;
 using FluentAssertions;
-using Nethereum.Util;
 using vBase.Core.Dataset.vBaseObjects;
 using vBase.Core.Exceptions;
 using vBase.Core.Utilities;
@@ -13,7 +12,7 @@ public class vBaseClientTests: vBaseForwarderTestBase
   public async Task UserNamedSetExists_SetDoesNotExistTest()
   {
     bool exists = await Client.UserNamedSetExists(
-      Client.Account.Address.ConvertToEthereumChecksumAddress(),
+      Client.AccountIdentifier,
       TestContext.CurrentContext.Random.GetString(50));
     exists.Should().BeFalse();
   }
@@ -23,9 +22,9 @@ public class vBaseClientTests: vBaseForwarderTestBase
   {
     string setName = TestContext.CurrentContext.Random.GetString(50);
 
-    bool existedBefore = await Client.UserNamedSetExists(Client.Account.Address.ConvertToEthereumChecksumAddress(), setName);
+    bool existedBefore = await Client.UserNamedSetExists(Client.AccountIdentifier, setName);
     await Client.AddNamedSet(setName);
-    bool existsAfter = await Client.UserNamedSetExists(Client.Account.Address.ConvertToEthereumChecksumAddress(), setName);
+    bool existsAfter = await Client.UserNamedSetExists(Client.AccountIdentifier, setName);
 
     existedBefore.Should().BeFalse();
     existsAfter.Should().BeTrue();
@@ -41,26 +40,26 @@ public class vBaseClientTests: vBaseForwarderTestBase
     // add and verify just added object
     var timestamp = await Client.AddSetObject(setName, objectToAdd.GetCid());
     bool objectAdded = await Client.VerifyUserObject(
-      Client.Account.Address.ConvertToEthereumChecksumAddress(),
+      Client.AccountIdentifier,
       objectToAdd.GetCid(), timestamp);
     objectAdded.Should().BeTrue();
 
     // verify object with invalid timestamp
     bool objectVerifiedWrongStamp = await Client.VerifyUserObject(
-      Client.Account.Address.ConvertToEthereumChecksumAddress(),
+      Client.AccountIdentifier,
       objectToAdd.GetCid(), timestamp + TimeSpan.FromSeconds(10));
     objectVerifiedWrongStamp.Should().BeFalse();
 
     // verify object with invalid CID
     bool objectVerifiedWrongCid = await Client.VerifyUserObject(
-      Client.Account.Address.ConvertToEthereumChecksumAddress(),
+      Client.AccountIdentifier,
       TestContext.CurrentContext.Random.GetString(50).GetCid(),
       timestamp);
     objectVerifiedWrongCid.Should().BeFalse();
 
     // verify set with 1 object
     bool setObjectsVerified = await Client.VerifyUserSetObjects(
-      Client.Account.Address.ConvertToEthereumChecksumAddress(),
+      Client.AccountIdentifier,
       setName.GetCid(),
       Utilities.Convert.EthereumBytesToBigInt(objectToAdd.GetCid().Data)
     );
@@ -77,7 +76,7 @@ public class vBaseClientTests: vBaseForwarderTestBase
     sum %= maxSum;
 
     setObjectsVerified = await Client.VerifyUserSetObjects(
-      Client.Account.Address.ConvertToEthereumChecksumAddress(),
+      Client.AccountIdentifier,
       setName.GetCid(), sum);
     setObjectsVerified.Should().BeTrue();
   }

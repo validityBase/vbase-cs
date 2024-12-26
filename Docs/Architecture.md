@@ -22,15 +22,17 @@ The client part consists of the following components:
 
 ### vBase Core
 
-The **vBase Core** library implements core client functionality.
+The **vBase Core** library implements core vBase client functionality.
 It consists of the following main classes and interfaces:
 
-- **ICommunicationChannel**: Responsible for delivering messages from the client to a vBase Contract deployed on the Ethereum blockchain.  
-  This class does not know about specific contract methods; it only knows how to call methods by their names and parameters.
+- **ICommitmentService**: Represents base commitment operations.
+- **Web3CommitmentService**: Ethereum blockchain commitment service, based on the vBase Smart Contract.
+  This class is abstract because it does not define the actual implementation for delivering messages to the Smart Contract.
+- **ForwarderCommitmentService**: A vBase Smart Contract commitment service where messages are delivered via the vBase Forwarder.
+- **vBaseDataset**: Represents a records set on the blockchain, commited with ICommitmentService.
+  It also facilitates validation of the commoted recorded data, ensuring that:
+  - Exactly the same data records were commited with the specified timestamps.
+  - No additional records were commited within the scope of the dataset.
+  - All the records in the dataset were commited.
 
-- **CommitmentService**: Mimics the vBase Smart Contract Interface. With the help of ICommunicationChannel, this class allows the execution of the contract's methods.
-
-- **vBaseDataset**: Records data on the blockchain with the assistance of the vBase Smart Contract. It also enables validation of the recorded data.  
-  Validation, in this context, ensures that exactly the same data records were submitted with the specified timestamps and that no other records were submitted within the scope of this dataset.
-
-![](https://img.plantuml.biz/plantuml/png/TP51QiCm44NtEiNWPI0zGIXfvPfaLt0kC9KdjQYaCT8uZg67h-JG9Wra8pxC-_-Ff6qIZ39wfvHnc19KchstuYb8I_5a3LM02LfbWr0yeY6ezeKPWpKebeFkCGHo2wRrRqp3SSBOKNp8DbTu9p8yv7PNxlIAYRIpURbBtRz1ZP9FsHoAECm3FIzGhLGBg_MwBASrRBwpR6vqoTSBqAhw0YeLM0YY_Um5-9W70E-HppC8mz85oUTt0yD18XfvKXGwAAPxQmu7U76EfrJCvk-M19EL7l0kATCT3OvdwWh_9Zr56ZryE3PVfaSRRhksMPRF-m40)
+![vBase Core Class Diagram](https://img.plantuml.biz/plantuml/png/TP9DImCn48Rl2_iVXkrDR45wzL2wjTHJmHLx495iCjj6yx4aquhWZpSVPMbjPI7P8SyxyyuaCq_CqLwhiYWBQGXTnpX2zLXRhILfDDIWEqYE5J0FTLCMhFNa62VWYdaFrGRRwNLwCuty4LjQzyMSG7UTNPwWAwB-EhMg6nW95ZyOZLw59KBnDWWFS-QnLZAeijtpamMZiEQZHMpuRok9MhSVo3FqCb__0pNafDcUe-zDp1aStl-CnyVcuvhZvNcuYk42ghiARa8Oz-2sJi6V8ytCTvMzb4NOSeAXeB64eB0Zi5sI0ZnXxz27ANXeWrdWmp31zkWOIMlyf2pG28ZoYpJPFC03xT3XNaEhBF_aEoRDQJAVh-Oseh6G06iWI23D21eTtXRKrgJvJIBrl9F-ECZmCuosHSxsGI4fGiAYZxv0O2SDfeo1sZC5KlSAO-tKGuGxwmAdv07ZZO16xzaswCactOM7qvxBOXR2zFf_0G00)

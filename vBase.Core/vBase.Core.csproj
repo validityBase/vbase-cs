@@ -8,12 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Base\ContractDefinitions\CommitmentService.json" />
+    <None Remove="Web3CommitmentService\ContractDefinitions\CommitmentService.json" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Include="..\Shared\AssemblyInfoShared.cs" Link="AssemblyInfoShared.cs" />
-    <EmbeddedResource Include="Base\ContractDefinitions\CommitmentService.json" />
+    <EmbeddedResource Include="Web3CommitmentService\ContractDefinitions\CommitmentService.json" />
   </ItemGroup>
 
   <ItemGroup>

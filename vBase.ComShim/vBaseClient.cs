@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using vBase.Core;
-using vBase.Core.Base;
 
 namespace vBase
 {
@@ -11,9 +10,9 @@ namespace vBase
   {
     private readonly Core.vBaseClient _coreClient;
 
-    internal vBaseClient(ICommunicationChannel channel, string privateKey)
+    internal vBaseClient(ICommitmentService commitmentService)
     {
-      _coreClient = new Core.vBaseClient(new CommitmentService(channel, privateKey));
+      _coreClient = new Core.vBaseClient(commitmentService);
     }
 
     internal Core.vBaseClient GetCoreClient()

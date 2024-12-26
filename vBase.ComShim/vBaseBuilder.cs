@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
-using vBase.Core.Base;
-using vBase.Core.CommunicationChannels;
+using vBase.Core;
+using vBase.Core.Web3CommitmentService;
 using vBase.Infrastructure;
 
 namespace vBase
@@ -16,8 +16,8 @@ namespace vBase
 
     public IvBaseClient CreateForwarderClient(string forwarderUrl, string apiKey, string privateKey)
     {
-      ICommunicationChannel channel = new ForwarderCommunicationChannel(forwarderUrl, apiKey, privateKey);
-      return new vBaseClient(channel, privateKey);
+      ICommitmentService commitmentService = new ForwarderCommitmentService(forwarderUrl, apiKey, privateKey);
+      return new vBaseClient(commitmentService);
     }
 
     public IvBaseDataset CreateDataset(IvBaseClient client, string name, vBaseDatasetRecordTypes recordType)
