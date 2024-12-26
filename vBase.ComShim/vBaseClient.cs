@@ -20,9 +20,9 @@ namespace vBase
       return _coreClient;
     }
 
-    public long AddSetObject(string datasetName, byte[] record)
+    public long AddSetObject(string datasetName, byte[] objectCid)
     {
-      return _coreClient.AddSetObject(datasetName, new Cid(record)).Result.ToUnixTimeSeconds();
+      return _coreClient.AddSetObject(datasetName, new Cid(objectCid)).Result.ToUnixTimeSeconds();
     }
 
     public bool UserNamedSetExists(string owner, string datasetName)
