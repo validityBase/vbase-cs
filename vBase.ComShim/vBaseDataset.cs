@@ -25,24 +25,28 @@ namespace vBase
 
     public void AddRecord(object recordData)
     {
-      _coreDataset.AddRecord(recordData).Wait();
+      Utils.PreprocessException(() => _coreDataset.AddRecord(recordData).Wait());
     }
 
     public IVerificationResult VerifyCommitments()
     {
-      var coreVerificationResult = _coreDataset.VerifyCommitments().Result;
-
-      var verificationResult = new VerificationResult();
-      foreach (var finding in coreVerificationResult.VerificationFindings)
+      return Utils.PreprocessException(() =>
       {
-        verificationResult.AddFinding(finding);
-      }
-      return verificationResult;
+        var coreVerificationResult = _coreDataset.VerifyCommitments().Result;
+
+        var verificationResult = new VerificationResult();
+        foreach (var finding in coreVerificationResult.VerificationFindings)
+        {
+          verificationResult.AddFinding(finding);
+        }
+
+        return verificationResult;
+      });
     }
 
     public string ToJson()
     {
-      return _coreDataset.ToJson();
+      return Utils.PreprocessException(() => _coreDataset.ToJson());
     }
 
     private string RecordTypeToCoreRecordType(vBaseDatasetRecordTypes vBaseRecordType)

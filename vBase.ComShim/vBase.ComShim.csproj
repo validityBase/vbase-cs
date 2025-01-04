@@ -56,6 +56,7 @@
     <Compile Include="IvBaseClient.cs" />
     <Compile Include="IvBaseDataset.cs" />
     <Compile Include="IVerificationResult.cs" />
+    <Compile Include="Utils.cs" />
     <Compile Include="vBaseBuilder.cs" />
     <Compile Include="vBaseClient.cs" />
     <Compile Include="vBaseDatasetRecordTypes.cs" />

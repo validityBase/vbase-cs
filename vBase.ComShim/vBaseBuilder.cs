@@ -16,18 +16,21 @@ namespace vBase
 
     public IvBaseClient CreateForwarderClient(string forwarderUrl, string apiKey, string privateKey)
     {
-      ICommitmentService commitmentService = new ForwarderCommitmentService(forwarderUrl, apiKey, privateKey);
-      return new vBaseClient(commitmentService);
+      return Utils.PreprocessException(() =>
+      {
+        ICommitmentService commitmentService = new ForwarderCommitmentService(forwarderUrl, apiKey, privateKey);
+        return new vBaseClient(commitmentService);
+      });
     }
 
     public IvBaseDataset CreateDataset(IvBaseClient client, string name, vBaseDatasetRecordTypes recordType)
     {
-      return new vBaseDataset(client, name, recordType);
+      return Utils.PreprocessException(() => new vBaseDataset(client, name, recordType));
     }
 
     public IvBaseDataset CreateDatasetFromJson(IvBaseClient client, string json)
     {
-      return new vBaseDataset(client, json);
+      return Utils.PreprocessException(() => new vBaseDataset(client, json));
     }
   }
 }

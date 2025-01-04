@@ -110,7 +110,16 @@ public class ForwarderCommitmentService: Web3CommitmentService
 
       var responseContent = await response.Content.ReadAsStringAsync();
 
-      response.EnsureSuccessStatusCode();
+      try
+      {
+        response.EnsureSuccessStatusCode();
+      }
+      catch(HttpRequestException ex)
+      {
+        throw new vBaseException(
+                   $"Failed to call forwarder API \"{apiMethodName}\". Status code: {response.StatusCode}. Response: {responseContent}",
+                            ex);
+      }
 
       try
       {
@@ -125,7 +134,7 @@ public class ForwarderCommitmentService: Web3CommitmentService
       catch (JsonReaderException ex)
       {
         throw new vBaseException(
-          $"Result received from forwarder API {apiMethodName} is not a valid JSON string. ({responseContent})",
+          $"Result received from forwarder API \"{apiMethodName}\" is not a valid JSON string. ({responseContent})",
           ex);
       }
     }
@@ -185,9 +194,15 @@ public class ForwarderCommitmentService: Web3CommitmentService
 
     // Sign the hash with the private key.
     var key = new EthECKey(Account.PrivateKey);
-    EthECDSASignature signature = key.SignAndCalculateV(hashedData);
-    string signatureStr = EthECDSASignature.CreateStringSignature(signature);
-
-    return signatureStr;
+    try
+    {
+      EthECDSASignature signature = key.SignAndCalculateV(hashedData);
+      string signatureStr = EthECDSASignature.CreateStringSignature(signature);
+      return signatureStr;
+    }
+    catch (ArgumentOutOfRangeException ex)
+    {
+      throw new vBaseException($"Invalid format of the provided private key. Error: {ex.Message}", ex);
+    }
   }
 }

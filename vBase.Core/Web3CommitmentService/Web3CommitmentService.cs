@@ -23,17 +23,24 @@ public abstract class Web3CommitmentService: ICommitmentService
 {
   private readonly Contract _commitmentServiceContract;
   protected readonly Account Account;
-  private readonly Web3 _web3;
 
   public Web3CommitmentService(string privateKey)
   {
     if (string.IsNullOrWhiteSpace(privateKey))
       throw new ArgumentException("Private key is required.", nameof(privateKey));
 
-    Account = new Account(privateKey);
-    _web3 = new Web3(Account);
+    try
+    {
+      Account = new Account(privateKey);
+    }
+    catch (Exception ex)
+    {
+      throw new vBaseException("Failed to create an account from the provided private key.", ex);
+    }
+
+    var web3 = new Web3(Account);
     var contractDefinitionJson = Utils.LoadEmbeddedJson("CommitmentService.json");
-    _commitmentServiceContract = _web3.Eth.GetContract(contractDefinitionJson, "0x1234");
+    _commitmentServiceContract = web3.Eth.GetContract(contractDefinitionJson, "0x1234");
   }
 
   public string AccountIdentifier => Account.Address.ConvertToEthereumChecksumAddress();

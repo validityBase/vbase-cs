@@ -33,7 +33,8 @@
 ```vbnet
 Sub BuildAndVerifyDataset()
 
-    
+    On Error GoTo ErrorHandler
+
     Dim vBaseBuidler As New vBase.vBaseBuilder
     Dim vBaseClient As vBase.vBaseClient
     Dim vBaseDataset As vBase.vBaseDataset
@@ -58,7 +59,13 @@ Sub BuildAndVerifyDataset()
 
     Set verificationResult = vBaseDataset.VerifyCommitments()
 
-    MsgBox MsgBox "Verification passed: " & verificationResult.VerificationPassed
+    MsgBox "Verification passed: " & verificationResult.VerificationPassed
+
+    Exit Sub
+
+ErrorHandler:
+    MsgBox "Use [Ctrl+Insert] to copy this message to the clipboard." & vbNewLine & "Error: " & Err.Description, vbCritical
+
 End Sub
 ```
 
@@ -66,6 +73,8 @@ or
 
 ```vbnet
 Sub VerifyDataset()
+
+    On Error GoTo ErrorHandler
 
     Dim vBaseBuidler As New vBase.vBaseBuilder
     Dim vBaseClient As vBase.vBaseClient
@@ -86,7 +95,12 @@ Sub VerifyDataset()
 
     Set verificationResult = vBaseDataset.VerifyCommitments()
 
-    MsgBox MsgBox "Verification passed: " & verificationResult.VerificationPassed
+    MsgBox "Verification passed: " & verificationResult.VerificationPassed
+Exit Sub
+
+ErrorHandler:
+    MsgBox "Use [Ctrl+Insert] to copy this message to the clipboard." & vbNewLine & "Error: " & Err.Description, vbCritical
+
 End Sub
 ```
 
