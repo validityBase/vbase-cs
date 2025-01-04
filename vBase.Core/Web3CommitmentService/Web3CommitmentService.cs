@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Nethereum.ABI.FunctionEncoding;
 using Nethereum.Contracts;
 using Nethereum.Util;
@@ -23,11 +24,14 @@ public abstract class Web3CommitmentService: ICommitmentService
 {
   private readonly Contract _commitmentServiceContract;
   protected readonly Account Account;
+  protected readonly ILogger Logger;
 
-  public Web3CommitmentService(string privateKey)
+  public Web3CommitmentService(string privateKey, ILogger logger)
   {
     if (string.IsNullOrWhiteSpace(privateKey))
       throw new ArgumentException("Private key is required.", nameof(privateKey));
+
+    Logger = logger;
 
     try
     {
@@ -63,6 +67,8 @@ public abstract class Web3CommitmentService: ICommitmentService
 
   public async Task<bool> UserSetExists(string user, Cid setCid)
   {
+    Logger.LogInformation($"Checking if user '{user}' has a set with CID '{setCid.ToHex()}'");
+
     var res = await CallStateVariable<string>("userSetCommitments", user, setCid.Data);
     int parsedRes = (int)(new Int32Converter()).ConvertFromString(res);
     return parsedRes == 1;
@@ -70,6 +76,8 @@ public abstract class Web3CommitmentService: ICommitmentService
 
   public async Task<bool> VerifyUserObject(string user, Cid objectCid, DateTimeOffset timestamp)
   {
+    Logger.LogInformation($"Verifying user '{user}' object with CID '{objectCid.ToHex()}'");
+
     var res = await CallStateVariable<string>("verifyUserObject", user, objectCid.Data, timestamp.ToUnixTimeSeconds());
     int parsedRes = (int)(new Int32Converter()).ConvertFromString(res);
     return parsedRes == 1;
@@ -77,6 +85,8 @@ public abstract class Web3CommitmentService: ICommitmentService
 
   public async Task<bool> VerifyUserSetObjects(string user, Cid setCid, BigInteger setObjectsCidSum)
   {
+    Logger.LogInformation($"Verifying user '{user}' set with CID '{setCid.ToHex()}'");
+
     var res = await CallStateVariable<string>("verifyUserSetObjectsCidSum", user, setCid.Data, setObjectsCidSum);
     int parsedRes = (int)(new Int32Converter()).ConvertFromString(res);
     return parsedRes == 1;
@@ -84,6 +94,8 @@ public abstract class Web3CommitmentService: ICommitmentService
 
   public async Task AddSet(Cid setCid)
   {
+    Logger.LogInformation($"Adding a set with CID '{setCid.ToHex()}'");
+
     var contractMethodExecutionRes = await CallContractFunction("addSet", setCid.Data);
     var addSetEvents = _commitmentServiceContract.GetEvent("AddSet")
       .DecodeAllEventsDefaultForEvent(contractMethodExecutionRes.Logs);
@@ -101,7 +113,13 @@ public abstract class Web3CommitmentService: ICommitmentService
 
   public async Task<DateTimeOffset> AddSetObject(Cid setCid, Cid objectCid)
   {
+    Logger.LogInformation($"Adding object with CID '{objectCid.ToHex()}' to a set with CID '{setCid.ToHex()}'");
+
     var contractMethodExecutionRes = await CallContractFunction("addSetObject", setCid.Data, objectCid.Data);
+
+    Logger.LogInformation(
+      $"Response status: {contractMethodExecutionRes.Status}. Response logs: {contractMethodExecutionRes.Logs}");
+
     var operationsEvents = _commitmentServiceContract.GetEvent("AddSetObject")
       .DecodeAllEventsDefaultForEvent(contractMethodExecutionRes.Logs);
 
@@ -129,6 +147,8 @@ public abstract class Web3CommitmentService: ICommitmentService
   /// <returns>The result of the contract function execution.</returns>
   private async Task<ContractMethodExecuteResultDto> CallContractFunction(string functionName, params object[] functionInput)
   {
+    Logger.LogInformation($"Calling a contract function {functionName}");
+
     var function = _commitmentServiceContract.GetFunction(functionName);
     var functionData = function.GetData(functionInput);
     var receipt = await CallContractFunction(function, functionData);
@@ -148,9 +168,13 @@ public abstract class Web3CommitmentService: ICommitmentService
   /// <returns>Variable value</returns>
   private async Task<TResultType> CallStateVariable<TResultType>(string stateVariableName, params object[] functionInput)
   {
+    Logger.LogInformation($"Fetching a contract state variable {stateVariableName}");
+
     var function = _commitmentServiceContract.GetFunction(stateVariableName);
     var functionData = function.GetData(functionInput);
     var receipt = await FetchStateVariable<TResultType>(functionData);
+
+    Logger.LogInformation($"Receipt status: {receipt.Success}");
 
     if (!receipt.Success)
       throw new vBaseException($"Failed to call a contract state variable {stateVariableName}");

@@ -7,10 +7,10 @@ using vBase.Core.Utilities;
 namespace vBase.Infrastructure
 {
   /// <summary>
-  /// We have transitive references to two different versions of Newtonsoft.Json - 11.0.0 and 13.0.0.
-  /// and in the application folder we have only the latest one
-  /// To resolve the older version at runtime and return the latest instead of older version
-  /// we use this AssemblyResolver class
+  /// Some dependencies are referenced transitively multiple times with different versions.
+  /// Only the latest version is available in the application folder.
+  /// To resolve older versions at runtime and return the latest version,
+  /// we use the AssemblyResolver class.
   /// </summary>
   [ComVisible(false)]
   public static class AssemblyResolver
@@ -24,15 +24,11 @@ namespace vBase.Infrastructure
     private static Assembly OnAssemblyResolve(object sender, ResolveEventArgs args)
     {
       AssemblyName assemblyName = new AssemblyName(args.Name);
-      if (assemblyName.Name.Contains("Newtonsoft.Json"))
-      {
-        // if the assembly is Newtonsoft.Json, load the latest version from the application folder
-        string directory = Path.GetDirectoryName(typeof(AssemblyResolver).Assembly.Location);
-        string path = Path.Combine(directory.AsserNotNull(), "Newtonsoft.Json.dll");
-        return Assembly.LoadFrom(path);
-      }
 
-      return null;
+      string directory = Path.GetDirectoryName(typeof(AssemblyResolver).Assembly.Location);
+      string assemblyFileName = $"{assemblyName.Name}.dll";
+      string assemblyFilePath = Path.Combine(directory.AsserNotNull(), assemblyFileName);
+      return Assembly.LoadFrom(assemblyFilePath);
     }
   }
 }

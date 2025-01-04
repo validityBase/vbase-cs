@@ -1,11 +1,13 @@
 ﻿using System;
+using System.IO;
+using Microsoft.Extensions.Logging;
 using vBase.Core.Exceptions;
 
 namespace vBase
 {
   internal static class Utils
   {
-    public static T PreprocessException<T>(Func<T> func)
+    public static T PreprocessException<T>(Func<T> func, ILogger logger = null)
     {
       try
       {
@@ -13,11 +15,12 @@ namespace vBase
       }
       catch (Exception ex)
       {
+        logger?.LogError(ex, "An error occurred.");
         throw PreprocessException(ex);
       }
     }
 
-    public static void PreprocessException(Action action)
+    public static void PreprocessException(Action action, ILogger logger = null)
     {
       try
       {
@@ -25,6 +28,7 @@ namespace vBase
       }
       catch (Exception ex)
       {
+        logger?.LogError(ex, "An error occurred.");
         throw PreprocessException(ex);
       }
     }
@@ -51,6 +55,7 @@ namespace vBase
         $"{ex.Message}\"\r\n" +
         "Additional Information:\r\n" +
         $"\tvBase SDK version: {typeof(Utils).Assembly.GetName().Version}\r\n" +
+        $"\tLog File Location: {Path.Combine(Path.GetTempPath(), "vBase-logs*.txt")}\r\n" +
         $"\tError Type: {ex.GetType().FullName}\r\n" +
         $"\tStackTrace: {ex.StackTrace}", ex);
     }

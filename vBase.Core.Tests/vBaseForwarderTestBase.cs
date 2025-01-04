@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using vBase.Core.Utilities;
 using vBase.Core.Web3CommitmentService;
 
@@ -21,12 +22,15 @@ public abstract class vBaseForwarderTestBase
       .AddYamlFile("settings.yml")
       .AddYamlFile("settings.local.yml", true)
       .AddEnvironmentVariables()
-      .Build();
+    .Build();
+
+    using ILoggerFactory factory = LoggerFactory.Create(_ => { });
 
     var commitmentService = new ForwarderCommitmentService(
       ForwarderUrl,
       ApiKey,
-      PrivateKey
+      PrivateKey,
+      factory.CreateLogger(this.GetType())
     );
 
     Client = new vBaseClient(commitmentService);

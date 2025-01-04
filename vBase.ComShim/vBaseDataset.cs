@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using Microsoft.Extensions.Logging;
 
 namespace vBase
 {
@@ -7,9 +8,11 @@ namespace vBase
   public class vBaseDataset : IvBaseDataset
   {
     private readonly Core.Dataset.vBaseDataset _coreDataset;
+    private readonly ILogger _logger;
 
-    internal vBaseDataset(IvBaseClient client, string name, ObjectTypes objectType)
+    internal vBaseDataset(IvBaseClient client, string name, ObjectTypes objectType, ILogger logger)
     {
+      _logger = logger;
       _coreDataset = new Core.Dataset.vBaseDataset(
         ((vBaseClient)client).GetCoreClient(),
         name,
@@ -25,7 +28,7 @@ namespace vBase
 
     public void AddRecord(object recordData)
     {
-      Utils.PreprocessException(() => _coreDataset.AddRecord(recordData).Wait());
+      Utils.PreprocessException(() => _coreDataset.AddRecord(recordData).Wait(), _logger);
     }
 
     public IVerificationResult VerifyCommitments()
@@ -41,12 +44,12 @@ namespace vBase
         }
 
         return verificationResult;
-      });
+      }, _logger);
     }
 
     public string ToJson()
     {
-      return Utils.PreprocessException(() => _coreDataset.ToJson());
+      return Utils.PreprocessException(() => _coreDataset.ToJson(), _logger);
     }
 
     private string ObjectTypeToCoreObjectType(ObjectTypes vBaseObjectType)

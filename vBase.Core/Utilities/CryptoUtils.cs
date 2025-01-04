@@ -31,7 +31,7 @@ public static class CryptoUtils
 
   public static byte[] GetSha3Hash(byte[] input)
   {
-    Sha3Digest sha3 = new Sha3Digest(256);
+    Sha3Digest sha3 = new(256);
     sha3.BlockUpdate(input, 0, input.Length);
     byte[] result = new byte[sha3.GetDigestSize()];
     sha3.DoFinal(result, 0);

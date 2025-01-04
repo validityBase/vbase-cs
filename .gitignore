@@ -11,3 +11,4 @@ debug/
 /vBase.ComShim/vBase.tlb
 /vBase.ComShim.Setup/Release
 /vBase.Core.Tests/settings.local.yml
+/packages
