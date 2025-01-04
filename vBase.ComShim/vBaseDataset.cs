@@ -8,12 +8,12 @@ namespace vBase
   {
     private readonly Core.Dataset.vBaseDataset _coreDataset;
 
-    internal vBaseDataset(IvBaseClient client, string name, vBaseDatasetRecordTypes recordType)
+    internal vBaseDataset(IvBaseClient client, string name, ObjectTypes objectType)
     {
       _coreDataset = new Core.Dataset.vBaseDataset(
         ((vBaseClient)client).GetCoreClient(),
         name,
-        RecordTypeToCoreRecordType(recordType));
+        ObjectTypeToCoreObjectType(objectType));
     }
 
     internal vBaseDataset(IvBaseClient client, string json)
@@ -49,14 +49,14 @@ namespace vBase
       return Utils.PreprocessException(() => _coreDataset.ToJson());
     }
 
-    private string RecordTypeToCoreRecordType(vBaseDatasetRecordTypes vBaseRecordType)
+    private string ObjectTypeToCoreObjectType(ObjectTypes vBaseObjectType)
     {
-      switch (vBaseRecordType)
+      switch (vBaseObjectType)
       {
-        case vBaseDatasetRecordTypes.vBaseStringObject:
+        case ObjectTypes.String:
           return Core.Dataset.vBaseObjects.vBaseStringObject.vBaseObjectType;
         default:
-          throw new System.ArgumentException("Unknown record type: " + vBaseRecordType);
+          throw new System.ArgumentException("Unknown object type: " + vBaseObjectType);
       }
     }
   }

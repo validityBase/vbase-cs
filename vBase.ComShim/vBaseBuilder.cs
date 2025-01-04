@@ -23,9 +23,9 @@ namespace vBase
       });
     }
 
-    public IvBaseDataset CreateDataset(IvBaseClient client, string name, vBaseDatasetRecordTypes recordType)
+    public IvBaseDataset CreateDataset(IvBaseClient client, string name, ObjectTypes objectType)
     {
-      return Utils.PreprocessException(() => new vBaseDataset(client, name, recordType));
+      return Utils.PreprocessException(() => new vBaseDataset(client, name, objectType));
     }
 
     public IvBaseDataset CreateDatasetFromJson(IvBaseClient client, string json)

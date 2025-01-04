@@ -23,9 +23,9 @@ namespace vBase
     /// </summary>
     /// <param name="client">vBase client.</param>
     /// <param name="name">The name of the dataset.</param>
-    /// <param name="recordType">Type of the records that will be stored in the dataset.</param>
+    /// <param name="objectType">Type of the objects that will be stored in the dataset.</param>
     /// <returns>Newly created dataset object.</returns>
-    IvBaseDataset CreateDataset(IvBaseClient client, string name, vBaseDatasetRecordTypes recordType);
+    IvBaseDataset CreateDataset(IvBaseClient client, string name, ObjectTypes objectType);
 
     /// <summary>
     /// Create a COM visible dataset object.

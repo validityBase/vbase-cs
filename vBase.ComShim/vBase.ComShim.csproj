@@ -59,7 +59,7 @@
     <Compile Include="Utils.cs" />
     <Compile Include="vBaseBuilder.cs" />
     <Compile Include="vBaseClient.cs" />
-    <Compile Include="vBaseDatasetRecordTypes.cs" />
+    <Compile Include="ObjectTypes.cs" />
     <Compile Include="vBaseDataset.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VerificationResult.cs" />
