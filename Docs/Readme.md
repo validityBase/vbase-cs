@@ -51,7 +51,7 @@ Sub BuildAndVerifyDataset()
     privateKey = "<PRIVATE KEY>"
 
     Set vBaseClient = vBaseBuidler.CreateForwarderClient(forwarderUrl, apiKey, privateKey)
-    Set vBaseDataset = vBaseBuidler.CreateDataset(vBaseClient, datasetName, vBase.vBaseDatasetRecordTypes.vBaseDatasetRecordTypes_vBaseStringObject)
+    Set vBaseDataset = vBaseBuidler.CreateDataset(vBaseClient, datasetName, vBase.ObjectTypes_String)
 
     vBaseDataset.AddRecord ("<Record 1 Data>")
     ' Add more records
