@@ -1,4 +1,4 @@
-# How to use the COM library
+# How to use vBase COM library
 
 1. Uninstall the library if you have it installed already on your machine.
 1. Install the new version using `setup.exe`
