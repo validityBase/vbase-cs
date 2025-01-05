@@ -1,16 +1,17 @@
 # How to use vBase COM library
 
-1. Uninstall the library if you have it installed already on your machine.
-1. Install the new version using `setup.exe`
-1. Run Microsoft Excel
-1. Make sure thta 'Developer' riboon tab is visible. If not, enable it in the Excel options.
-    1. right click on the ribbon and select 'Customize the Ribbon'
-    1. Check the 'Developer' checkbox in the reabon tabs tree
+1. Uninstall the library if it is already installed on your machine.
+2. Install the new version using `setup.exe`.
+3. Run Microsoft Excel.
+4. Ensure that the 'Developer' ribbon tab is visible. If it is not, enable it in the Excel options:
+    1. Right-click on the ribbon and select 'Customize the Ribbon'.
+    2. Check the 'Developer' checkbox in the ribbon tabs tree.
        ![Customize the Ribbon](images/customize-the-ribbon.png)
-1. Got to Developer Ribbon tab and click on 'Visual Basic' button.
-1. In the Microsoft Visual basic for Application Add a reference to the library: **Tools** -> **References** -> find **vBase**.
+5. Go to the Developer ribbon tab and click on the 'Visual Basic' button.
+6. In Microsoft Visual Basic for Applications, add a reference to the library: **Tools** -> **References** -> find **vBase**.
    ![Add Reference](images/add-reference.png)
-1. The VBA code bellow demonstrates how to use the library:
+7. The VBA code below demonstrates how to use the library:
+
 
 ```vbnet
 Sub BuildAndVerifyDataset()
