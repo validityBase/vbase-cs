@@ -11,7 +11,7 @@ namespace vBase.Core.Utilities;
 
 public static class Utils
 {
-  public static readonly JsonSerializerSettings DefaultJsonSerializerSettings = new JsonSerializerSettings
+  public static readonly JsonSerializerSettings DefaultJsonSerializerSettings = new()
   {
     ContractResolver = new CamelCasePropertyNamesContractResolver
     {
@@ -42,7 +42,7 @@ public static class Utils
 
   public static Uri BuildUri(Uri baseUri, string path, Dictionary<string, string> queryParams)
   {
-    UriBuilder uriBuilder = new UriBuilder(baseUri);
+    UriBuilder uriBuilder = new(baseUri);
     uriBuilder.Path = $"{uriBuilder.Path.TrimEnd('/')}/{path.TrimStart('/')}";
 
     string queryString = string.Join("&", queryParams

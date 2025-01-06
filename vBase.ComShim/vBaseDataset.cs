@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using Microsoft.Extensions.Logging;
 
 namespace vBase
 {
@@ -7,13 +8,15 @@ namespace vBase
   public class vBaseDataset : IvBaseDataset
   {
     private readonly Core.Dataset.vBaseDataset _coreDataset;
+    private readonly ILogger _logger;
 
-    internal vBaseDataset(IvBaseClient client, string name, vBaseDatasetRecordTypes recordType)
+    internal vBaseDataset(IvBaseClient client, string name, ObjectTypes objectType, ILogger logger)
     {
+      _logger = logger;
       _coreDataset = new Core.Dataset.vBaseDataset(
         ((vBaseClient)client).GetCoreClient(),
         name,
-        RecordTypeToCoreRecordType(recordType));
+        ObjectTypeToCoreObjectType(objectType));
     }
 
     internal vBaseDataset(IvBaseClient client, string json)
@@ -25,34 +28,38 @@ namespace vBase
 
     public void AddRecord(object recordData)
     {
-      _coreDataset.AddRecord(recordData).Wait();
+      Utils.PreprocessException(() => _coreDataset.AddRecord(recordData).Wait(), _logger);
     }
 
     public IVerificationResult VerifyCommitments()
     {
-      var coreVerificationResult = _coreDataset.VerifyCommitments().Result;
-
-      var verificationResult = new VerificationResult();
-      foreach (var finding in coreVerificationResult.VerificationFindings)
+      return Utils.PreprocessException(() =>
       {
-        verificationResult.AddFinding(finding);
-      }
-      return verificationResult;
+        var coreVerificationResult = _coreDataset.VerifyCommitments().Result;
+
+        var verificationResult = new VerificationResult();
+        foreach (var finding in coreVerificationResult.VerificationFindings)
+        {
+          verificationResult.AddFinding(finding);
+        }
+
+        return verificationResult;
+      }, _logger);
     }
 
     public string ToJson()
     {
-      return _coreDataset.ToJson();
+      return Utils.PreprocessException(() => _coreDataset.ToJson(), _logger);
     }
 
-    private string RecordTypeToCoreRecordType(vBaseDatasetRecordTypes vBaseRecordType)
+    private string ObjectTypeToCoreObjectType(ObjectTypes vBaseObjectType)
     {
-      switch (vBaseRecordType)
+      switch (vBaseObjectType)
       {
-        case vBaseDatasetRecordTypes.vBaseStringObject:
+        case ObjectTypes.String:
           return Core.Dataset.vBaseObjects.vBaseStringObject.vBaseObjectType;
         default:
-          throw new System.ArgumentException("Unknown record type: " + vBaseRecordType);
+          throw new System.ArgumentException("Unknown object type: " + vBaseObjectType);
       }
     }
   }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Nethereum.ABI.EIP712;
 using Nethereum.Contracts;
 using Nethereum.Signer.EIP712;
@@ -20,7 +21,7 @@ public class ForwarderCommitmentService: Web3CommitmentService
   private readonly string _apiKey;
   private SignatureDataDto? _signatureData;
 
-  public ForwarderCommitmentService(string forwarderUrl, string apiKey, string privateKey) : base(privateKey)
+  public ForwarderCommitmentService(string forwarderUrl, string apiKey, string privateKey, ILogger logger) : base(privateKey, logger)
   {
     if (string.IsNullOrWhiteSpace(forwarderUrl))
       throw new ArgumentException("Forwarder URL is required.", nameof(forwarderUrl));
@@ -34,6 +35,8 @@ public class ForwarderCommitmentService: Web3CommitmentService
 
   protected override async Task<ReceiptDto<ContractMethodExecuteResultDto>> CallContractFunction(Function function, string functionData)
   {
+    Logger.LogInformation("Executing contract function via the forwarder.");
+
     await EnsureSignatureData();
 
     var metaTransactionTypedData = CreateMetaTransactionTypedData(functionData);
@@ -70,12 +73,18 @@ public class ForwarderCommitmentService: Web3CommitmentService
   {
     if (_signatureData == null)
     {
+      Logger.LogInformation("Fetching signature data.");
+
       var receipt = await CallForwarderApi<ReceiptDto<SignatureDataDto>>("signature-data");
       if (!receipt.Success)
       {
         throw new vBaseException("Failed to get signature data from forwarder API");
       }
       _signatureData = receipt.Data;
+    }
+    else
+    {
+      Logger.LogInformation("Signature data is initialized and will be reused.");
     }
   }
 
@@ -85,6 +94,9 @@ public class ForwarderCommitmentService: Web3CommitmentService
     Dictionary<string, string>? requestParameters = null,
     object? payload = null)
   {
+
+    Logger.LogInformation($"Calling forwarder API \"{apiMethodName}\".");
+
     requestParameters ??= new Dictionary<string, string>();
     requestParameters.Add("from", Account.Address);
 
@@ -108,9 +120,22 @@ public class ForwarderCommitmentService: Web3CommitmentService
     {
       using var response = await client.SendAsync(request);
 
+      Logger.LogInformation($"Forwarder API response status: {response.StatusCode}");
+
       var responseContent = await response.Content.ReadAsStringAsync();
 
-      response.EnsureSuccessStatusCode();
+      Logger.LogInformation($"Forwarder API response content: {responseContent}");
+
+      try
+      {
+        response.EnsureSuccessStatusCode();
+      }
+      catch(HttpRequestException ex)
+      {
+        throw new vBaseException(
+                   $"Failed to call forwarder API \"{apiMethodName}\". Status code: {response.StatusCode}. Response: {responseContent}",
+                            ex);
+      }
 
       try
       {
@@ -125,7 +150,7 @@ public class ForwarderCommitmentService: Web3CommitmentService
       catch (JsonReaderException ex)
       {
         throw new vBaseException(
-          $"Result received from forwarder API {apiMethodName} is not a valid JSON string. ({responseContent})",
+          $"Result received from forwarder API \"{apiMethodName}\" is not a valid JSON string. ({responseContent})",
           ex);
       }
     }
@@ -185,9 +210,15 @@ public class ForwarderCommitmentService: Web3CommitmentService
 
     // Sign the hash with the private key.
     var key = new EthECKey(Account.PrivateKey);
-    EthECDSASignature signature = key.SignAndCalculateV(hashedData);
-    string signatureStr = EthECDSASignature.CreateStringSignature(signature);
-
-    return signatureStr;
+    try
+    {
+      EthECDSASignature signature = key.SignAndCalculateV(hashedData);
+      string signatureStr = EthECDSASignature.CreateStringSignature(signature);
+      return signatureStr;
+    }
+    catch (ArgumentOutOfRangeException ex)
+    {
+      throw new vBaseException($"Invalid format of the provided private key. Error: {ex.Message}", ex);
+    }
   }
 }

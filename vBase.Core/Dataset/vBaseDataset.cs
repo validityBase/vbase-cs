@@ -130,7 +130,7 @@ public class vBaseDataset
 
   public string ToJson()
   {
-    JsonSerializationDto serializationDto = new JsonSerializationDto
+    JsonSerializationDto serializationDto = new()
     {
       Name = _name,
       Cid = _name.GetCid().ToHex(),
