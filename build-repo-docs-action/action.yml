@@ -22,8 +22,14 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: actions/checkout@v4
+    - name: Checkout the main docs repository
+      uses: actions/checkout@v4
       with:
         repository: ${{ inputs.target-repository }}
         token: ${{ inputs.docs-repo-access-token }}
         path: main-docs
+
+    - name: Copy md files to the main docs repo
+      shell: bash
+      run: |
+          cp -r docs/* main-docs/${{ inputs.target-docs-path }}

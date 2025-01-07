@@ -9,7 +9,7 @@ jobs:
   update-main-docs:
     runs-on: ubuntu-latest
     steps:
-      - name: build-repo-docs
+      - name: Build repo docs
         uses: validityBase/vbase-cs/build-repo-docs-action@docs_repo_build_pipeline
         with:
           docs-repo-access-token: ${{ secrets.DOCS_REPO_ACCESS_TOKEN }}
