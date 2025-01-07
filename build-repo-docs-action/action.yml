@@ -33,7 +33,11 @@ runs:
     - name: Copy md files to the main docs repo
       shell: bash
       run: |
-          cp -r ${{ inputs.source-docs-path }}/* main-docs/${{ inputs.target-docs-path }}
+          target_path=${{ inputs.target-docs-path }}
+          if [ -z "$target_path" ]; then
+            target_path=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)
+          fi
+          cp -r ${{ inputs.source-docs-path }}/* main-docs/$target_path
 
     - name: list current dir contents
       shell: bash
