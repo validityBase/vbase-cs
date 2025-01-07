@@ -45,7 +45,7 @@ runs:
           const files = fs.readdirSync(sourceFolder);
           files.forEach(file => {
               if (file.endsWith('.md')) {
-                  const content = fs.readFileSync(path.join(sourceFolder, file), 'utf8');
+                  let content = fs.readFileSync(path.join(sourceFolder, file), 'utf8');
                   content = preprocessMdContent(content);
                   fs.writeFileSync(path.join(sourceFolder, file), content);
               }
