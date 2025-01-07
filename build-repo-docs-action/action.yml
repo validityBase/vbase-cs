@@ -33,7 +33,7 @@ runs:
       name: Copy md files to the main docs repo
       with:
         script: |
-          console.log("Copying md files to the main docs repo");
+          const copyMdFilesScript = require('./copy_md_files.js');
 
 
     # - name: Copy md files to the main docs repo
