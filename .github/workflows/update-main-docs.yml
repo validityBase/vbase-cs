@@ -19,5 +19,3 @@ jobs:
           docs-repo-access-token: ${{ secrets.DOCS_REPO_ACCESS_TOKEN }}
           target-repository: 'validityBase/docs'
           target-repository-branch: 'docs_repo_build_pipeline'
-          source-docs-path: 'Docs'
-          target-docs-path: 'TEST-cs-def'
