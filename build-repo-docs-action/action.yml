@@ -26,6 +26,32 @@ runs:
         path: main-docs
 
     - uses: actions/github-script@v7
+      name: Preprocess plantUml diagrams
+      with:
+        script: |
+          function preprocessMdContent(content) {
+            console.log('Preprocessing content' + content);
+            return 'PREPROCESSED' + content;
+          }
+
+          const fs = require('fs');
+          const path = require('path');
+          const { execSync } = require('child_process');
+
+          let sourceFolder = "${{ inputs.source-docs-path }}";
+
+          console.log(`Preprocessing plantUml diagrams in "${sourceFolder}"`);
+
+          const files = fs.readdirSync(sourceFolder);
+          files.forEach(file => {
+              if (file.endsWith('.md')) {
+                  const content = fs.readFileSync(path.join(sourceFolder, file), 'utf8');
+                  content = preprocessMdContent(content);
+                  fs.writeFileSync(path.join(sourceFolder, file), content);
+              }
+          });
+
+    - uses: actions/github-script@v7
       name: Copy md files to the main docs repo
       with:
         script: |
