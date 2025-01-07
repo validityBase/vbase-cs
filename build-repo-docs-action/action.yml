@@ -32,4 +32,4 @@ runs:
     - name: Copy md files to the main docs repo
       shell: bash
       run: |
-          cp -r docs/* main-docs/${{ inputs.target-docs-path }}
+          cp -r Docs/* main-docs/${{ inputs.target-docs-path }}
