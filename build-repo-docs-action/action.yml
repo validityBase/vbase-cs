@@ -36,4 +36,4 @@ runs:
 
     - name: list current dir contents
       shell: bash
-      run: ls -la ./
+      run: ls -laR ./
