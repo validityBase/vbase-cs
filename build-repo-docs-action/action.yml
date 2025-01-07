@@ -32,4 +32,8 @@ runs:
     - name: Copy md files to the main docs repo
       shell: bash
       run: |
-          cp -r Docs/* main-docs/${{ inputs.target-docs-path }}
+          cp -r {{ inputs.source-docs-path }}/* main-docs/${{ inputs.target-docs-path }}
+
+    - name: list current dir contents
+      shell: bash
+      run: ls -la ./
