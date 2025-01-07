@@ -9,6 +9,10 @@ jobs:
   update-main-docs:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Build repo docs
         uses: validityBase/vbase-cs/build-repo-docs-action@docs_repo_build_pipeline
         with:
