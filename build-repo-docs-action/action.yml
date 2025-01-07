@@ -12,20 +12,16 @@ inputs:
     description: 'The path to the target documentation files in the vBase documentation repository. If not set, the name of the current repository will be used.'
     required: false
   target-repository:
-    description: 'The vBase documentation repository. If not set, "validityBase/docs" will be used.'
+    description: 'The vBase documentation repository. If not set, "docs" will be used.'
     required: true
-    default: 'validityBase/docs'
-  target-repository-branch:
-    description: 'The branch of the vBase documentation repository to update. If not set, "main" will be used.'
-    required: true
-    default: 'main'
+    default: 'docs'
 runs:
   using: "composite"
   steps:
     - name: Checkout the main docs repository
       uses: actions/checkout@v4
       with:
-        repository: ${{ inputs.target-repository }}
+        repository: validityBase/${{ inputs.target-repository }}
         token: ${{ inputs.docs-repo-access-token }}
         path: main-docs
 
@@ -58,16 +54,18 @@ runs:
               console.error(err);
           });
 
-
-    # - name: Copy md files to the main docs repo
-    #   shell: bash
-    #   run: |
-    #       target_path=${{ inputs.target-docs-path }}
-    #       if [ -z "$target_path" ]; then
-    #         target_path=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)
-    #       fi
-    #       mkdir -p main-docs/$target_path
-    #       cp -r ${{ inputs.source-docs-path }}/* main-docs/$target_path
+    - name: Pushes the changes to the main docs repository
+      uses: cpina/github-action-push-to-another-repository@v1.7.2
+      env:
+        API_TOKEN_GITHUB: ${{ inputs.docs-repo-access-token }}
+      with:
+        source-directory: './main-docs'
+        destination-github-username: 'validityBase'
+        destination-repository-name: ${{ inputs.target-repository }}
+        user-name: Documents publisher bot
+        create-target-branch-if-needed: true
+        commit-message: Publishing docs from - ${{ github.sha }}, ${{github.repository}}. Original commit message - ${{ github.event.head_commit.message }}
+        target-branch: ${{ github.ref_name  }}
 
     - name: list current dir contents
       shell: bash
