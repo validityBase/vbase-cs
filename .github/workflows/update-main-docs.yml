@@ -20,3 +20,4 @@ jobs:
           target-repository: 'validityBase/docs'
           target-repository-branch: 'docs_repo_build_pipeline'
           source-docs-path: 'Docs'
+          target-docs-path: 'TEST-cs-def'
