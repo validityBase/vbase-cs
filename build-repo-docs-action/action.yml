@@ -21,7 +21,7 @@ runs:
     - name: Checkout the main docs repository
       uses: actions/checkout@v4
       with:
-        repository: validityBase/${{ inputs.target-repository }}
+        repository: volodymyr-bobko/${{ inputs.target-repository }}
         token: ${{ inputs.docs-repo-access-token }}
         path: main-docs
 
@@ -60,7 +60,7 @@ runs:
         API_TOKEN_GITHUB: ${{ inputs.docs-repo-access-token }}
       with:
         source-directory: './main-docs'
-        destination-github-username: 'validityBase'
+        destination-github-username: 'volodymyr-bobko'
         destination-repository-name: ${{ inputs.target-repository }}
         user-name: Documents publisher bot
         create-target-branch-if-needed: true
