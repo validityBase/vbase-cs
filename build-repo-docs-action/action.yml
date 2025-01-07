@@ -42,8 +42,7 @@ runs:
 
           if (!targetFolder) {
               console.log('No target folder specified. We will use repository name as a default value.');
-              console.log('Context: ', JSON.stringify(context, null, 2));
-              targetFolder = context.repo.repo.split('/')[1];
+              targetFolder = context.payload.repository.name;
           }
 
           targetFolder = path.join(mainDocsFolder, targetFolder);
