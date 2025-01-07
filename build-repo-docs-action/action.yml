@@ -32,14 +32,13 @@ runs:
     - name: Copy md files to the main docs repo
       shell: bash
       run: |
-          shopt -s nocaseglob
           target_path=${{ inputs.target-docs-path }}
           if [ -z "$target_path" ]; then
             target_path=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)
           fi
           mkdir -p main-docs/$target_path
           cp -r ${{ inputs.source-docs-path }}/* main-docs/$target_path
-          shopt -u nocaseglob
+
     - name: list current dir contents
       shell: bash
       run: ls -laR ./
