@@ -11,7 +11,7 @@ inputs:
   target-docs-path:
     description: 'The path to the target documentation files in the vBase documentation repository. If not set, the name of the current repository will be used.'
     required: false
-    default: ${{ github.repository }}
+    default: ${{ github.repository.split('/')[1] }} # The name of the current repository
   target-repository:
     description: 'The vBase documentation repository. If not set, "validityBase/docs" will be used.'
     required: true
