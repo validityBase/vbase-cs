@@ -36,6 +36,7 @@ runs:
           if [ -z "$target_path" ]; then
             target_path=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)
           fi
+          mkdir -p main-docs/$target_path
           cp -r ${{ inputs.source-docs-path }}/* main-docs/$target_path
 
     - name: list current dir contents
