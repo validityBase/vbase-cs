@@ -29,15 +29,26 @@ runs:
         token: ${{ inputs.docs-repo-access-token }}
         path: main-docs
 
-    - name: Copy md files to the main docs repo
-      shell: bash
-      run: |
-          target_path=${{ inputs.target-docs-path }}
-          if [ -z "$target_path" ]; then
-            target_path=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)
-          fi
-          mkdir -p main-docs/$target_path
-          cp -r ${{ inputs.source-docs-path }}/* main-docs/$target_path
+    - uses: actions/github-script@v7
+      name: Copy md files to the main docs repo
+      with:
+        script: |
+          const copyMdFilesScript = require('./copy_md_files.js')
+          await copyMdFilesScript({
+            "${{ inputs.source-docs-path }}",
+            "main-docs",
+            "${{ inputs.target-docs-path }}",
+            context})
+
+    # - name: Copy md files to the main docs repo
+    #   shell: bash
+    #   run: |
+    #       target_path=${{ inputs.target-docs-path }}
+    #       if [ -z "$target_path" ]; then
+    #         target_path=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)
+    #       fi
+    #       mkdir -p main-docs/$target_path
+    #       cp -r ${{ inputs.source-docs-path }}/* main-docs/$target_path
 
     - name: list current dir contents
       shell: bash
