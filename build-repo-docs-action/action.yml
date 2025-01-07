@@ -36,8 +36,13 @@ runs:
           const fs = require('fs');
           const path = require('path');
 
+          let sourceFolder = "${{ inputs.source-docs-path }}";
+          let targetFolder = "${{ inputs.target-docs-path }}";
+          let mainDocsFolder = 'main-docs';
+
           if (!targetFolder) {
               console.log('No target folder specified. We will use repository name as a default value.');
+              console.log('Context: ', JSON.stringify(context, null, 2));
               targetFolder = context.repo.repo.split('/')[1];
           }
 
