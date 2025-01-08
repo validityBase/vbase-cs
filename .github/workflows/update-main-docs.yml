@@ -17,5 +17,4 @@ jobs:
         uses: validityBase/vbase-cs/build-repo-docs-action@docs_repo_build_pipeline
         with:
           docs-repo-access-token: ${{ secrets.DOCS_REPO_ACCESS_TOKEN }}
-          target-repository: 'docs'
           source-docs-path: 'Docs'
