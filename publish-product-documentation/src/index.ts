@@ -13,5 +13,10 @@ exec("cd main-docs");
 console.log('Cloning the docs repository done.');
 
 // copy the markdown files from the build directory to the docs repository
+console.log(process.env);
+let docsSubDirectory = core.getInput('target-docs-path');
+if(!docsSubDirectory) {
+    console.log('No target-docs-path provided. We will use the current repository name as a docs sub-directory.');
+}
 
 // commit and push the changes to the docs repository

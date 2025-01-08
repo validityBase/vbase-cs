@@ -1,4 +1,4 @@
-name: 'Build Repository Docs'
+name: 'Publish Product Documentation'
 description: 'Copies the end-user documentation Markdown (.md) files from the current repository to the vBase documentation repository.'
 inputs:
   docs-repo-access-token:
