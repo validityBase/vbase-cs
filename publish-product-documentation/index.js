@@ -25705,7 +25705,7 @@ exports.cloneDocsRepository = cloneDocsRepository;
 function commitAndPushDocsRepository(productDocsFolderToAdd) {
     return __awaiter(this, void 0, void 0, function* () {
         console.log('Committing and pushing the changes to the docs repository...');
-        yield (0, process_helpers_1.run)("cd", [constants_1.Constants.MainDocsDirectory], null);
+        yield (0, process_helpers_1.run)("ls", ["-laR", "./"], null);
         yield (0, process_helpers_1.run)("git", ["config", "user.name", "github-actions[bot]"], constants_1.Constants.MainDocsDirectory);
         yield (0, process_helpers_1.run)("git", ["config", "user.email", "github-actions[bot]@users.noreply.github.com"], constants_1.Constants.MainDocsDirectory);
         yield (0, process_helpers_1.run)("git", ["add", productDocsFolderToAdd], constants_1.Constants.MainDocsDirectory);
