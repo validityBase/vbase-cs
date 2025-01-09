@@ -19,7 +19,13 @@ export async function commitAndPushDocsRepository(productDocsSubDirectory: strin
     await run("git", ["config", "user.name", "github-actions[bot]"], Constants.MainDocsDirectory);
     await run("git", ["config", "user.email", "github-actions[bot]@users.noreply.github.com"], Constants.MainDocsDirectory);
     await run("git", ["add", productDocsSubDirectory], Constants.MainDocsDirectory);
-    var diffOutput = await run("git", ["diff-index", "--quiet", "HEAD"], Constants.MainDocsDirectory);
-
-    console.log(`diffOutput: ${diffOutput}`);
+    await run("git", ["diff-index", "--quiet", "HEAD"], Constants.MainDocsDirectory)
+        .then(() => {
+            // no changes
+            console.log('No changes in the docs repository.');
+        })
+        .catch(async () => {
+            // there are changes
+            console.log('Committing the changes to the docs repository...');
+        });
 }

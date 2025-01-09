@@ -25708,8 +25708,15 @@ function commitAndPushDocsRepository(productDocsSubDirectory) {
         yield (0, process_helpers_1.run)("git", ["config", "user.name", "github-actions[bot]"], constants_1.Constants.MainDocsDirectory);
         yield (0, process_helpers_1.run)("git", ["config", "user.email", "github-actions[bot]@users.noreply.github.com"], constants_1.Constants.MainDocsDirectory);
         yield (0, process_helpers_1.run)("git", ["add", productDocsSubDirectory], constants_1.Constants.MainDocsDirectory);
-        var diffOutput = yield (0, process_helpers_1.run)("git", ["diff-index", "--quiet", "HEAD"], constants_1.Constants.MainDocsDirectory);
-        console.log(`diffOutput: ${diffOutput}`);
+        yield (0, process_helpers_1.run)("git", ["diff-index", "--quiet", "HEAD"], constants_1.Constants.MainDocsDirectory)
+            .then(() => {
+            // no changes
+            console.log('No changes in the docs repository.');
+        })
+            .catch(() => __awaiter(this, void 0, void 0, function* () {
+            // there are changes
+            console.log('Committing the changes to the docs repository...');
+        }));
     });
 }
 exports.commitAndPushDocsRepository = commitAndPushDocsRepository;
@@ -25843,7 +25850,7 @@ function run(cmd, args, cwd) {
         });
         process.on('close', (code) => {
             if (code !== 0) {
-                reject("Command execution error. Exit code: " + code);
+                reject(`Command [${command}] execution error. Exit code: ${code}`);
             }
             // wait for 5 seconds to flush the output
             (0, utils_1.wait)(5 * 1000).then(() => { resolve(output); });

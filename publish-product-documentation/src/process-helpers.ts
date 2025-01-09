@@ -31,7 +31,7 @@ export function run(cmd: string, args: Array<string>, cwd: string | null): Promi
         
         process.on('close', (code:any) => {
             if(code !== 0) {
-                reject("Command execution error. Exit code: " + code); 
+                reject(`Command [${command}] execution error. Exit code: ${code}`); 
             }
 
             // wait for 5 seconds to flush the output
