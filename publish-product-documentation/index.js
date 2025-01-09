@@ -25635,6 +25635,61 @@ module.exports = {
 
 /***/ }),
 
+/***/ 4813:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.cloneDocsRepository = void 0;
+const core = __importStar(__nccwpck_require__(5316));
+const process_helpers_1 = __nccwpck_require__(6361);
+const docsRepoAccessToken = core.getInput('docs-repo-access-token');
+const docsRepository = core.getInput('target-repository');
+function cloneDocsRepository() {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log(`Cloning the docs repository "${docsRepository}"...`);
+        yield (0, process_helpers_1.run)("git", ["clone", `https://${docsRepoAccessToken}@github.com/${docsRepository}.git`, "main-docs"]);
+        console.log('Cloning the docs repository done.');
+    });
+}
+exports.cloneDocsRepository = cloneDocsRepository;
+
+
+/***/ }),
+
 /***/ 3500:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -25664,23 +25719,78 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const { exec } = __nccwpck_require__(2081);
+const git_helpers_1 = __nccwpck_require__(4813);
 const core = __importStar(__nccwpck_require__(5316));
 console.log('Publishing user documentation to the central docs repository...');
-const docsRepoAccessToken = core.getInput('docs-repo-access-token');
-const docsRepository = core.getInput('docs-repository');
-// checkout the docs repository
-console.log(`Cloning the docs repository ${docsRepository}...`);
-exec(`git clone https://${docsRepoAccessToken}@github.com/${docsRepository}.git main-docs`);
-exec("cd main-docs");
-console.log('Cloning the docs repository done.');
-// copy the markdown files from the build directory to the docs repository
-console.log(process.env);
-let docsSubDirectory = core.getInput('target-docs-path');
-if (!docsSubDirectory) {
-    console.log('No target-docs-path provided. We will use the current repository name as a docs sub-directory.');
+const env = process.env;
+core.exportVariable('GIT_COMMITTER_NAME', env.GITHUB_ACTOR);
+(0, git_helpers_1.cloneDocsRepository)()
+    .then(() => {
+    console.log('Cloning the docs repository done.');
+})
+    .then(() => {
+    console.log('Publishing user documentation is done.');
+});
+// // copy the markdown files from the build directory to the docs repository
+// console.log(process.env);
+// let docsSubDirectory = core.getInput('target-docs-path');
+// if(!docsSubDirectory) {
+//     console.log('No target-docs-path provided. We will use the current repository name as a docs sub-directory.');
+//     docsSubDirectory = env.GITHUB_REPOSITORY.split('/')[1];
+// }
+// const sourceDirectory = core.getInput('source-docs-path');
+// console.log(`Copying the markdown files from ${sourceDirectory} to ${docsSubDirectory}...`);
+// const targetDirectory = `main-docs/${docsSubDirectory}`;
+// if (!fs.existsSync(targetDirectory)) {
+//     fs.mkdirSync(targetDirectory);
+// }
+// // copy all files recursively
+// fs.cp(sourceDirectory, targetDirectory, {recursive: true}, (err:any) => {
+//     console.error(err);
+// });
+// // commit and push the changes to the docs repository
+
+
+/***/ }),
+
+/***/ 6361:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.run = void 0;
+const { spawn } = __nccwpck_require__(7718);
+function run(cmd, args) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => {
+            const process = spawn(cmd, args);
+            process.stdout.on('data', (data) => {
+                console.log(`stdout: ${data}`);
+            });
+            process.stderr.on('data', (data) => {
+                console.error(`stderr: ${data}`);
+            });
+            process.on('close', (code) => {
+                console.log(`child process exited with code ${code}`);
+                if (code !== 0) {
+                    reject();
+                }
+                resolve();
+            });
+        });
+    });
 }
-// commit and push the changes to the docs repository
+exports.run = run;
 
 
 /***/ }),
@@ -25786,6 +25896,14 @@ module.exports = require("https");
 
 "use strict";
 module.exports = require("net");
+
+/***/ }),
+
+/***/ 7718:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("node:child_process");
 
 /***/ }),
 
