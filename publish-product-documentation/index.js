@@ -25769,15 +25769,17 @@ function copyDocs() {
             docsSubDirectory = env.GITHUB_REPOSITORY.split('/')[1];
         }
         const sourceDirectory = core.getInput('source-docs-path');
-        console.log(`Copying the files from ${sourceDirectory} to ${docsSubDirectory}...`);
         const targetDirectory = `${constants_1.Constants.MainDocsDirectory}/${docsSubDirectory}`;
+        console.log(`Copying the files from ${sourceDirectory} to ${targetDirectory}...`);
         if (!fs.existsSync(targetDirectory)) {
             fs.mkdirSync(targetDirectory);
         }
         // copy all files recursively
-        fs.cp(sourceDirectory, targetDirectory, { recursive: true }, (err) => {
-            console.error(err);
-        });
+        fs.cpSync(sourceDirectory, targetDirectory, { recursive: true, filter: (src) => {
+                // we use this filter to log the files being copied
+                console.log(`Copying ${src}`);
+                return true; // copy all files
+            } });
         return targetDirectory;
     });
 }
