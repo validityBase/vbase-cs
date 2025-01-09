@@ -1,6 +1,8 @@
 import * as core from '@actions/core';
 import { run } from './process-helpers';
 import { Constants } from './constants';
+import * as path from 'path';
+import * as fs from 'fs';
 
 const docsRepoAccessToken = core.getInput('docs-repo-access-token');
 const docsRepository = core.getInput('target-repository');
@@ -14,12 +16,16 @@ export async function cloneDocsRepository(): Promise<void> {
 export async function commitAndPushDocsRepository(productDocsFolderToAdd: string): Promise<void> {
     console.log('Committing and pushing the changes to the docs repository...');
     await run("ls", ["-laR", "./"], null);
-    await run("cd", ['./' + Constants.MainDocsDirectory], null);
     
-    await run("git", ["config", "user.name", "github-actions[bot]"], Constants.MainDocsDirectory);
-    await run("git", ["config", "user.email", "github-actions[bot]@users.noreply.github.com"], Constants.MainDocsDirectory);
-    await run("git", ["add", productDocsFolderToAdd], Constants.MainDocsDirectory);
-    var diffOutput = await run("git", ["diff-index", "--quiet", "HEAD"], Constants.MainDocsDirectory);
+    console.log(process.cwd());
+    var docsDir = path.join(process.cwd(), Constants.MainDocsDirectory);
+    console.log("Exists: " + fs.existsSync(docsDir));
+    console.log(docsDir);
+
+    await run("git", ["config", "user.name", "github-actions[bot]"], docsDir);
+    await run("git", ["config", "user.email", "github-actions[bot]@users.noreply.github.com"], docsDir);
+    await run("git", ["add", productDocsFolderToAdd], docsDir);
+    var diffOutput = await run("git", ["diff-index", "--quiet", "HEAD"], docsDir);
     
     console.log(`diffOutput: ${diffOutput}`);
 }
