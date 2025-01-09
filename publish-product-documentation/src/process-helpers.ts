@@ -1,4 +1,5 @@
 import * as child_process from 'node:child_process';
+import { wait } from './utils';
 
 export function run(cmd: string, args: Array<string>, cwd: string | null): Promise<string> {
 
@@ -32,7 +33,9 @@ export function run(cmd: string, args: Array<string>, cwd: string | null): Promi
             if(code !== 0) {
                 reject("Command execution error. Exit code: " + code); 
             }
-            resolve(output);
+
+            // wait for 5 seconds to flush the output
+            wait(5 * 1000).then(() => { resolve(output); });
         });
     });
 }

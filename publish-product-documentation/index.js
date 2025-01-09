@@ -25821,6 +25821,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = void 0;
 const child_process = __importStar(__nccwpck_require__(7718));
+const utils_1 = __nccwpck_require__(46);
 function run(cmd, args, cwd) {
     var command = cmd + ' ' + args.join(' ');
     console.log(`Running command: ${command}`);
@@ -25846,11 +25847,38 @@ function run(cmd, args, cwd) {
             if (code !== 0) {
                 reject("Command execution error. Exit code: " + code);
             }
-            resolve(output);
+            // wait for 5 seconds to flush the output
+            (0, utils_1.wait)(5 * 1000).then(() => { resolve(output); });
         });
     });
 }
 exports.run = run;
+
+
+/***/ }),
+
+/***/ 46:
+/***/ (function(__unused_webpack_module, exports) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.wait = void 0;
+function wait(ms) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => setTimeout(resolve, ms));
+    });
+}
+exports.wait = wait;
 
 
 /***/ }),
