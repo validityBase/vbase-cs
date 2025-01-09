@@ -15,6 +15,9 @@ inputs:
     description: 'The vBase documentation repository. If not set, "validityBase/docs" will be used.'
     required: true
     default: 'validityBase/docs'
+  target-repository-branch:
+    description: 'The vBase documentation repository branch. If not set, branch name will be taken from the current product branch.'
+    required: false
 runs:
   using: "node20"
   main: "index.js"

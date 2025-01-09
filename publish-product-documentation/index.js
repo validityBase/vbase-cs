@@ -25694,6 +25694,7 @@ const process_helpers_1 = __nccwpck_require__(6361);
 const constants_1 = __nccwpck_require__(9097);
 const docsRepoAccessToken = core.getInput('docs-repo-access-token');
 const docsRepository = core.getInput('target-repository');
+const env = process.env;
 function cloneDocsRepository() {
     return __awaiter(this, void 0, void 0, function* () {
         console.log(`Cloning the docs repository: "${docsRepository}"...`);
@@ -25716,11 +25717,15 @@ function commitAndPushDocsRepository(productDocsSubDirectory) {
             .catch(() => __awaiter(this, void 0, void 0, function* () {
             // there are changes
             console.log('Committing the changes to the docs repository...');
-            console.log(process.env);
-            // git commit -m "Update vbase-py-samples documentation from automated build"
-            // git push https://$DOCS_BUILD_PAT@github.com/validityBase/docs.git main
-            //await run("git", ["commit", "-m", `Update ${productDocsSubDirectory} documentation from automated build`], Constants.MainDocsDirectory);
-            //await run("git", ["push", `https://${docsRepoAccessToken}@github.com/${docsRepository}.git`, ], Constants.MainDocsDirectory);
+            let targetBranch = core.getInput('target-repository-branch');
+            if (!targetBranch) {
+                console.log('No target-repository-branch provided. We will use the current product branch name.');
+                targetBranch = env.GITHUB_REF_NAME;
+            }
+            var currentRepo = env.GITHUB_REPOSITORY.split('/')[1];
+            yield (0, process_helpers_1.run)("git", ["commit", "-m", `Update ${currentRepo} documentation from automated build`], constants_1.Constants.MainDocsDirectory);
+            yield (0, process_helpers_1.run)("git", ["push", `https://${docsRepoAccessToken}@github.com/${docsRepository}.git`, targetBranch], constants_1.Constants.MainDocsDirectory);
+            console.log('Committing the changes to the docs repository done.');
         }));
     });
 }

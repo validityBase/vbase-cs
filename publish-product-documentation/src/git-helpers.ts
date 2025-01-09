@@ -4,6 +4,7 @@ import { Constants } from './constants';
 
 const docsRepoAccessToken = core.getInput('docs-repo-access-token');
 const docsRepository = core.getInput('target-repository');
+const env = process.env as any;
 
 export async function cloneDocsRepository(): Promise<void> {
     console.log(`Cloning the docs repository: "${docsRepository}"...`);
@@ -25,11 +26,17 @@ export async function commitAndPushDocsRepository(productDocsSubDirectory: strin
         .catch(async () => {
             // there are changes
             console.log('Committing the changes to the docs repository...');
-            console.log(process.env);
-            // git commit -m "Update vbase-py-samples documentation from automated build"
-            // git push https://$DOCS_BUILD_PAT@github.com/validityBase/docs.git main
-            //await run("git", ["commit", "-m", `Update ${productDocsSubDirectory} documentation from automated build`], Constants.MainDocsDirectory);
-            //await run("git", ["push", `https://${docsRepoAccessToken}@github.com/${docsRepository}.git`, ], Constants.MainDocsDirectory);
 
+            let targetBranch = core.getInput('target-repository-branch') as string;
+            if(!targetBranch) {
+                console.log('No target-repository-branch provided. We will use the current product branch name.');
+                targetBranch = env.GITHUB_REF_NAME;
+            }
+
+            var currentRepo = env.GITHUB_REPOSITORY.split('/')[1];
+            await run("git", ["commit", "-m", `Update ${currentRepo} documentation from automated build`], Constants.MainDocsDirectory);
+            await run("git", ["push", `https://${docsRepoAccessToken}@github.com/${docsRepository}.git`, targetBranch], Constants.MainDocsDirectory);
+
+            console.log('Committing the changes to the docs repository done.');
         });
 }
