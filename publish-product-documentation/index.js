@@ -25696,6 +25696,7 @@ const docsRepoAccessToken = core.getInput('docs-repo-access-token');
 const docsRepository = core.getInput('target-repository');
 function cloneDocsRepository() {
     return __awaiter(this, void 0, void 0, function* () {
+        yield (0, process_helpers_1.run)('echo', ["$PWD"], null);
         console.log(`Cloning the docs repository: "${docsRepository}"...`);
         yield (0, process_helpers_1.run)("git", ["clone", `https://${docsRepoAccessToken}@github.com/${docsRepository}.git`, constants_1.Constants.MainDocsDirectory], null);
         console.log('Cloning the docs repository done.');
@@ -25705,6 +25706,7 @@ exports.cloneDocsRepository = cloneDocsRepository;
 function commitAndPushDocsRepository(productDocsFolderToAdd) {
     return __awaiter(this, void 0, void 0, function* () {
         console.log('Committing and pushing the changes to the docs repository...');
+        yield (0, process_helpers_1.run)('echo', ["$PWD"], constants_1.Constants.MainDocsDirectory);
         yield (0, process_helpers_1.run)("git", ["config", "user.name", "github-actions[bot]"], constants_1.Constants.MainDocsDirectory);
         yield (0, process_helpers_1.run)("git", ["config", "user.email", "github-actions[bot]@users.noreply.github.com"], constants_1.Constants.MainDocsDirectory);
         yield (0, process_helpers_1.run)("git", ["add", productDocsFolderToAdd], constants_1.Constants.MainDocsDirectory);
