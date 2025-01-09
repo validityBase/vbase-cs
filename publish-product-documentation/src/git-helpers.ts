@@ -14,7 +14,7 @@ export async function cloneDocsRepository() {
 export async function commitAndPushDocsRepository(productDocsFolderToAdd: string) {
     console.log('Committing and pushing the changes to the docs repository...');
     await run("ls", ["-laR", "./"], null);
-    await run("cd", [Constants.MainDocsDirectory], null);
+    await run("cd", ['./' + Constants.MainDocsDirectory], null);
     
     await run("git", ["config", "user.name", "github-actions[bot]"], Constants.MainDocsDirectory);
     await run("git", ["config", "user.email", "github-actions[bot]@users.noreply.github.com"], Constants.MainDocsDirectory);
