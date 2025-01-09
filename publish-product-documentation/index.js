@@ -25692,31 +25692,23 @@ exports.commitAndPushDocsRepository = exports.cloneDocsRepository = void 0;
 const core = __importStar(__nccwpck_require__(5316));
 const process_helpers_1 = __nccwpck_require__(6361);
 const constants_1 = __nccwpck_require__(9097);
-const path = __importStar(__nccwpck_require__(1017));
-const fs = __importStar(__nccwpck_require__(7147));
 const docsRepoAccessToken = core.getInput('docs-repo-access-token');
 const docsRepository = core.getInput('target-repository');
 function cloneDocsRepository() {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log("CWD: " + process.cwd());
         console.log(`Cloning the docs repository: "${docsRepository}"...`);
         yield (0, process_helpers_1.run)("git", ["clone", `https://${docsRepoAccessToken}@github.com/${docsRepository}.git`, constants_1.Constants.MainDocsDirectory], null);
         console.log('Cloning the docs repository done.');
     });
 }
 exports.cloneDocsRepository = cloneDocsRepository;
-function commitAndPushDocsRepository(productDocsFolderToAdd) {
+function commitAndPushDocsRepository(productDocsSubDirectory) {
     return __awaiter(this, void 0, void 0, function* () {
         console.log('Committing and pushing the changes to the docs repository...');
-        yield (0, process_helpers_1.run)("ls", ["-laR", "./"], null);
-        console.log("CWD: " + process.cwd());
-        var docsDir = path.join(process.cwd(), constants_1.Constants.MainDocsDirectory);
-        console.log("Exists: " + fs.existsSync(docsDir));
-        console.log(docsDir);
-        yield (0, process_helpers_1.run)("git", ["config", "user.name", "github-actions[bot]"], docsDir);
-        yield (0, process_helpers_1.run)("git", ["config", "user.email", "github-actions[bot]@users.noreply.github.com"], docsDir);
-        yield (0, process_helpers_1.run)("git", ["add", productDocsFolderToAdd], docsDir);
-        var diffOutput = yield (0, process_helpers_1.run)("git", ["diff-index", "--quiet", "HEAD"], docsDir);
+        yield (0, process_helpers_1.run)("git", ["config", "user.name", "github-actions[bot]"], constants_1.Constants.MainDocsDirectory);
+        yield (0, process_helpers_1.run)("git", ["config", "user.email", "github-actions[bot]@users.noreply.github.com"], constants_1.Constants.MainDocsDirectory);
+        yield (0, process_helpers_1.run)("git", ["add", productDocsSubDirectory], constants_1.Constants.MainDocsDirectory);
+        var diffOutput = yield (0, process_helpers_1.run)("git", ["diff-index", "--quiet", "HEAD"], constants_1.Constants.MainDocsDirectory);
         console.log(`diffOutput: ${diffOutput}`);
     });
 }
@@ -25788,7 +25780,7 @@ function copyDocs() {
                 console.log(`Copying ${src}`);
                 return true; // copy all files
             } });
-        return targetDirectory;
+        return docsSubDirectory;
     });
 }
 exports.copyDocs = copyDocs;

@@ -26,5 +26,5 @@ export async function copyDocs(): Promise<string> {
         return true; // copy all files
     }});
 
-    return targetDirectory;
+    return docsSubDirectory;
 }
