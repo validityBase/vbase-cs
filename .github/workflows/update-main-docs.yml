@@ -18,5 +18,6 @@ jobs:
           source-docs-path: 'Docs'
           target-repository: 'volodymyr-bobko/docs'
       - name: list current dir contents
+        if: always()
         shell: bash
         run: ls -laR ./
