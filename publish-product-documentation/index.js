@@ -25698,6 +25698,7 @@ const docsRepoAccessToken = core.getInput('docs-repo-access-token');
 const docsRepository = core.getInput('target-repository');
 function cloneDocsRepository() {
     return __awaiter(this, void 0, void 0, function* () {
+        console.log("CWD: " + process.cwd());
         console.log(`Cloning the docs repository: "${docsRepository}"...`);
         yield (0, process_helpers_1.run)("git", ["clone", `https://${docsRepoAccessToken}@github.com/${docsRepository}.git`, constants_1.Constants.MainDocsDirectory], null);
         console.log('Cloning the docs repository done.');
@@ -25708,7 +25709,7 @@ function commitAndPushDocsRepository(productDocsFolderToAdd) {
     return __awaiter(this, void 0, void 0, function* () {
         console.log('Committing and pushing the changes to the docs repository...');
         yield (0, process_helpers_1.run)("ls", ["-laR", "./"], null);
-        console.log(process.cwd());
+        console.log("CWD: " + process.cwd());
         var docsDir = path.join(process.cwd(), constants_1.Constants.MainDocsDirectory);
         console.log("Exists: " + fs.existsSync(docsDir));
         console.log(docsDir);
@@ -27809,6 +27810,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const git_helpers_1 = __nccwpck_require__(4813);
 const md_helpers_1 = __nccwpck_require__(5572);
 console.log('Publishing user documentation to the central docs repository...');
+console.log("CWD: " + process.cwd());
 (0, git_helpers_1.cloneDocsRepository)()
     .then(() => {
     return (0, md_helpers_1.copyDocs)();

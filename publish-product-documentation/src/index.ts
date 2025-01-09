@@ -3,6 +3,7 @@ import { copyDocs } from './md-helpers';
 
 
 console.log('Publishing user documentation to the central docs repository...');
+console.log("CWD: " + process.cwd());
 
 cloneDocsRepository()
     .then(() => {
