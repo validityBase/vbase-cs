@@ -25742,6 +25742,39 @@ function getTargetBranch() {
 
 /***/ }),
 
+/***/ 3500:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const path_1 = __importDefault(__nccwpck_require__(1017));
+const git_helpers_1 = __nccwpck_require__(4813);
+const md_helpers_1 = __nccwpck_require__(5572);
+const constants_1 = __nccwpck_require__(9097);
+console.log('Publishing user documentation to the central docs repository...');
+(0, git_helpers_1.cloneDocsRepository)()
+    .then(() => {
+    return (0, md_helpers_1.copyDocs)();
+})
+    .then((prodDocsDirectoryInTheMainDocs) => {
+    return (0, md_helpers_1.preprocessMdsInDirectory)(path_1.default.join(constants_1.Constants.MainDocsDirectory, prodDocsDirectoryInTheMainDocs))
+        .then(() => prodDocsDirectoryInTheMainDocs);
+})
+    .then((prodDocsDirectoryInTheMainDocs) => {
+    return (0, git_helpers_1.commitAndPushDocsRepository)(prodDocsDirectoryInTheMainDocs);
+})
+    .then(() => {
+    console.log('Publishing user documentation is done.');
+});
+// // commit and push the changes to the docs repository
+
+
+/***/ }),
+
 /***/ 5572:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -25779,11 +25812,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.copyDocs = void 0;
+exports.preprocessMdsInDirectory = exports.copyDocs = void 0;
 const core = __importStar(__nccwpck_require__(5316));
 const constants_1 = __nccwpck_require__(9097);
 const fs = __importStar(__nccwpck_require__(7147));
+const path_1 = __importDefault(__nccwpck_require__(1017));
 const env = process.env;
 function copyDocs() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -25809,6 +25846,37 @@ function copyDocs() {
     });
 }
 exports.copyDocs = copyDocs;
+function preprocessMdsInDirectory(directory) {
+    return __awaiter(this, void 0, void 0, function* () {
+        // iterate over all markdown files in the directory and preprocess them
+        console.log(`Preprocessing markdown files in ${directory}...`);
+        const files = getFiles(directory);
+        for (let i = 0; i < files.length; i++) {
+            if (path_1.default.extname(files[i]) !== '.md') {
+                console.log(`Skipping ${files[i]}`);
+                continue;
+            }
+            console.log(`Preprocessing ${files[i]}...`);
+            let content = fs.readFileSync(files[i], 'utf8');
+            content = 'PREPROCESSED\r\n' + content;
+            fs.writeFileSync(files[i], content);
+        }
+    });
+}
+exports.preprocessMdsInDirectory = preprocessMdsInDirectory;
+function getFiles(dir) {
+    const fsEntries = fs.readdirSync(dir, { withFileTypes: true });
+    let res = [];
+    for (let i = 0; i < fsEntries.length; i++) {
+        if (fsEntries[i].isDirectory()) {
+            res = res.concat(getFiles(path_1.default.join(dir, fsEntries[i].name)));
+        }
+        else {
+            res = res.concat([path_1.default.join(dir, fsEntries[i].name)]);
+        }
+    }
+    return res;
+}
 
 
 /***/ }),
@@ -27817,31 +27885,12 @@ module.exports = parseParams
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
 /******/ 	
 /************************************************************************/
-var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
-(() => {
-"use strict";
-var exports = __webpack_exports__;
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const git_helpers_1 = __nccwpck_require__(4813);
-const md_helpers_1 = __nccwpck_require__(5572);
-console.log('Publishing user documentation to the central docs repository...');
-console.log("CWD: " + process.cwd());
-(0, git_helpers_1.cloneDocsRepository)()
-    .then(() => {
-    return (0, md_helpers_1.copyDocs)();
-})
-    .then((prodDocsDirectoryInTheMainDocs) => {
-    return (0, git_helpers_1.commitAndPushDocsRepository)(prodDocsDirectoryInTheMainDocs);
-})
-    .then(() => {
-    console.log('Publishing user documentation is done.');
-});
-// // commit and push the changes to the docs repository
-
-})();
-
-module.exports = __webpack_exports__;
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module is referenced by other modules so it can't be inlined
+/******/ 	var __webpack_exports__ = __nccwpck_require__(3500);
+/******/ 	module.exports = __webpack_exports__;
+/******/ 	
 /******/ })()
 ;

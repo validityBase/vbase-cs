@@ -1,6 +1,7 @@
 import * as core from '@actions/core';
 import { Constants } from './constants';
 import * as fs from 'fs';
+import path from 'path';
 
 const env = process.env as any;
 
@@ -28,3 +29,36 @@ export async function copyDocs(): Promise<string> {
 
     return docsSubDirectory;
 }
+
+export async function preprocessMdsInDirectory(directory: string): Promise<void> {
+    // iterate over all markdown files in the directory and preprocess them
+    console.log(`Preprocessing markdown files in ${directory}...`);
+
+    const files = getFiles(directory);
+
+    for (let i = 0; i < files.length; i++) {
+
+        if(path.extname(files[i]) !== '.md') {
+            console.log(`Skipping ${files[i]}`);
+            continue;
+        }
+
+        console.log(`Preprocessing ${files[i]}...`);
+        let content = fs.readFileSync(files[i], 'utf8');
+        content = 'PREPROCESSED\r\n' + content;
+        fs.writeFileSync(files[i], content);
+    }
+}
+
+function getFiles(dir: string): Array<string> {
+    const fsEntries = fs.readdirSync(dir, { withFileTypes: true });
+    let res: string[] = [];
+    for (let i = 0; i < fsEntries.length; i++) {
+      if (fsEntries[i].isDirectory()) {
+        res = res.concat(getFiles(path.join(dir, fsEntries[i].name)));
+      } else {
+        res = res.concat([path.join(dir, fsEntries[i].name)]);
+      }
+    }
+    return res;
+  }

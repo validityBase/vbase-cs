@@ -1,13 +1,17 @@
+import path from 'path';
 import { cloneDocsRepository, commitAndPushDocsRepository } from './git-helpers';
-import { copyDocs } from './md-helpers';
-
+import { copyDocs, preprocessMdsInDirectory } from './md-helpers';
+import { Constants } from './constants';
 
 console.log('Publishing user documentation to the central docs repository...');
-console.log("CWD: " + process.cwd());
 
 cloneDocsRepository()
     .then(() => {
         return copyDocs();
+    })
+    .then((prodDocsDirectoryInTheMainDocs) => {
+        return preprocessMdsInDirectory(path.join(Constants.MainDocsDirectory, prodDocsDirectoryInTheMainDocs))
+            .then(() => prodDocsDirectoryInTheMainDocs);
     })
     .then((prodDocsDirectoryInTheMainDocs) => {
         return commitAndPushDocsRepository(prodDocsDirectoryInTheMainDocs);
