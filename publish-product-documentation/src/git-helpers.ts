@@ -1,8 +1,6 @@
 import * as core from '@actions/core';
 import { run } from './process-helpers';
 import { Constants } from './constants';
-import * as path from 'path';
-import * as fs from 'fs';
 
 const docsRepoAccessToken = core.getInput('docs-repo-access-token');
 const docsRepository = core.getInput('target-repository');
@@ -27,5 +25,11 @@ export async function commitAndPushDocsRepository(productDocsSubDirectory: strin
         .catch(async () => {
             // there are changes
             console.log('Committing the changes to the docs repository...');
+            console.log(process.env);
+            // git commit -m "Update vbase-py-samples documentation from automated build"
+            // git push https://$DOCS_BUILD_PAT@github.com/validityBase/docs.git main
+            //await run("git", ["commit", "-m", `Update ${productDocsSubDirectory} documentation from automated build`], Constants.MainDocsDirectory);
+            //await run("git", ["push", `https://${docsRepoAccessToken}@github.com/${docsRepository}.git`, ], Constants.MainDocsDirectory);
+
         });
 }

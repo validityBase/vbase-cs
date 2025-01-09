@@ -25716,6 +25716,11 @@ function commitAndPushDocsRepository(productDocsSubDirectory) {
             .catch(() => __awaiter(this, void 0, void 0, function* () {
             // there are changes
             console.log('Committing the changes to the docs repository...');
+            console.log(process.env);
+            // git commit -m "Update vbase-py-samples documentation from automated build"
+            // git push https://$DOCS_BUILD_PAT@github.com/validityBase/docs.git main
+            //await run("git", ["commit", "-m", `Update ${productDocsSubDirectory} documentation from automated build`], Constants.MainDocsDirectory);
+            //await run("git", ["push", `https://${docsRepoAccessToken}@github.com/${docsRepository}.git`, ], Constants.MainDocsDirectory);
         }));
     });
 }
