@@ -25695,10 +25695,15 @@ const constants_1 = __nccwpck_require__(9097);
 const docsRepoAccessToken = core.getInput('docs-repo-access-token');
 const docsRepository = core.getInput('target-repository');
 const env = process.env;
+let targetBranch = core.getInput('target-repository-branch');
+if (!targetBranch) {
+    console.log('No target-repository-branch provided. We will use the current product branch name.');
+    targetBranch = env.GITHUB_REF_NAME;
+}
 function cloneDocsRepository() {
     return __awaiter(this, void 0, void 0, function* () {
         console.log(`Cloning the docs repository: "${docsRepository}"...`);
-        yield (0, process_helpers_1.run)("git", ["clone", `https://${docsRepoAccessToken}@github.com/${docsRepository}.git`, constants_1.Constants.MainDocsDirectory], null);
+        yield (0, process_helpers_1.run)("git", ["clone", "-b", getTargetBranch(), `https://${docsRepoAccessToken}@github.com/${docsRepository}.git`, constants_1.Constants.MainDocsDirectory], null);
         console.log('Cloning the docs repository done.');
     });
 }
@@ -25717,19 +25722,22 @@ function commitAndPushDocsRepository(productDocsSubDirectory) {
             .catch(() => __awaiter(this, void 0, void 0, function* () {
             // there are changes
             console.log('Committing the changes to the docs repository...');
-            let targetBranch = core.getInput('target-repository-branch');
-            if (!targetBranch) {
-                console.log('No target-repository-branch provided. We will use the current product branch name.');
-                targetBranch = env.GITHUB_REF_NAME;
-            }
             var currentRepo = env.GITHUB_REPOSITORY.split('/')[1];
             yield (0, process_helpers_1.run)("git", ["commit", "-m", `Update ${currentRepo} documentation from automated build`], constants_1.Constants.MainDocsDirectory);
-            yield (0, process_helpers_1.run)("git", ["push", `https://${docsRepoAccessToken}@github.com/${docsRepository}.git`, targetBranch], constants_1.Constants.MainDocsDirectory);
+            yield (0, process_helpers_1.run)("git", ["push", `https://${docsRepoAccessToken}@github.com/${docsRepository}.git`, getTargetBranch()], constants_1.Constants.MainDocsDirectory);
             console.log('Committing the changes to the docs repository done.');
         }));
     });
 }
 exports.commitAndPushDocsRepository = commitAndPushDocsRepository;
+function getTargetBranch() {
+    let targetBranch = core.getInput('target-repository-branch');
+    if (!targetBranch) {
+        targetBranch = env.GITHUB_REF_NAME;
+        console.log(`No target-repository-branch provided. We will use the current product branch name - ${targetBranch}.`);
+    }
+    return targetBranch;
+}
 
 
 /***/ }),
