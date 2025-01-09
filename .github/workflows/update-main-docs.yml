@@ -17,3 +17,6 @@ jobs:
           docs-repo-access-token: ${{ secrets.DOCS_REPO_ACCESS_TOKEN }}
           source-docs-path: 'Docs'
           target-repository: 'volodymyr-bobko/docs'
+      - name: list current dir contents
+        shell: bash
+        run: ls -laR ./
