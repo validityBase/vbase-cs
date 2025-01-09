@@ -12,7 +12,7 @@ export async function copyDocs(): Promise<string> {
         console.log('No target-docs-path provided. We will use the current repository name as a docs sub-directory.');
         docsSubDirectory = env.GITHUB_REPOSITORY.split('/')[1];
     }
-    const sourceDirectory = core.getInput('source-docs-path');
+    const sourceDirectory = core.getInput('source-docs-path') + "/";
     const targetDirectory = `${Constants.MainDocsDirectory}/${docsSubDirectory}`;
     console.log(`Copying the files from ${sourceDirectory} to ${targetDirectory}...`);
 

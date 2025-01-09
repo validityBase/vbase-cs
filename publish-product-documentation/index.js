@@ -25768,7 +25768,7 @@ function copyDocs() {
             console.log('No target-docs-path provided. We will use the current repository name as a docs sub-directory.');
             docsSubDirectory = env.GITHUB_REPOSITORY.split('/')[1];
         }
-        const sourceDirectory = core.getInput('source-docs-path');
+        const sourceDirectory = core.getInput('source-docs-path') + "/";
         const targetDirectory = `${constants_1.Constants.MainDocsDirectory}/${docsSubDirectory}`;
         console.log(`Copying the files from ${sourceDirectory} to ${targetDirectory}...`);
         if (!fs.existsSync(targetDirectory)) {
@@ -25830,6 +25830,8 @@ exports.run = void 0;
 const child_process = __importStar(__nccwpck_require__(7718));
 function run(cmd, args, cwd) {
     return __awaiter(this, void 0, void 0, function* () {
+        var command = cmd + ' ' + args.join(' ');
+        console.log(`Running command: ${command}`);
         return new Promise((resolve, reject) => {
             var options = {};
             if (cwd) {
