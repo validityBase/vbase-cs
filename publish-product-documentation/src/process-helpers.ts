@@ -1,6 +1,6 @@
 import * as child_process from 'node:child_process';
 
-export async function run(cmd: string, args: Array<string>, cwd: string | null): Promise<string> {
+export function run(cmd: string, args: Array<string>, cwd: string | null): Promise<string> {
 
     var command = cmd + ' ' + args.join(' ');
     console.log(`Running command: ${command}`);

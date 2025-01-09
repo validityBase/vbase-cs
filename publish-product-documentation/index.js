@@ -25818,46 +25818,35 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.run = void 0;
 const child_process = __importStar(__nccwpck_require__(7718));
 function run(cmd, args, cwd) {
-    return __awaiter(this, void 0, void 0, function* () {
-        var command = cmd + ' ' + args.join(' ');
-        console.log(`Running command: ${command}`);
-        return new Promise((resolve, reject) => {
-            var options = {};
-            if (cwd) {
-                options.cwd = cwd;
+    var command = cmd + ' ' + args.join(' ');
+    console.log(`Running command: ${command}`);
+    return new Promise((resolve, reject) => {
+        var options = {};
+        if (cwd) {
+            options.cwd = cwd;
+        }
+        let output = '';
+        const process = child_process.spawn(cmd, args, options);
+        process.stdout.on('data', (data) => {
+            if (data) {
+                console.log(`stdout: ${data}`);
+                output += data;
             }
-            let output = '';
-            const process = child_process.spawn(cmd, args, options);
-            process.stdout.on('data', (data) => {
-                if (data) {
-                    console.log(`stdout: ${data}`);
-                    output += data;
-                }
-            });
-            process.stderr.on('data', (data) => {
-                if (data) {
-                    console.error(`stderr: ${data}`);
-                }
-            });
-            process.on('close', (code) => {
-                if (code !== 0) {
-                    reject("Command execution error. Exit code: " + code);
-                }
-                resolve(output);
-            });
+        });
+        process.stderr.on('data', (data) => {
+            if (data) {
+                console.error(`stderr: ${data}`);
+            }
+        });
+        process.on('close', (code) => {
+            if (code !== 0) {
+                reject("Command execution error. Exit code: " + code);
+            }
+            resolve(output);
         });
     });
 }
