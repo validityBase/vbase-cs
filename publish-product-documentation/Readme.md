@@ -1,9 +1,9 @@
 ## Overall Convention for Documentation Publishing
 
-1. The user-facing documentation should be stored in the docs folder of the product repository.
+1. The user-facing documentation should be stored in the `docs` folder of the product repository.
 The documentation should be written in Markdown format.
-1. The internal documentation should be stored in the dev-docs folder of the product repository.
-1. Each product repository should have a workflow for documentation publishing. The workflow should be based on this action.
+1. The internal documentation should be stored in the dev-docs folder of the product repository. It'll not be published to the central documentation repository.
+1. Each product repository should have a workflow for documentation publishing. The workflow should be based on this action. Here is an example of the workflow YAML file:
 ``` yaml
 name: Update the Main Docs Repository
 
@@ -21,10 +21,9 @@ jobs:
       - name: Publish Documents
         uses: validityBase/docs/publish-product-documentation@main
         with:
-          docs-repo-access-token: ${{ secrets.DOCS_REPO_ACCESS_TOKEN }} # required
-          source-docs-path: 'Docs' # optional - default is 'docs'
+          docs-repo-access-token: ${{ secrets.DOCS_REPO_ACCESS_TOKEN }} #source-docs-path: # optional - default is 'docs'
           #target-docs-path: # optional - default is the name of the current repository
-          target-repository: 'validityBase/docs' # optional - default is 'validityBase/docs'
+          #target-repository: # optional - default is 'validityBase/docs'
           #target-repository-branch: # optional - default is the branch name of the current product branch
           #preprocess-plant-uml: # optional - default is 'true'
     
