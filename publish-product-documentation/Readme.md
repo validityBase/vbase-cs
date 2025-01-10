@@ -1,8 +1,8 @@
 ## Overall Convention for Documentation Publishing
 
-1. The user-facing documentation should be stored in the `docs` folder of the product repository.
+1. The user-facing documentation should be stored in the `user-docs` folder of the product repository.
 The documentation should be written in Markdown format.
-1. The internal documentation should be stored in the dev-docs folder of the product repository. It'll not be published to the central documentation repository.
+1. The internal documentation should be stored in the `docs` folder of the product repository. It'll not be published to the central documentation repository.
 1. Each product repository should have a workflow for documentation publishing. The workflow should be based on this action. Here is an example of the workflow YAML file:
 ``` yaml
 name: Update the Main Docs Repository
