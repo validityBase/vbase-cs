@@ -86,23 +86,3 @@ ErrorHandler:
 
 End Sub
 ```
-
-```plantuml(My Diagram)
-@startuml
-
-[Client] #palegreen
-
-cloud {
-  [Forwarder]
-  [Ethereum]
-  [vBase Smart Contract]
-}
-
-
-[Client] --> [Forwarder] : HTTP
-[Forwarder] --> [Ethereum]
-[Ethereum] o-- [vBase Smart Contract]
-
-@enduml
-```
-
