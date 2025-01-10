@@ -1,4 +1,5 @@
 import path from 'path';
+import * as core from '@actions/core';
 import { cloneDocsRepository, commitAndPushDocsRepository } from './git-helpers';
 import { copyDocs, preprocessMdsInDirectory } from './md-helpers';
 import { Constants } from './constants';
@@ -10,8 +11,13 @@ cloneDocsRepository()
         return copyDocs();
     })
     .then((prodDocsDirectoryInTheMainDocs) => {
-        return preprocessMdsInDirectory(path.join(Constants.MainDocsDirectory, prodDocsDirectoryInTheMainDocs))
-            .then(() => prodDocsDirectoryInTheMainDocs);
+        if(core.getInput('preprocess-plant-uml') === 'true') {
+            return preprocessMdsInDirectory(path.join(Constants.MainDocsDirectory, prodDocsDirectoryInTheMainDocs))
+                .then(() => prodDocsDirectoryInTheMainDocs);
+        }
+        else {
+            return prodDocsDirectoryInTheMainDocs;
+        }
     })
     .then((prodDocsDirectoryInTheMainDocs) => {
         return commitAndPushDocsRepository(prodDocsDirectoryInTheMainDocs);
@@ -19,7 +25,3 @@ cloneDocsRepository()
     .then(() => {
         console.log('Publishing user documentation is done.');
     });
-
-
-
-// // commit and push the changes to the docs repository

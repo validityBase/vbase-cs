@@ -18,6 +18,10 @@ inputs:
   target-repository-branch:
     description: 'The vBase documentation repository branch. If not set, branch name will be taken from the current product branch.'
     required: false
+  preprocess-plant-uml:
+    description: 'Preprocess PlantUML diagrams in the markdown files. "true" if not set.'
+    required: false
+    default: 'true'
 runs:
   using: "node20"
   main: "index.js"

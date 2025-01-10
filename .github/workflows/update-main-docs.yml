@@ -14,10 +14,11 @@ jobs:
       - name: Publish Documents
         uses: validityBase/vbase-cs/publish-product-documentation@docs_repo_build_pipeline
         with:
-          docs-repo-access-token: ${{ secrets.DOCS_REPO_ACCESS_TOKEN }}
-          source-docs-path: 'Docs'
-          target-repository: 'volodymyr-bobko/docs'
-      - name: list current dir contents
-        if: always()
-        shell: bash
-        run: ls -laR ./
+          docs-repo-access-token: ${{ secrets.DOCS_REPO_ACCESS_TOKEN }} # required
+          source-docs-path: 'Docs' # optional - default is 'docs'
+          #target-docs-path: # optional - default is the name of the current repository
+          target-repository: 'volodymyr-bobko/docs' # optional - default is 'validityBase/docs'
+          #target-repository-branch: # optional - default is the branch name of the current product branch
+          #preprocess-plant-uml: # optional - default is 'true'
+          
+

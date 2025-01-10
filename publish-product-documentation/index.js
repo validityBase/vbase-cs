@@ -3195,6 +3195,196 @@ function copyFile(srcFile, destFile, force) {
 
 /***/ }),
 
+/***/ 1951:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+module.exports = {
+  encode: (__nccwpck_require__(1577)/* .encode */ .c),
+  decode: (__nccwpck_require__(6438)/* .decode */ .J)
+}
+
+
+/***/ }),
+
+/***/ 2805:
+/***/ ((module) => {
+
+"use strict";
+
+
+// Reverse of
+// http://plantuml.sourceforge.net/codejavascript2.html
+
+// It is described as being "a transformation close to base64"
+// The code has been slightly modified to pass linters
+
+function decode6bit (cc) {
+  var c = cc.charCodeAt(0)
+  if (cc === '_') return 63
+  if (cc === '-') return 62
+  if (c >= 97) return c - 61 // - 97 + 26 + 10
+  if (c >= 65) return c - 55 // - 65 + 10
+  if (c >= 48) return c - 48
+  return '?'
+}
+
+function extract3bytes (data) {
+  var c1 = decode6bit(data[0])
+  var c2 = decode6bit(data[1])
+  var c3 = decode6bit(data[2])
+  var c4 = decode6bit(data[3])
+  var b1 = c1 << 2 | (c2 >> 4) & 0x3F
+  var b2 = (c2 << 4) & 0xF0 | (c3 >> 2) & 0xF
+  var b3 = (c3 << 6) & 0xC0 | c4 & 0x3F
+
+  return [b1, b2, b3]
+}
+
+module.exports = function (data) {
+  var r = ''
+  var i = 0
+  for (i = 0; i < data.length; i += 4) {
+    var t = extract3bytes(data.substring(i, i + 4))
+    r = r + String.fromCharCode(t[0])
+    r = r + String.fromCharCode(t[1])
+    r = r + String.fromCharCode(t[2])
+  }
+  return r
+}
+
+
+/***/ }),
+
+/***/ 6438:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+"use strict";
+
+
+var inflate = __nccwpck_require__(3779)
+var decode64 = __nccwpck_require__(2805)
+
+module.exports.J = function (encoded) {
+  var deflated = decode64(encoded)
+  return inflate(deflated)
+}
+
+
+/***/ }),
+
+/***/ 5277:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+"use strict";
+
+
+const zlib = __nccwpck_require__(9796)
+
+module.exports = function (data) {
+  return zlib.deflateRawSync(data, { level: 9 }).toString('binary')
+}
+
+
+/***/ }),
+
+/***/ 4968:
+/***/ ((module) => {
+
+"use strict";
+
+
+// Encode code taken from the PlantUML website:
+// http://plantuml.sourceforge.net/codejavascript2.html
+
+// It is described as being "a transformation close to base64"
+// The code has been slightly modified to pass linters
+
+function encode6bit (b) {
+  if (b < 10) {
+    return String.fromCharCode(48 + b)
+  }
+  b -= 10
+  if (b < 26) {
+    return String.fromCharCode(65 + b)
+  }
+  b -= 26
+  if (b < 26) {
+    return String.fromCharCode(97 + b)
+  }
+  b -= 26
+  if (b === 0) {
+    return '-'
+  }
+  if (b === 1) {
+    return '_'
+  }
+  return '?'
+}
+
+function append3bytes (b1, b2, b3) {
+  var c1 = b1 >> 2
+  var c2 = ((b1 & 0x3) << 4) | (b2 >> 4)
+  var c3 = ((b2 & 0xF) << 2) | (b3 >> 6)
+  var c4 = b3 & 0x3F
+  var r = ''
+  r += encode6bit(c1 & 0x3F)
+  r += encode6bit(c2 & 0x3F)
+  r += encode6bit(c3 & 0x3F)
+  r += encode6bit(c4 & 0x3F)
+  return r
+}
+
+module.exports = function (data) {
+  var r = ''
+  for (var i = 0; i < data.length; i += 3) {
+    if (i + 2 === data.length) {
+      r += append3bytes(data.charCodeAt(i), data.charCodeAt(i + 1), 0)
+    } else if (i + 1 === data.length) {
+      r += append3bytes(data.charCodeAt(i), 0, 0)
+    } else {
+      r += append3bytes(data.charCodeAt(i),
+        data.charCodeAt(i + 1),
+        data.charCodeAt(i + 2))
+    }
+  }
+  return r
+}
+
+
+/***/ }),
+
+/***/ 1577:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+"use strict";
+
+
+var deflate = __nccwpck_require__(5277)
+var encode64 = __nccwpck_require__(4968)
+
+module.exports.c = function (puml) {
+  var deflated = deflate(puml)
+  return encode64(deflated)
+}
+
+
+/***/ }),
+
+/***/ 3779:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+"use strict";
+
+
+const zlib = __nccwpck_require__(9796)
+
+module.exports = function (data) {
+  return zlib.inflateRawSync(Buffer.from(data, 'binary')).toString()
+}
+
+
+/***/ }),
+
 /***/ 5220:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
@@ -25747,11 +25937,35 @@ function getTargetBranch() {
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const path_1 = __importDefault(__nccwpck_require__(1017));
+const core = __importStar(__nccwpck_require__(5316));
 const git_helpers_1 = __nccwpck_require__(4813);
 const md_helpers_1 = __nccwpck_require__(5572);
 const constants_1 = __nccwpck_require__(9097);
@@ -25761,8 +25975,13 @@ console.log('Publishing user documentation to the central docs repository...');
     return (0, md_helpers_1.copyDocs)();
 })
     .then((prodDocsDirectoryInTheMainDocs) => {
-    return (0, md_helpers_1.preprocessMdsInDirectory)(path_1.default.join(constants_1.Constants.MainDocsDirectory, prodDocsDirectoryInTheMainDocs))
-        .then(() => prodDocsDirectoryInTheMainDocs);
+    if (core.getInput('preprocess-plant-uml') === 'true') {
+        return (0, md_helpers_1.preprocessMdsInDirectory)(path_1.default.join(constants_1.Constants.MainDocsDirectory, prodDocsDirectoryInTheMainDocs))
+            .then(() => prodDocsDirectoryInTheMainDocs);
+    }
+    else {
+        return prodDocsDirectoryInTheMainDocs;
+    }
 })
     .then((prodDocsDirectoryInTheMainDocs) => {
     return (0, git_helpers_1.commitAndPushDocsRepository)(prodDocsDirectoryInTheMainDocs);
@@ -25770,7 +25989,6 @@ console.log('Publishing user documentation to the central docs repository...');
     .then(() => {
     console.log('Publishing user documentation is done.');
 });
-// // commit and push the changes to the docs repository
 
 
 /***/ }),
@@ -25821,10 +26039,11 @@ const core = __importStar(__nccwpck_require__(5316));
 const constants_1 = __nccwpck_require__(9097);
 const fs = __importStar(__nccwpck_require__(7147));
 const path_1 = __importDefault(__nccwpck_require__(1017));
+const plantuml_encoder_1 = __importDefault(__nccwpck_require__(1951));
 const env = process.env;
+// copy the markdown files from the build directory to the docs repository
 function copyDocs() {
     return __awaiter(this, void 0, void 0, function* () {
-        // copy the markdown files from the build directory to the docs repository
         let docsSubDirectory = core.getInput('target-docs-path');
         if (!docsSubDirectory) {
             console.log('No target-docs-path provided. We will use the current repository name as a docs sub-directory.');
@@ -25858,12 +26077,73 @@ function preprocessMdsInDirectory(directory) {
             }
             console.log(`Preprocessing ${files[i]}...`);
             let content = fs.readFileSync(files[i], 'utf8');
-            content = 'PREPROCESSED\r\n' + content;
+            content = yield preprocessPlantUmlDiagrams(content, path_1.default.dirname(files[i]));
             fs.writeFileSync(files[i], content);
         }
     });
 }
 exports.preprocessMdsInDirectory = preprocessMdsInDirectory;
+function preprocessPlantUmlDiagrams(content, imagesDir) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let processingResult = yield precessFirstUmlDiagram(content, imagesDir);
+        if (!processingResult.diagramCreated) {
+            console.log('No PlantUml diagrams found in the file.');
+            return content;
+        }
+        let numberOfDiagrams = 0;
+        while (processingResult.diagramCreated) {
+            content = processingResult.content;
+            numberOfDiagrams++;
+            processingResult = yield precessFirstUmlDiagram(content, imagesDir);
+        }
+        console.log(`Preprocessed ${numberOfDiagrams} PlantUml diagrams`);
+        return content;
+    });
+}
+function precessFirstUmlDiagram(content, imagesDir) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const diagramStartPattern = /```plantuml/g;
+        const diagramEndPattern = /```/g;
+        var lines = content.split('\n');
+        var diagramStart = findDiagramStart(lines);
+        var diagramEnd = findDiagramEnd(diagramStart, lines);
+        // no diagram found
+        if (diagramStart === -1) {
+            return { diagramCreated: false, content: content };
+        }
+        // no closing ``` found
+        if (diagramEnd === -1) {
+            throw new Error('PlantUml diagram is not closed');
+        }
+        let diagramCode = lines.slice(diagramStart + 1, diagramEnd - 1).join('\n');
+        // get UTF8
+        let encodedPuml = plantuml_encoder_1.default.encode(diagramCode);
+        let plantUmlUrl = `https://img.plantuml.biz/plantuml/png/${encodedPuml}`;
+        content = lines.slice(0, diagramStart)
+            .concat([`![${getDiagramName(lines[diagramStart])}](${plantUmlUrl})`])
+            .concat(lines.slice(diagramEnd + 1))
+            .join('\n');
+        return { diagramCreated: true, content: content };
+    });
+}
+function findDiagramStart(lines) {
+    const diagramStartPattern = /```plantuml/g;
+    for (let i = 0; i < lines.length; i++) {
+        if (diagramStartPattern.test(lines[i])) {
+            return i;
+        }
+    }
+    return -1;
+}
+function findDiagramEnd(startFrom, lines) {
+    const diagramEndPattern = /```/g;
+    for (let i = startFrom + 1; i < lines.length; i++) {
+        if (diagramEndPattern.test(lines[i])) {
+            return i;
+        }
+    }
+    return -1;
+}
 function getFiles(dir) {
     const fsEntries = fs.readdirSync(dir, { withFileTypes: true });
     let res = [];
@@ -25876,6 +26156,13 @@ function getFiles(dir) {
         }
     }
     return res;
+}
+function getDiagramName(openDiagramTag) {
+    var groups = /(\()(.+)(\))/g.exec(openDiagramTag);
+    if (groups && groups.length > 3) {
+        return groups[2];
+    }
+    return 'Diagram';
 }
 
 

@@ -1,3 +1,41 @@
+## Overall Convention for Documentation Publishing
+
+1. The user-facing documentation should be stored in the docs folder of the product repository.
+The documentation should be written in Markdown format.
+1. The internal documentation should be stored in the dev-docs folder of the product repository.
+1. Each product repository should have a workflow for documentation publishing. The workflow should be based on this action.
+``` yaml
+name: Update the Main Docs Repository
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  update-main-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Publish Documents
+        uses: validityBase/docs/publish-product-documentation@main
+        with:
+          docs-repo-access-token: ${{ secrets.DOCS_REPO_ACCESS_TOKEN }} # required
+          source-docs-path: 'Docs' # optional - default is 'docs'
+          #target-docs-path: # optional - default is the name of the current repository
+          target-repository: 'validityBase/docs' # optional - default is 'validityBase/docs'
+          #target-repository-branch: # optional - default is the branch name of the current product branch
+          #preprocess-plant-uml: # optional - default is 'true'
+    
+```
+1. The diagrams in the documentation should be created using PlantUML. The source code for the diagrams should be enclosed in:\
+\`\`\` plantuml(Diagram Name)\
+ DIAGRAM CODE GOES HERE\
+\`\`\`
+1. To view the diagrams in the development environment, please use a corresponding plugin. For example, for Visual Studio Code, you can use the [Markdown Plantuml Preview](https://marketplace.visualstudio.com/items?itemName=myml.vscode-markdown-plantuml-preview) extension.
+1. During the document publishing process, this action will automatically replace all PlantUML code blocks with the corresponding image links to make them visible in the end-user browser.
+
 # Purpose of this Custom Action  
 This action is created to simplify the process of publishing user documentation from the product repository to the central vBase documentation repository.  
 
@@ -14,6 +52,6 @@ Besides copying the files, it also preprocesses the PlantUML diagrams in the Mar
 
 ## How to Make Changes to the Action  
 1. Install Node.js and npm on your development machine.  
-2. Make the changes in the corresponding TypeScript (TS) file in the `src` folder.  
-3. Run the following command to compile the TS file into a JS file: `npm run build`. This will update the `index.js` file in the action root folder.  
-4. Commit the changes and push them to the repository.  
+1. Make the changes in the corresponding TypeScript (TS) file in the `src` folder.  
+1. Run the following command to compile the TS file into a JS file: `npm run build`. This will update the `index.js` file in the action root folder.  
+1. Commit the changes and push them to the repository.  
