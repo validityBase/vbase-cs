@@ -27,9 +27,5 @@
 signtool sign /fd SHA256 /n "<CERTIFICATE_NAME>" /t http://timestamp.url.com /v "vBase.msi"
 ```
 
-# How to Update the Diagrams in the Documentation
-- All diagrams are created using [PlantUML](https://plantuml.com).
-- The source code for the diagrams is located in the `Docs\Diagrams` folder.
-
 # Known issues
 1. The MSI installer installs the SDK library in the `Program Files (x86)` directory instead of `Program Files`.
