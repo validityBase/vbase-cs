@@ -1,0 +1,24 @@
+name: Update the Main Docs Repository
+
+on:
+  push:
+    branches:
+      - main # publish the docs only when the main branch is updated
+
+jobs:
+  update-main-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Publish Documents
+        uses: validityBase/docs/publish-docs-action@main
+        with:
+          docs-repo-access-token: ${{ secrets.DOCS_REPO_ACCESS_TOKEN }}
+          # Folder name is case-sensitive. The default one is 'docs'.
+          # In .NET projects, PascalCase is conventional for folder naming,
+          # so we need to override the default value to 'Docs'.
+          source-docs-path: 'Docs'
+          target-repository-branch: main
+          
+

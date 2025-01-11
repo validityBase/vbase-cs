@@ -12,3 +12,5 @@ debug/
 /vBase.ComShim.Setup/Release
 /vBase.Core.Tests/settings.local.yml
 /packages
+/publish-product-documentation/node_modules
+/publish-product-documentation/src/*.js
