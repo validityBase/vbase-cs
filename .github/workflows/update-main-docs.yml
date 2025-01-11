@@ -1,6 +1,8 @@
 name: Update the Main Docs Repository
 
 on:
+  # allows manual trigger
+  workflow_dispatch:
   push:
     branches:
       - main # publish the docs only when the main branch is updated
