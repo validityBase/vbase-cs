@@ -2,8 +2,8 @@ name: Update the Main Docs Repository
 
 on:
   push:
-    #branches:
-    #  - main
+    branches:
+      - main # publish the docs only when the main branch is updated
 
 jobs:
   update-main-docs:
@@ -12,13 +12,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Publish Documents
-        uses: validityBase/vbase-cs/publish-product-documentation@docs_repo_build_pipeline
+        uses: validityBase/docs/publish-docs-action@main
         with:
-          docs-repo-access-token: ${{ secrets.DOCS_REPO_ACCESS_TOKEN }} # required
-          source-docs-path: 'Docs' # optional - default is 'docs'
-          #target-docs-path: # optional - default is the name of the current repository
-          target-repository: 'volodymyr-bobko/docs' # optional - default is 'validityBase/docs'
-          #target-repository-branch: # optional - default is the branch name of the current product branch
-          #preprocess-plant-uml: # optional - default is 'true'
+          docs-repo-access-token: ${{ secrets.DOCS_REPO_ACCESS_TOKEN }}
+          # Folder name is case-sensitive. The default one is 'docs'.
+          # In .NET projects, PascalCase is conventional for folder naming,
+          # so we need to override the default value to 'Docs'.
+          source-docs-path: 'Docs'
+          target-repository-branch: main
           
 

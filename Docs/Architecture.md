@@ -6,8 +6,24 @@ The software consists of the following components:
 - **Validity Base Forwarder API**: A RESTful API that forwards data to the blockchain on behalf of the client.  
 - **Validity Base Client**: A client application that interacts with the Forwarder API to send data to the blockchain.  
 
-![Abstraction Diagram](https://img.plantuml.biz/plantuml/png/SoWkIImgAStDuUNYvOfspibCpIk9LL0kICn9JIzAJSq32IVdv9UcA5JpSYaeHBlb5vKd5gMa5iM2kQub6Qb5gQMv45wPKs9nga9mBj141UVyl9AYnEGIe4mjo10aqtLrxP0DKh1Iy0W92G0gG183gq4o7S5MoDVLnMaLBvT3QbuAq3i0)
+```plantuml(Abstraction Diagram)
+@startuml
 
+[Client] #palegreen
+
+cloud {
+  [Forwarder]
+  [Ethereum]
+  [vBase Smart Contract]
+}
+
+
+[Client] --> [Forwarder] : HTTP
+[Forwarder] --> [Ethereum]
+[Ethereum] o-- [vBase Smart Contract]
+
+@enduml
+```
 
 ## Client
 
@@ -17,8 +33,37 @@ The client part consists of the following components:
   It is written in .NET Standard 2.0, which makes it compatible with both .NET Core and .NET Framework.  
 - **vBase COM Shim**: A COM shim that enables the **vBase Core** library to be used in a COM environment, such as Visual Basic for Applications.  
 
-![Client Diagram](https://img.plantuml.biz/plantuml/png/TPBDJiCm383lbVeErdPUXNW0D1PM3a0vLE9IxU2sNXijFrLgjY6qToVDoc0RM8eIsvz_bNdFwFXTgpYA8sDhWebGaWp3qcobiqRxzmG-1pTuwR3QOEEfxG9xWlpXAJXXb2AO4s4ThG1x433jK57ZYCmb1UBr1V9Mwa3cL-J1d--onN9FbOAtnNs0_GtJPzcq_EZmOqIIZ1XIXvfsrctWE4OV-2pz1nyQFIV56NauheK9IijiDTWrY251YCuPJOskXjla1YghEsHPAeATvFO4XHAUW_F-4ZyRUUkG_8yY-Id-Po8bIuSkz4_xplRID667qZ2vDLPqaR88wvhDxg38LrxDqb4JGHE_j3YQ-qZ_3Ru0)
+```plantuml(Client Diagram)
+@startuml
 
+node "Client Environment" {
+
+    package "vBase SDK" {
+        [vBase.Core] as C #palegreen
+        [vBase COM Shim] as S #palegreen
+    }   
+
+    [Execl VBA] as VBA #LightGray
+    [.Net Framework Clients] as NF #LightGray
+    [.Net Core Clients] as NC #LightGray
+}
+
+note bottom of C
+  .Net Standard 2.0 compatible with
+  .Net Core and .Net Framework. 
+end note
+
+note bottom of S
+  .Net Framework library
+  exposing COM interface 
+end note
+
+[VBA] --> [S]
+[NF] --> [C]
+[NC] --> [C]
+
+@enduml
+```
 
 ### vBase Core
 
@@ -35,4 +80,41 @@ It consists of the following main classes and interfaces:
   - No additional records were commited within the scope of the dataset.
   - All the records in the dataset were commited.
 
-![vBase Core Class Diagram](https://img.plantuml.biz/plantuml/png/RPB1QiCm38RlWRo3I6zZBOnUToXDLxfJOHdhOOpXs4hhBRQ3hNGCzl2JanAQjWJi27-_z4ls8f3mr9ewJT94Mq9V2OcGFUVE64q6BHNeZrfY1Y90NgI9A0Dv8GbaBKA0R8Vb_3QzcqV-XAsT_n5UeR_Dhi_G3L5pczha1KoKY1zC9k_A4Q7w68J7fGYOrvfLlTtnoKeGh_tHAZPysKf7RSilb3tqjjoECnJajTsFYSyYfc9ZZt_JwQddkFRnUXnkOhY2x263EmxZpYRpBhWuCiB-Phs5DE6jJp0Kj8uGQgm8NDL90LwmyHYu-G0bcmKvp11SWrwGTZRCqWIjWYY_IjER1tYY0tfi3PIraz_o8BGzJnRw6xcFQ2oam5bW2NGpWiBmauBSsMwsiqYz7dGu3Pb_Xh6NA4NB2aqHKWv3z0KAAssnoyXKAshGfganrkvwY73bF7ErFcAy4J0OWjYpdbodk_9mtdEQB3ZaH_yF)
+```plantuml(vBase Core Class Diagram)
+@startuml
+
+interface "ICommitmentService" as CS
+abstract class "Web3CommitmentService" as W3CS
+class "ForwarderCommitmentService" as FCS
+class "HttpCommitmentService" as HCS #dadada ##[dotted]
+class "vBaseClient" as C
+class "vBaseDataset" as D
+
+abstract class "vBaseObject" as VBO
+class "vBaseStringObject" as VBO_S
+
+CS <|-- W3CS
+W3CS <|-- FCS
+W3CS <|-- HCS
+D "1" *-- "1" C
+C *-- CS
+D "1" *-- "many" VBO
+
+VBO <|-- VBO_S
+
+note left of CS
+  Represents base commitment operations.
+end note
+
+note left of W3CS
+  Ethereum blockchain commitment service,
+  based on the vBase Smart Contract.
+  This class is abstract because it
+  does not define the actual implementation
+  for delivering messages to the Smart Contract.
+end note
+
+
+@enduml
+
+```
