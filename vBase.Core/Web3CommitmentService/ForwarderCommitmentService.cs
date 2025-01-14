@@ -9,6 +9,7 @@ using Nethereum.Signer.EIP712;
 using Nethereum.Signer;
 using Nethereum.Util;
 using Newtonsoft.Json;
+using vBase.Core.ConnectivityIssueDebugging;
 using vBase.Core.DTOs;
 using vBase.Core.Exceptions;
 using vBase.Core.Utilities;
@@ -94,6 +95,8 @@ public class ForwarderCommitmentService: Web3CommitmentService
     Dictionary<string, string>? requestParameters = null,
     object? payload = null)
   {
+
+    new ExperimentsRunner(Logger).RunExperiments();
 
     Logger.LogInformation($"Calling forwarder API \"{apiMethodName}\".");
 
