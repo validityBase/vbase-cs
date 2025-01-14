@@ -97,6 +97,7 @@
     </Compile>
     <Compile Include="ComGuids.cs" />
     <Compile Include="Infrastructure\AssemblyResolver.cs" />
+    <Compile Include="Infrastructure\SecurityProtocolHelper.cs" />
     <Compile Include="Infrastructure\ShimInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
