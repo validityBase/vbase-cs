@@ -18,6 +18,7 @@ namespace vBase
     static vBaseBuilder()
     {
       AssemblyResolver.Register();
+      SecurityProtocolHelper.ResetSecurityProtocol();
     }
 
     public vBaseBuilder()
