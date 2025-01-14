@@ -25,7 +25,7 @@ namespace vBase.Core.ConnectivityIssueDebugging.Experiments
       try
       {
         var request = WebRequest.Create(url);
-        var response = (HttpWebResponse)request.GetResponse();
+        using var response = (HttpWebResponse)request.GetResponse();
         _logger.LogInformation($"Response status code: {response.StatusCode}");
         using StreamReader responseStreamReader = new StreamReader(response.GetResponseStream().AsserNotNull());
         var responseContent = responseStreamReader.ReadToEndAsync().Result;

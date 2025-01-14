@@ -20,8 +20,8 @@ namespace vBase.Core.ConnectivityIssueDebugging.Experiments
 
     public override (HttpStatusCode HttpStatusCode, string Content) CallUrl(string url)
     {
-      var request = new HttpRequestMessage(HttpMethod.Get, url);
-      var client = new HttpClient();
+      using var request = new HttpRequestMessage(HttpMethod.Get, url);
+      using var client = new HttpClient();
       using var response = client.SendAsync(request).Result;
       _logger.LogInformation($"Response status code: {response.StatusCode}");
       var responseContent = response.Content.ReadAsStringAsync().Result;
