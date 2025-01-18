@@ -30,6 +30,8 @@ jobs:
       uses: ./.github/workflows/build-solution-action
       with:
         run-tests: 'true'
+        api-key: ${{ secrets.API_KEY }}
+        private-key: ${{ secrets.PRIVATE_KEY }}
 
     # Publish the installer - MSI + Setup.exe
     - name: Publish Installer

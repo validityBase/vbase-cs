@@ -21,6 +21,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{0179EE78-7C40-4A7F-BEBC-81B45B6A6C93}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\build.yml = .github\workflows\build.yml
+		.github\workflows\update-main-docs.yml = .github\workflows\update-main-docs.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{B771C496-E6A2-4D5F-9D9C-E16232B6B799}"
@@ -32,6 +33,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DevDocs", "DevDocs", "{5D4B
 	ProjectSection(SolutionItems) = preProject
 		DevDocs\Architecture.md = DevDocs\Architecture.md
 		DevDocs\Readme.md = DevDocs\Readme.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build-solution-action", "build-solution-action", "{A6724410-70DB-40C7-9E8C-C520D37B368B}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\build-solution-action\action.yml = .github\workflows\build-solution-action\action.yml
 	EndProjectSection
 EndProject
 Global
@@ -61,6 +67,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0179EE78-7C40-4A7F-BEBC-81B45B6A6C93} = {067C7925-ED0A-42F6-92FB-6160CFD7E549}
+		{A6724410-70DB-40C7-9E8C-C520D37B368B} = {0179EE78-7C40-4A7F-BEBC-81B45B6A6C93}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3EC99843-781B-4349-8B3A-FE99CCF33025}

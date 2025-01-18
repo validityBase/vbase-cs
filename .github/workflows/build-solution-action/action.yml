@@ -5,6 +5,12 @@ inputs:
     required: false
     description: 'Run tests after building the solution'
     default: 'true'
+  api-key:
+    required: false
+    description: 'API Key for the tests'
+  private-key:
+    required: false
+    description: 'Private Key for the tests'
 runs:
   using: "composite"
   steps:
@@ -14,15 +20,17 @@ runs:
           dotnet-version: 8.0.x
 
     - name: Restore Dependencies
+      shell: cmd
       run: dotnet restore
 
     - name: Run Tests
       if: ${{ inputs.run-tests == 'true' }}
+      shell: cmd
       run: dotnet test --logger:"console;verbosity=normal"
       env:
         ForwarderUrl: https://dev.api.vbase.com/forwarder
-        ApiKey: ${{ secrets.API_KEY }}
-        PrivateKey: ${{ secrets.PRIVATE_KEY }}
+        ApiKey: ${{ inputs.api-key }}
+        PrivateKey: ${{ inputs.private-key }}
 
     # vswhere helps us to find Visual Studio installation path
     - name: Install vswhere
@@ -31,6 +39,7 @@ runs:
     # Find Visual Studio installation path
     - name: Find Visual Studio
       id: vs
+      shell: cmd
       run: |
         vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath
         echo "::set-output name=vs-path::$(vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath)"
@@ -46,6 +55,7 @@ runs:
     # Note: We are using devenv.com instead of msbuild
     # because the Visual Studio Installer project does not support msbuild
     - name: Build Solution
+      shell: cmd
       run: |
         $vsPath = '${{ steps.vs.outputs.vs-path }}'
         & "$vsPath\Common7\IDE\devenv.com" vBase.sln /Build "Release"
