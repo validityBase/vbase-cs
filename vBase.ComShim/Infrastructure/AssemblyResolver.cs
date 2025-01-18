@@ -13,7 +13,7 @@ namespace vBase.Infrastructure
   /// we use the AssemblyResolver class.
   /// </summary>
   [ComVisible(false)]
-  public static class AssemblyResolver
+  internal static class AssemblyResolver
   {
     public static void Register()
     {

@@ -14,3 +14,5 @@ debug/
 /packages
 /publish-product-documentation/node_modules
 /publish-product-documentation/src/*.js
+/vBase.Core/vBase.Core.md
+/vBase.ComShim/vBase COM SDK.md

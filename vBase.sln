@@ -25,9 +25,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{B771C496-E6A2-4D5F-9D9C-E16232B6B799}"
 	ProjectSection(SolutionItems) = preProject
-		Docs\Architecture.md = Docs\Architecture.md
-		Docs\Readme.md = Docs\Readme.md
 		Docs\User Guide.md = Docs\User Guide.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DevDocs", "DevDocs", "{5D4BF6D1-872F-4943-8ABB-6CA334995EA3}"
+	ProjectSection(SolutionItems) = preProject
+		DevDocs\Architecture.md = DevDocs\Architecture.md
+		DevDocs\Readme.md = DevDocs\Readme.md
 	EndProjectSection
 EndProject
 Global

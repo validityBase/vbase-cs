@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace vBase.Infrastructure
 {
   [ComVisible(false)]
-  public static class SecurityProtocolHelper
+  internal static class SecurityProtocolHelper
   {
     /// <summary>
     /// When running the shim in the VBA environment, we observed on some machines
