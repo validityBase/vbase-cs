@@ -5,8 +5,19 @@ using vBase.Core.Exceptions;
 
 namespace vBase
 {
+  /// <summary>
+  /// Utility methods.
+  /// </summary>
   internal static class Utils
   {
+    /// <summary>
+    /// Executes a function and logs any exceptions that occur.
+    /// Additionally, converts the exception into a VBA-friendly exception.
+    /// </summary>
+    /// <typeparam name="T">Function return type.</typeparam>
+    /// <param name="func">Function to execute.</param>
+    /// <param name="logger">Logger.</param>
+    /// <returns>Function execution result.</returns>
     public static T PreprocessException<T>(Func<T> func, ILogger logger = null)
     {
       try
@@ -20,6 +31,12 @@ namespace vBase
       }
     }
 
+    /// <summary>
+    /// Executes an action and logs any exceptions that occur.
+    /// Additionally, converts the exception into a VBA-friendly exception.
+    /// </summary>
+    /// <param name="action">Action to execute.</param>
+    /// <param name="logger">Logger.</param>
     public static void PreprocessException(Action action, ILogger logger = null)
     {
       try
