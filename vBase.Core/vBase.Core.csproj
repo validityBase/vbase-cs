@@ -6,7 +6,15 @@
     <LangVersion>default</LangVersion>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <DocumentationMarkdown>$(MSBuildProjectDirectory)\vBase.Core.md</DocumentationMarkdown>
+    <DocumentationMarkdown>$(MSBuildProjectDirectory)\..\Docs\vBase.Core.md</DocumentationMarkdown>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;1591</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

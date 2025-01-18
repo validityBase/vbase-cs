@@ -25,7 +25,8 @@
     <WarningLevel>4</WarningLevel>
     <RegisterForComInterop>false</RegisterForComInterop>
     <DocumentationFile>bin\Debug\vBase.xml</DocumentationFile>
-    <DocumentationMarkdown>$(MSBuildProjectDirectory)\vBase COM SDK.md</DocumentationMarkdown>
+    <DocumentationMarkdown>$(MSBuildProjectDirectory)\..\Docs\vBase COM SDK.md</DocumentationMarkdown>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
