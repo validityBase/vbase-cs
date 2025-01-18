@@ -26,7 +26,6 @@
     <RegisterForComInterop>false</RegisterForComInterop>
     <DocumentationFile>bin\Debug\vBase.xml</DocumentationFile>
     <DocumentationMarkdown>$(MSBuildProjectDirectory)\..\Docs\vBase COM SDK.md</DocumentationMarkdown>
-    <NoWarn>1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -35,6 +34,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>1591</NoWarn>
+    <DocumentationFile>bin\Debug\vBase.xml</DocumentationFile>
+    <DocumentationMarkdown>$(MSBuildProjectDirectory)\..\Docs\vBase COM SDK.md</DocumentationMarkdown>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
