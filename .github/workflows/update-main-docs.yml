@@ -19,6 +19,11 @@ jobs:
         uses: ./.github/workflows/build-solution-action
         with:
           run-tests: 'false'
+
+      # list all the files in the repository
+      - name: List Files
+        run: |
+          ls -R
      
       - name: Publish Documents
         uses: validityBase/docs/publish-docs-action@main
