@@ -49,7 +49,7 @@ runs:
     # See: https://marketplace.visualstudio.com/items?itemName=UnniRavindranathan-MSFT.MicrosoftVisualStudio2013InstallerProjects
     - name: Disable Out of Proc Build (fix for HRESULT = 8000000A)
       working-directory: ${{ steps.vs.outputs.vs-path }}\Common7\IDE\CommonExtensions\Microsoft\VSI\DisableOutOfProcBuild
-      shell: ''
+      shell: cmd
       run: DisableOutOfProcBuild.exe
 
     # Build the solution
