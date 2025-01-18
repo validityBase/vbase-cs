@@ -34,6 +34,7 @@ runs:
 
     # vswhere helps us to find Visual Studio installation path
     - name: Install vswhere
+      shell: cmd
       run: choco install vswhere
 
     # Find Visual Studio installation path
