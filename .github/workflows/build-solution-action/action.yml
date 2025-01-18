@@ -20,12 +20,12 @@ runs:
           dotnet-version: 8.0.x
 
     - name: Restore Dependencies
-      shell: cmd
+      shell: ''
       run: dotnet restore
 
     - name: Run Tests
       if: ${{ inputs.run-tests == 'true' }}
-      shell: cmd
+      shell: ''
       run: dotnet test --logger:"console;verbosity=normal"
       env:
         ForwarderUrl: https://dev.api.vbase.com/forwarder
@@ -34,13 +34,13 @@ runs:
 
     # vswhere helps us to find Visual Studio installation path
     - name: Install vswhere
-      shell: cmd
+      shell: ''
       run: choco install vswhere
 
     # Find Visual Studio installation path
     - name: Find Visual Studio
       id: vs
-      shell: bash
+      shell: ''
       run: |
         vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath
         echo "::set-output name=vs-path::$(vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath)"
@@ -49,14 +49,14 @@ runs:
     # See: https://marketplace.visualstudio.com/items?itemName=UnniRavindranathan-MSFT.MicrosoftVisualStudio2013InstallerProjects
     - name: Disable Out of Proc Build (fix for HRESULT = 8000000A)
       working-directory: ${{ steps.vs.outputs.vs-path }}\Common7\IDE\CommonExtensions\Microsoft\VSI\DisableOutOfProcBuild
-      shell: cmd
+      shell: ''
       run: DisableOutOfProcBuild.exe
 
     # Build the solution
     # Note: We are using devenv.com instead of msbuild
     # because the Visual Studio Installer project does not support msbuild
     - name: Build Solution
-      shell: cmd
+      shell: ''
       run: |
         $vsPath = '${{ steps.vs.outputs.vs-path }}'
         & "$vsPath\Common7\IDE\devenv.com" vBase.sln /Build "Release"
