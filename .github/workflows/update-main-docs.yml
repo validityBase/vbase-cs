@@ -19,7 +19,7 @@ jobs:
         uses: microsoft/setup-msbuild@v2
 
       - name: Restore the application
-        run: msbuild /t:Restore
+        run: nuget restore vBase.sln
 
       # build solution using with msbuild
       - name: Build Solution
