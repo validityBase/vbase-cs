@@ -5,6 +5,10 @@ using Newtonsoft.Json.Linq;
 
 namespace vBase.Core.Dataset;
 
+/// <summary>
+/// DTO for dataset JSON serialization.
+/// It's important to keep this class in sync with the Python and other SDKs.
+/// </summary>
 internal class JsonSerializationDto
 {
   public string Name { get; set; }

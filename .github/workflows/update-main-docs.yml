@@ -9,18 +9,24 @@ on:
 
 jobs:
   update-main-docs:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup MSBuild.exe
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Restore nuget  packages for the solution
+        run: nuget restore vBase.sln
+
+      # Build the solution using MSBuild
+      # The goal is to run a minimal build process required to generate the documentation
+      # No post-build events will be executed
+      - name: Build Solution
+        run: msbuild /p:PreBuildEvent= /p:PostBuildEvent=
+
       - name: Publish Documents
         uses: validityBase/docs/publish-docs-action@main
         with:
           docs-repo-access-token: ${{ secrets.DOCS_REPO_ACCESS_TOKEN }}
-          # Folder name is case-sensitive. The default one is 'docs'.
-          # In .NET projects, PascalCase is conventional for folder naming,
-          # so we need to override the default value to 'Docs'.
-          source-docs-path: 'Docs'
-          target-repository-branch: main
-          
-

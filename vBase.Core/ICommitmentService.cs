@@ -4,8 +4,14 @@ using System.Threading.Tasks;
 
 namespace vBase.Core;
 
+/// <summary>
+/// Common interface for commitment services.
+/// </summary>
 public interface ICommitmentService
 {
+  /// <summary>
+  /// Current user account identifier.
+  /// </summary>
   public string AccountIdentifier { get; }
 
   /// <summary>

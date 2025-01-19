@@ -4,6 +4,9 @@ using System.Numerics;
 using Nethereum.RLP;
 namespace vBase.Core.Utilities
 {
+  /// <summary>
+  /// Provides conversion methods.
+  /// </summary>
   public static class Convert
   {
     public static byte[] BigIntToEthereumBytes(this BigInteger value, uint size)

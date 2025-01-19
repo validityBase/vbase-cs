@@ -4,6 +4,10 @@ using Org.BouncyCastle.Crypto.Digests;
 
 namespace vBase.Core.Utilities;
 
+
+/// <summary>
+/// Provides cryptographic utilities.
+/// </summary>
 public static class CryptoUtils
 {
   /// <summary>

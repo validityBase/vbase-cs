@@ -2,6 +2,9 @@
 
 namespace vBase
 {
+  /// <summary>
+  /// Contains the GUIDs for the COM interfaces and classes.
+  /// </summary>
   [ComVisible(false)]
   internal static class ComGuids
   {
