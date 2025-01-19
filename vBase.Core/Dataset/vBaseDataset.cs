@@ -12,6 +12,9 @@ namespace vBase.Core.Dataset;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
+/// <summary>
+/// vBase dataset.
+/// </summary>
 public class vBaseDataset
 {
   private class Record
@@ -27,6 +30,13 @@ public class vBaseDataset
   private readonly string _recordTypeName;
   private readonly List<Record> _records = [];
 
+  /// <summary>
+  /// Creates a new instance of the vBase dataset.
+  /// </summary>
+  /// <param name="vBaseClient">The vBaseClient used for communication with the vBase smart protocol.</param>
+  /// <param name="name">The name of the dataset.</param>
+  /// <param name="recordTypeName">The type of records to be stored in the dataset.</param>
+  /// <exception cref="InvalidOperationException">Thrown if an unknown record type is provided.</exception>
   public vBaseDataset(vBaseClient vBaseClient, string name, string recordTypeName)
   {
     _vBaseClient = vBaseClient;
@@ -44,6 +54,12 @@ public class vBaseDataset
     Initialize().Wait();
   }
 
+  /// <summary>
+  /// Creates a new instance of the vBase dataset from JSON.
+  /// </summary>
+  /// <param name="vBaseClient">The vBaseClient used for communication with the vBase smart protocol.</param>
+  /// <param name="json">The JSON representation of the dataset. JSON created by vBase SDKs for other platforms, such as Python or Java, is also supported.</param>
+  /// <exception cref="vBaseException">Thrown when the current CID generation algorithm does not match the one used to generate the provided JSON.</exception>
   public vBaseDataset(vBaseClient vBaseClient, string json)
   {
     _vBaseClient = vBaseClient;
@@ -73,6 +89,10 @@ public class vBaseDataset
     }
   }
 
+  /// <summary>
+  /// Creates a new dataset on the blockchain if it does not already exist.
+  /// </summary>
+  /// <returns>A task representing the asynchronous operation.</returns>
   public async Task Initialize()
   {
     if (!await _vBaseClient.UserNamedSetExists(_owner, _name))
@@ -81,6 +101,11 @@ public class vBaseDataset
     }
   }
 
+  /// <summary>
+  /// Adds a record to the dataset.
+  /// </summary>
+  /// <param name="recordData">The record to add. The record type must match the dataset type.</param>
+  /// <returns>A task representing the asynchronous operation.</returns>
   public async Task AddRecord(object recordData)
   {
     var obj = vBaseObjectFactory.Create(_recordTypeName, recordData);
@@ -88,6 +113,15 @@ public class vBaseDataset
     _records.Add(new Record { vBaseObject = obj, Timestamp = timestamp });
   }
 
+  /// <summary>
+  /// Verifies if all records in the dataset were actually created on the Validity Base platform at the specified timestamps.
+  /// </summary>
+  /// <returns>
+  /// Validation result: A collection of errors. For each record that was not found on the Validity Base platform, 
+  /// or was added with a different timestamp, there will be a separate error item in the collection.
+  /// Additionally, an error item will be added if the dataset on the Validity Base platform contains more records 
+  /// than exist in this client-side dataset.
+  /// </returns>
   public async Task<VerificationResult> VerifyCommitments()
   {
     var verificationResult = new VerificationResult();
@@ -128,6 +162,10 @@ public class vBaseDataset
     return verificationResult;
   }
 
+  /// <summary>
+  /// Serializes the dataset into a vBase-compatible JSON representation.
+  /// </summary>
+  /// <returns>A JSON string.</returns>
   public string ToJson()
   {
     JsonSerializationDto serializationDto = new()

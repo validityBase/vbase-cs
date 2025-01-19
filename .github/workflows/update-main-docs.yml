@@ -14,11 +14,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
       - name: Setup MSBuild.exe
         uses: microsoft/setup-msbuild@v2
 
-      - name: Restore the application
+      - name: Restore nuget  packages for the solution
         run: nuget restore vBase.sln
 
       # Build the solution using MSBuild
@@ -27,13 +26,7 @@ jobs:
       - name: Build Solution
         run: msbuild /p:PreBuildEvent= /p:PostBuildEvent=
 
-      # list all the files in the repository
-      - name: List Files
-        run: |
-          ls -R
-     
       - name: Publish Documents
         uses: validityBase/docs/publish-docs-action@main
         with:
           docs-repo-access-token: ${{ secrets.DOCS_REPO_ACCESS_TOKEN }}
-          target-repository-branch: vbase-py-samples-test

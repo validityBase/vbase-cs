@@ -15,6 +15,9 @@ using vBase.Core.Utilities;
 
 namespace vBase.Core.Web3CommitmentService;
 
+/// <summary>
+/// Provides access to the CommitmentService smart contract over vBase forwarder.
+/// </summary>
 public class ForwarderCommitmentService: Web3CommitmentService
 {
   private readonly Uri _forwarderUrl;

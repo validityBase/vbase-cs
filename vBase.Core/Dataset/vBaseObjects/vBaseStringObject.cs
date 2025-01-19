@@ -4,6 +4,9 @@ using vBase.Core.Utilities;
 
 namespace vBase.Core.Dataset.vBaseObjects;
 
+/// <summary>
+/// vBase Object representing a string data.
+/// </summary>
 public class vBaseStringObject: vBaseObject
 {
   /// <summary>

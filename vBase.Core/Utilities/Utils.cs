@@ -9,6 +9,9 @@ using Newtonsoft.Json.Serialization;
 
 namespace vBase.Core.Utilities;
 
+/// <summary>
+/// Provides utility methods.
+/// </summary>
 public static class Utils
 {
   public static readonly JsonSerializerSettings DefaultJsonSerializerSettings = new()
