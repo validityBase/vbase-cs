@@ -21,9 +21,11 @@ jobs:
       - name: Restore the application
         run: nuget restore vBase.sln
 
-      # build solution using with msbuild
+      # Build the solution using MSBuild
+      # The goal is to run a minimal build process required to generate the documentation
+      # No post-build events will be executed
       - name: Build Solution
-        run: msbuild
+        run: msbuild /p:PreBuildEvent= /p:PostBuildEvent=
 
       # list all the files in the repository
       - name: List Files
