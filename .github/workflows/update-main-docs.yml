@@ -13,12 +13,22 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
-      # build solution using composite action
-      - name: Build Solution
-        uses: ./.github/workflows/build-solution-action
+
+      # Install the .NET Core workload
+      - name: Install .NET Core
+        uses: actions/setup-dotnet@v4
         with:
-          run-tests: 'false'
+            dotnet-version: |
+                8.0.x
+                4.8.x
+
+      # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+      - name: Setup MSBuild.exe
+        uses: microsoft/setup-msbuild@v2
+      
+      # build solution using with msbuild
+      - name: Build Solution
+        run: msbuild
 
       # list all the files in the repository
       - name: List Files
