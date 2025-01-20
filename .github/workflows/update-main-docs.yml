@@ -26,12 +26,6 @@ jobs:
       - name: Build Solution
         run: msbuild /p:PreBuildEvent= /p:PostBuildEvent=
 
-      - name: Install stdrename
-        run: npm install -g stdrename
-      - name: Rename files to kebab-case
-        run: |
-          stdrename ./docs --case kebab --filter *.md
-
       - name: Publish Documents
         uses: validityBase/docs/publish-docs-action@main
         with:
