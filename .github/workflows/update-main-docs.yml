@@ -26,11 +26,6 @@ jobs:
       - name: Build Solution
         run: msbuild /p:PreBuildEvent= /p:PostBuildEvent=
 
-      - uses: actions/setup-node@v4
-        with:
-            node-version: 20
-            cache: 'npm'
-
       - name: Install stdrename
         run: npm install -g stdrename
       - name: Rename files to kebab-case
