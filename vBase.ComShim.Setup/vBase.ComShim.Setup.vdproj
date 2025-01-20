@@ -69,7 +69,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_3C04877933BB4073B75712AE910DDAF5"
+        "MsmKey" = "8:_313CB706F7B0465DA0BBA19C884103C8"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -364,12 +364,6 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_24ECF1393AACCE72C95D653F1543B0E9"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_78F8E4E904884A4F8D1740CDA4AFE773"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -491,6 +485,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_BAF9EEDB2F79B9107E2BA501F2315B06"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_24ECF1393AACCE72C95D653F1543B0E9"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -771,10 +771,10 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3C04877933BB4073B75712AE910DDAF5"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_313CB706F7B0465DA0BBA19C884103C8"
             {
-            "SourcePath" = "8:..\\Docs\\User Guide.md"
-            "TargetName" = "8:User Guide.md"
+            "SourcePath" = "8:..\\Docs\\user-guide.md"
+            "TargetName" = "8:user-guide.md"
             "Tag" = "8:"
             "Folder" = "8:_D691B7A43548445B9C36C791CA5A3661"
             "Condition" = "8:"

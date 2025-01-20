@@ -26,7 +26,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{B771C496-E6A2-4D5F-9D9C-E16232B6B799}"
 	ProjectSection(SolutionItems) = preProject
-		Docs\User Guide.md = Docs\User Guide.md
+		Docs\user-guide.md = Docs\user-guide.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DevDocs", "DevDocs", "{5D4BF6D1-872F-4943-8ABB-6CA334995EA3}"
@@ -36,9 +36,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DevDocs", "DevDocs", "{5D4B
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build-solution-action", "build-solution-action", "{A6724410-70DB-40C7-9E8C-C520D37B368B}"
-	ProjectSection(SolutionItems) = preProject
-		.github\workflows\build-solution-action\action.yml = .github\workflows\build-solution-action\action.yml
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
