@@ -26,7 +26,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <RegisterForComInterop>false</RegisterForComInterop>
     <DocumentationFile>bin\Debug\vBase.xml</DocumentationFile>
-    <DocumentationMarkdown>$(MSBuildProjectDirectory)\..\Docs\vBase COM SDK.md</DocumentationMarkdown>
+    <DocumentationMarkdown>$(MSBuildProjectDirectory)\..\Docs\vbase-com-sdk.md</DocumentationMarkdown>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -38,7 +38,7 @@
     <NoWarn>1591</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DocumentationFile>bin\Debug\vBase.xml</DocumentationFile>
-    <DocumentationMarkdown>$(MSBuildProjectDirectory)\..\Docs\vBase COM SDK.md</DocumentationMarkdown>
+    <DocumentationMarkdown>$(MSBuildProjectDirectory)\..\Docs\vbase-com-sdk.md</DocumentationMarkdown>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">

@@ -15,10 +15,10 @@ capabilities from Excel sheets or other sources.
 4. Ensure that the 'Developer' ribbon tab is visible. If it is not, enable it in the Excel options:
     1. Right-click on the ribbon and select 'Customize the Ribbon'.
     2. Check the 'Developer' checkbox in the ribbon tabs tree.
-       ![Customize the Ribbon](Images/customize-the-ribbon.png)
+       ![Customize the Ribbon](images/customize-the-ribbon.png)
 5. Go to the Developer ribbon tab and click on the 'Visual Basic' button.
 6. In Microsoft Visual Basic for Applications, add a reference to the library: **Tools** -> **References** -> find **vBase**.
-   ![Add Reference](Images/add-reference.png)
+   ![Add Reference](images/add-reference.png)
 7. The VBA code below demonstrates how to use the library:
 
 

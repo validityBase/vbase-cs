@@ -6,7 +6,7 @@
     <LangVersion>default</LangVersion>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <DocumentationMarkdown>$(MSBuildProjectDirectory)\..\Docs\vBase.Core.md</DocumentationMarkdown>
+    <DocumentationMarkdown>$(MSBuildProjectDirectory)\..\Docs\vbase-core.md</DocumentationMarkdown>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
