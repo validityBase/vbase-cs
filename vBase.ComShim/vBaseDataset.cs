@@ -1,5 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging;
+using vBase.Infrastructure;
+using vBase.Receipts;
 
 namespace vBase
 {
@@ -26,9 +28,13 @@ namespace vBase
         json);
     }
 
-    public void AddRecord(object recordData)
+    public IReceipt AddRecord(object recordData)
     {
-      Utils.PreprocessException(() => _coreDataset.AddRecord(recordData).Wait(), _logger);
+      return Utils.PreprocessException(() =>
+      {
+        var coreReceipt = _coreDataset.AddRecord(recordData).Result;
+        return ReceiptConverter.ToCom(coreReceipt);
+      }, _logger);
     }
 
     public IVerificationResult VerifyCommitments()

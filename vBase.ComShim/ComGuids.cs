@@ -19,5 +19,11 @@ namespace vBase
 
     public const string VerificationResultInterface = "2611961F-F796-462C-B676-246216A04FFF";
     public const string VerificationResult = "985DACDF-2FE2-4849-A987-0EFE5F175CE6";
+    
+    public const string vBaseReceiptInterface = "C6AE138B-A433-4F79-BD2B-BE1A67AFA666";
+    public const string vBaseReceipt = "A11F5C6F-ADDB-4D20-B4BD-F32DE518D813";
+
+    public const string vBaseWeb3ReceiptInterface = "C919560A-F536-4E78-BE5E-D436C66A3BC3";
+    public const string vBaseWeb3Receipt = "C1CF0EAA-3DB5-4E89-B6D5-CF88C8CFD7CF";
   }
 }

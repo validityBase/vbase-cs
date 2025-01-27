@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using vBase.Receipts;
 
 namespace vBase
 {
@@ -16,7 +17,7 @@ namespace vBase
     /// <param name="setCid">HEX encoded CID for the set containing the object.</param>
     /// <param name="objectCid">HEX encoded CID of the object to record.</param>
     /// <returns>The transaction timestamp of the record addition in Unix time format (seconds).</returns>
-    long AddSetObject(string setCid, string objectCid);
+    IReceipt AddSetObject(string setCid, string objectCid);
 
     /// <summary>
     /// Checks if a named dataset exists.

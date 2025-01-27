@@ -112,6 +112,11 @@
     <Compile Include="IvBaseClient.cs" />
     <Compile Include="IvBaseDataset.cs" />
     <Compile Include="IVerificationResult.cs" />
+    <Compile Include="Receipts\IReceipt.cs" />
+    <Compile Include="Receipts\IWeb3Receipt.cs" />
+    <Compile Include="Receipts\Receipt.cs" />
+    <Compile Include="Infrastructure\ReceiptConverter.cs" />
+    <Compile Include="Receipts\Web3Receipt.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="vBaseBuilder.cs" />
     <Compile Include="vBaseClient.cs" />
@@ -130,6 +135,7 @@
       <Name>vBase.Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

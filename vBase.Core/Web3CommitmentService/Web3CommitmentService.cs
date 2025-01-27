@@ -111,7 +111,7 @@ public abstract class Web3CommitmentService: ICommitmentService
     }
   }
 
-  public async Task<DateTimeOffset> AddSetObject(Cid setCid, Cid objectCid)
+  public async Task<Receipt> AddSetObject(Cid setCid, Cid objectCid)
   {
     Logger.LogInformation($"Adding object with CID '{objectCid.ToHex()}' to a set with CID '{setCid.ToHex()}'");
 
@@ -136,7 +136,8 @@ public abstract class Web3CommitmentService: ICommitmentService
     OperationEventCrossCheckSetCid(operationEvent, setCid);
     OperationEventCrossCheckAddedRecordCid(operationEvent, objectCid);
 
-    return DateTimeOffset.FromUnixTimeSeconds((long)operationEvent.GetEventParameterValue<BigInteger>("timestamp"));
+    var timestamp= DateTimeOffset.FromUnixTimeSeconds((long)operationEvent.GetEventParameterValue<BigInteger>("timestamp"));
+    return new Web3Receipt(contractMethodExecutionRes.TransactionHash, timestamp);
   }
 
   /// <summary>

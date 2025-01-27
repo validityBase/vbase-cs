@@ -105,12 +105,13 @@ public class vBaseDataset
   /// Adds a record to the dataset.
   /// </summary>
   /// <param name="recordData">The record to add. The record type must match the dataset type.</param>
-  /// <returns>A task representing the asynchronous operation.</returns>
-  public async Task AddRecord(object recordData)
+  /// <returns>A transaction receipt.</returns>
+  public async Task<Receipt> AddRecord(object recordData)
   {
     var obj = vBaseObjectFactory.Create(_recordTypeName, recordData);
-    var timestamp = await _vBaseClient.AddSetObject(_setCid, obj.GetCid());
-    _records.Add(new Record { vBaseObject = obj, Timestamp = timestamp });
+    var receipt = await _vBaseClient.AddSetObject(_setCid, obj.GetCid());
+    _records.Add(new Record { vBaseObject = obj, Timestamp = receipt.Timestamp });
+    return receipt;
   }
 
   /// <summary>
