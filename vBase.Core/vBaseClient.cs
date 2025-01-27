@@ -24,8 +24,8 @@ namespace vBase.Core
     /// </summary>
     /// <param name="setCid">Set CID.</param>
     /// <param name="objectCid">Object to add CID.</param>
-    /// <returns></returns>
-    public async Task<DateTimeOffset> AddSetObject(Cid setCid, Cid objectCid)
+    /// <returns>Receipt of the operation.</returns>
+    public async Task<Receipt> AddSetObject(Cid setCid, Cid objectCid)
     {
       return await _commitmentService.AddSetObject(setCid, objectCid);
     }

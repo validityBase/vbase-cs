@@ -3,6 +3,8 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using Microsoft.Extensions.Logging;
 using vBase.Core;
+using vBase.Infrastructure;
+using vBase.Receipts;
 
 namespace vBase
 {
@@ -24,10 +26,13 @@ namespace vBase
       return _coreClient;
     }
 
-    public long AddSetObject(string setCid, string objectCid)
+    public IReceipt AddSetObject(string setCid, string objectCid)
     {
       return Utils.PreprocessException(() =>
-        _coreClient.AddSetObject(new Cid(setCid), new Cid(objectCid)).Result.ToUnixTimeSeconds(), _logger);
+      {
+        var receipt = _coreClient.AddSetObject(new Cid(setCid), new Cid(objectCid)).Result;
+        return ReceiptConverter.ToCom(receipt);
+      }, _logger);
     }
 
     public bool UserNamedSetExists(string user, string name)

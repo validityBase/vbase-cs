@@ -51,5 +51,6 @@ public interface ICommitmentService
   /// </summary>
   /// <param name="setCid">CID of the set where the objectCid will be added.</param>
   /// <param name="objectCid">Object CID to add.</param>
-  Task<DateTimeOffset> AddSetObject(Cid setCid, Cid objectCid);
+  /// <returns>Receipt of the operation.</returns>
+  Task<Receipt> AddSetObject(Cid setCid, Cid objectCid);
 }

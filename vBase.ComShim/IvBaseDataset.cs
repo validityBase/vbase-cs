@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using vBase.Receipts;
 
 namespace vBase
 {
@@ -14,7 +15,7 @@ namespace vBase
     /// Adds a record to the dataset.
     /// </summary>
     /// <param name="recordData">Record to add.</param>
-    void AddRecord(object recordData);
+    IReceipt AddRecord(object recordData);
 
     /// <summary>
     /// Verifies if all records in the dataset were actually created on the Validity Base platform at the specified timestamps.

@@ -38,23 +38,23 @@ public class vBaseClientTests: vBaseForwarderTestBase
     var objectToAdd = new vBaseStringObject(TestContext.CurrentContext.Random.GetString(50));
 
     // add and verify just added object
-    var timestamp = await Client.AddSetObject(setName.GetCid(), objectToAdd.GetCid());
+    var receipt = await Client.AddSetObject(setName.GetCid(), objectToAdd.GetCid());
     bool objectAdded = await Client.VerifyUserObject(
       Client.AccountIdentifier,
-      objectToAdd.GetCid(), timestamp);
+      objectToAdd.GetCid(), receipt.Timestamp);
     objectAdded.Should().BeTrue();
 
     // verify object with invalid timestamp
     bool objectVerifiedWrongStamp = await Client.VerifyUserObject(
       Client.AccountIdentifier,
-      objectToAdd.GetCid(), timestamp + TimeSpan.FromSeconds(10));
+      objectToAdd.GetCid(), receipt.Timestamp + TimeSpan.FromSeconds(10));
     objectVerifiedWrongStamp.Should().BeFalse();
 
     // verify object with invalid CID
     bool objectVerifiedWrongCid = await Client.VerifyUserObject(
       Client.AccountIdentifier,
       TestContext.CurrentContext.Random.GetString(50).GetCid(),
-      timestamp);
+      receipt.Timestamp);
     objectVerifiedWrongCid.Should().BeFalse();
 
     // verify set with 1 object
