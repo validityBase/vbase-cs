@@ -15,6 +15,7 @@ fs.readdirSync(dir).forEach(file => {
             // at this point all refs are outlined in the format |||anchor||| we need to URL escape and lowercase them
             .replace(/\|\|\|([^|]+)\|\|\|/gm, (_, p1) => {
                 if(p1.startsWith('http')) return p1; // ignore external links
+                console.log('\tEscaping: ' + p1);
                 return encodeURIComponent(p1.toLowerCase());
             });
 
