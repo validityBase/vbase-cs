@@ -53,7 +53,8 @@ runs:
     # Note: We are using devenv.com instead of msbuild
     # because the Visual Studio Installer project does not support msbuild
     - name: Build Solution
-      shell: ''
+      shell: powershell
       run: |
-        $vsPath = '${{ steps.vs.outputs.vs-path }}'
-        & "$vsPath\Common7\IDE\devenv.com" vBase.sln /Build "Release"
+        $vsPath = vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath
+        Set-Location "$vsPath\Common7\IDE\"
+        .\devenv.com vBase.sln /Build "Release"
