@@ -40,7 +40,7 @@ runs:
     # Find Visual Studio installation path
     - name: Find Visual Studio
       id: vs
-      shell: cmd
+      shell: powershell
       run: |
         vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath
         echo "vs-path=$(vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath)" >> $GITHUB_OUTPUT
