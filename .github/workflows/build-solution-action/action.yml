@@ -38,7 +38,6 @@ runs:
       run: choco install vswhere
     
     - name: Find Visual Studio and Disable Out of Proc Build
-      id: vs
       shell: powershell
       run: |
         # Find Visual Studio installation path
