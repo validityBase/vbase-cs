@@ -18,7 +18,7 @@ fs.readdirSync(dir).forEach(file => {
                 console.log('\tEscaping: ' + p1);
 
                 let refStr = p1; 
-                [',','`',"'",'"','(',')','{','}'].forEach(function(letter){
+                [',','`',"'",'"','(',')','{','}', '-'].forEach(function(letter){
                     refStr = refStr.replaceAll(letter, '');
                 })
                 refStr = refStr.toLowerCase()
