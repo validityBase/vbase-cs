@@ -56,5 +56,6 @@ runs:
       shell: powershell
       run: |
         $vsPath = vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath
-        Set-Location "$vsPath\Common7\IDE\"
-        .\devenv.com vBase.sln /Build "Release"
+         
+        # run "$vsPath\Common7\IDE\devenv.com" with arguments vBase.sln /Build "Release"
+        & "$vsPath\Common7\IDE\devenv.com" vBase.sln /Build "Release"
