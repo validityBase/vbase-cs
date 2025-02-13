@@ -16,7 +16,13 @@ fs.readdirSync(dir).forEach(file => {
             .replace(/\|\|\|([^|]+)\|\|\|/gm, (_, p1) => {
                 if(p1.startsWith('http')) return p1; // ignore external links
                 console.log('\tEscaping: ' + p1);
-                return encodeURIComponent(p1.toLowerCase().replace(',').replace('-').replace('`').replace("'").replace("(").replace(")"));
+
+                let refStr = p1; 
+                [',','`',"'",'"','(',')','{','}'].forEach(function(letter){
+                    refStr = refStr.replaceAll(letter, '');
+                })
+                refStr = refStr.toLowerCase()
+                return encodeURIComponent(refStr);
             });
 
         fs.writeFileSync(filePath, result, 'utf8');
