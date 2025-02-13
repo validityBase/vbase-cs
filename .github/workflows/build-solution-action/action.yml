@@ -36,27 +36,26 @@ runs:
     - name: Install vswhere
       shell: ''
       run: choco install vswhere
-
-    # Find Visual Studio installation path
-    - name: Find Visual Studio
-      id: vs
-      shell: ''
+    
+    - name: Find Visual Studio and Disable Out of Proc Build
+      shell: powershell
       run: |
-        vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath
-        echo "::set-output name=vs-path::$(vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath)"
-
-    # Workaround for a known issue with building a Visual Studio Installer project from the command line
-    # See: https://marketplace.visualstudio.com/items?itemName=UnniRavindranathan-MSFT.MicrosoftVisualStudio2013InstallerProjects
-    - name: Disable Out of Proc Build (fix for HRESULT = 8000000A)
-      working-directory: ${{ steps.vs.outputs.vs-path }}\Common7\IDE\CommonExtensions\Microsoft\VSI\DisableOutOfProcBuild
-      shell: cmd
-      run: DisableOutOfProcBuild.exe
+        # Find Visual Studio installation path
+        $vsPath = vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath
+        # print $vsPath to the console
+        echo "vs-path=$vsPath"
+        # change working directory to $vsPath
+        Set-Location "$vsPath\Common7\IDE\CommonExtensions\Microsoft\VSI\DisableOutOfProcBuild\"
+        # run DisableOutOfProcBuild.exe
+        .\DisableOutOfProcBuild.exe
 
     # Build the solution
     # Note: We are using devenv.com instead of msbuild
     # because the Visual Studio Installer project does not support msbuild
     - name: Build Solution
-      shell: ''
+      shell: powershell
       run: |
-        $vsPath = '${{ steps.vs.outputs.vs-path }}'
+        $vsPath = vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath
+         
+        # run "$vsPath\Common7\IDE\devenv.com" with arguments vBase.sln /Build "Release"
         & "$vsPath\Common7\IDE\devenv.com" vBase.sln /Build "Release"
