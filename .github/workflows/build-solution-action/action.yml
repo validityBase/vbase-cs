@@ -46,6 +46,7 @@ runs:
         echo "vs-path=$(vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath)" >> $GITHUB_OUTPUT
 
     - name: DEBUG
+      shell: cmd
       run: echo "Dir is ${{ steps.vs.outputs.vs-path }}"
 
     # Workaround for a known issue with building a Visual Studio Installer project from the command line
