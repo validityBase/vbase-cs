@@ -49,26 +49,6 @@ runs:
         # run DisableOutOfProcBuild.exe
         .\DisableOutOfProcBuild.exe
 
-
-    # Find Visual Studio installation path
-    - name: Find Visual Studio
-      id: vs
-      shell: powershell
-      run: |
-        vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath
-        echo "vs-path=$(vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath)" >> $GITHUB_OUTPUT
-
-    - name: DEBUG
-      shell: cmd
-      run: echo "Dir is ${{ steps.vs.outputs.vs-path }}"
-
-    # Workaround for a known issue with building a Visual Studio Installer project from the command line
-    # See: https://marketplace.visualstudio.com/items?itemName=UnniRavindranathan-MSFT.MicrosoftVisualStudio2013InstallerProjects
-    - name: Disable Out of Proc Build (fix for HRESULT = 8000000A)
-      working-directory: ${{ steps.vs.outputs.vs-path }}\Common7\IDE\CommonExtensions\Microsoft\VSI\DisableOutOfProcBuild
-      shell: cmd
-      run: DisableOutOfProcBuild.exe
-
     # Build the solution
     # Note: We are using devenv.com instead of msbuild
     # because the Visual Studio Installer project does not support msbuild
