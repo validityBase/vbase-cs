@@ -43,7 +43,7 @@ runs:
       shell: ''
       run: |
         vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath
-        echo "::set-output name=vs-path::$(vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath)"
+        echo "vs-path=$(vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath)" >> $GITHUB_OUTPUT
 
     # Workaround for a known issue with building a Visual Studio Installer project from the command line
     # See: https://marketplace.visualstudio.com/items?itemName=UnniRavindranathan-MSFT.MicrosoftVisualStudio2013InstallerProjects
