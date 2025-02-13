@@ -36,6 +36,20 @@ runs:
     - name: Install vswhere
       shell: ''
       run: choco install vswhere
+    
+    - name: Find Visual Studio and Disable Out of Proc Build
+      id: vs
+      shell: powershell
+      run: |
+        # Find Visual Studio installation path
+        $vsPath = vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath
+        # print $vsPath to the console
+        echo "vs-path=$vsPath"
+        # change working directory to $vsPath
+        Set-Location "$vsPath\Common7\IDE\CommonExtensions\Microsoft\VSI\DisableOutOfProcBuild\"
+        # run DisableOutOfProcBuild.exe
+        .\DisableOutOfProcBuild.exe
+
 
     # Find Visual Studio installation path
     - name: Find Visual Studio
