@@ -42,7 +42,7 @@ public class vBaseDataset
     _vBaseClient = vBaseClient;
     _name = name;
     _setCid = name.GetCid();
-    _owner = vBaseClient.AccountIdentifier;
+    _owner = vBaseClient.DefaultUser;
 
     if (!vBaseObjectFactory.IsTypeRegistered(recordTypeName))
     {

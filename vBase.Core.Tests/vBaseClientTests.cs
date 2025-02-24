@@ -12,7 +12,7 @@ public class vBaseClientTests: vBaseForwarderTestBase
   public async Task UserNamedSetExists_SetDoesNotExistTest()
   {
     bool exists = await Client.UserNamedSetExists(
-      Client.AccountIdentifier,
+      Client.DefaultUser,
       TestContext.CurrentContext.Random.GetString(50));
     exists.Should().BeFalse();
   }
@@ -22,9 +22,9 @@ public class vBaseClientTests: vBaseForwarderTestBase
   {
     string setName = TestContext.CurrentContext.Random.GetString(50);
 
-    bool existedBefore = await Client.UserNamedSetExists(Client.AccountIdentifier, setName);
+    bool existedBefore = await Client.UserNamedSetExists(Client.DefaultUser, setName);
     await Client.AddNamedSet(setName);
-    bool existsAfter = await Client.UserNamedSetExists(Client.AccountIdentifier, setName);
+    bool existsAfter = await Client.UserNamedSetExists(Client.DefaultUser, setName);
 
     existedBefore.Should().BeFalse();
     existsAfter.Should().BeTrue();
@@ -40,26 +40,26 @@ public class vBaseClientTests: vBaseForwarderTestBase
     // add and verify just added object
     var receipt = await Client.AddSetObject(setName.GetCid(), objectToAdd.GetCid());
     bool objectAdded = await Client.VerifyUserObject(
-      Client.AccountIdentifier,
+      Client.DefaultUser,
       objectToAdd.GetCid(), receipt.Timestamp);
     objectAdded.Should().BeTrue();
 
     // verify object with invalid timestamp
     bool objectVerifiedWrongStamp = await Client.VerifyUserObject(
-      Client.AccountIdentifier,
+      Client.DefaultUser,
       objectToAdd.GetCid(), receipt.Timestamp + TimeSpan.FromSeconds(10));
     objectVerifiedWrongStamp.Should().BeFalse();
 
     // verify object with invalid CID
     bool objectVerifiedWrongCid = await Client.VerifyUserObject(
-      Client.AccountIdentifier,
+      Client.DefaultUser,
       TestContext.CurrentContext.Random.GetString(50).GetCid(),
       receipt.Timestamp);
     objectVerifiedWrongCid.Should().BeFalse();
 
     // verify set with 1 object
     bool setObjectsVerified = await Client.VerifyUserSetObjects(
-      Client.AccountIdentifier,
+      Client.DefaultUser,
       setName.GetCid(),
       Utilities.Convert.EthereumBytesToBigInt(objectToAdd.GetCid().Data)
     );
@@ -76,7 +76,7 @@ public class vBaseClientTests: vBaseForwarderTestBase
     sum %= maxSum;
 
     setObjectsVerified = await Client.VerifyUserSetObjects(
-      Client.AccountIdentifier,
+      Client.DefaultUser,
       setName.GetCid(), sum);
     setObjectsVerified.Should().BeTrue();
   }

@@ -47,7 +47,7 @@ public abstract class Web3CommitmentService: ICommitmentService
     _commitmentServiceContract = web3.Eth.GetContract(contractDefinitionJson, "0x1234");
   }
 
-  public string AccountIdentifier => Account.Address.ConvertToEthereumChecksumAddress();
+  public string DefaultUser => Account.Address.ConvertToEthereumChecksumAddress();
 
   /// <summary>
   /// Executes Smart Contract function.
