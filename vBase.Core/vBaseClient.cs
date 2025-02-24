@@ -17,7 +17,10 @@ namespace vBase.Core
       _commitmentService = commitmentService;
     }
 
-    public string AccountIdentifier => _commitmentService.AccountIdentifier;
+    /// <summary>
+    /// Return the default user address used in vBase transactions.
+    /// </summary>
+    public string DefaultUser => _commitmentService.DefaultUser;
 
     /// <summary>
     /// Adds a new object to the set.

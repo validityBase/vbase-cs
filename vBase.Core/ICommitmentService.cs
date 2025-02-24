@@ -10,9 +10,9 @@ namespace vBase.Core;
 public interface ICommitmentService
 {
   /// <summary>
-  /// Current user account identifier.
+  /// Current user identifier.
   /// </summary>
-  public string AccountIdentifier { get; }
+  public string DefaultUser { get; }
 
   /// <summary>
   /// Checks if the specified object set exists.

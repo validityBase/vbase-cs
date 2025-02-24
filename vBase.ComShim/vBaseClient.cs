@@ -26,6 +26,8 @@ namespace vBase
       return _coreClient;
     }
 
+    public string DefaultUser => _coreClient.DefaultUser;
+
     public IReceipt AddSetObject(string setCid, string objectCid)
     {
       return Utils.PreprocessException(() =>

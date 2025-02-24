@@ -12,6 +12,11 @@ namespace vBase
   public interface IvBaseClient
   {
     /// <summary>
+    /// Return the default user address used in vBase transactions.
+    /// </summary>
+    string DefaultUser { get; }
+
+    /// <summary>
     /// Adds a record to the dataset.
     /// </summary>
     /// <param name="setCid">HEX encoded CID for the set containing the object.</param>
