@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Nethereum.RLP;
-using System.Linq;
 
 namespace vBase.Core.Utilities
 {
