@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Nethereum.RLP;
+
 namespace vBase.Core.Utilities
 {
   /// <summary>
@@ -23,7 +25,9 @@ namespace vBase.Core.Utilities
 
       var sizeInBytes = size / 8;
 
-      byte[] intBytes = value.ToByteArray().Reverse().ToArray().TrimZeroBytes();
+      IEnumerable<byte> reverseBytes = Enumerable.Reverse(value.ToByteArray());
+      byte[] intBytes = reverseBytes.ToArray().TrimZeroBytes();
+      
       if (intBytes.Length > sizeInBytes)
       {
         throw new ArgumentException($"Integer value {value} is too large for {size} bits.");
