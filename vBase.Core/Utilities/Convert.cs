@@ -25,7 +25,7 @@ namespace vBase.Core.Utilities
 
       var sizeInBytes = size / 8;
 
-      IEnumerable<byte> reverseBytes = value.ToByteArray().Reverse();
+      IEnumerable<byte> reverseBytes = Enumerable.Reverse(value.ToByteArray());
       byte[] intBytes = reverseBytes.ToArray().TrimZeroBytes();
       if (intBytes.Length > sizeInBytes)
       {
