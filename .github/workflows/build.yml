@@ -5,37 +5,40 @@ on:
   workflow_dispatch:
   # trigger on push to main branch
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   # trigger on pull request to main branch
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
+
+permissions:
+  contents: read
+  actions: write
+
 jobs:
-
   build:
-
     strategy:
       matrix:
         configuration: [Release]
 
-    runs-on: windows-latest 
+    runs-on: windows-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
-    # build solution using composite action
-    - name: Build Solution
-      uses: ./.github/workflows/build-solution-action
-      with:
-        run-tests: 'true'
-        api-key: ${{ secrets.API_KEY }}
-        private-key: ${{ secrets.PRIVATE_KEY }}
+      # build solution using composite action
+      - name: Build Solution
+        uses: ./.github/workflows/build-solution-action
+        with:
+          run-tests: "true"
+          api-key: ${{ secrets.API_KEY }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
 
-    # Publish the installer - MSI + Setup.exe
-    - name: Publish Installer
-      uses: actions/upload-artifact@v4
-      with:
-        name: vBase Setup
-        path: vBase.ComShim.Setup\Release\
+      # Publish the installer - MSI + Setup.exe
+      - name: Publish Installer
+        uses: actions/upload-artifact@v6
+        with:
+          name: vBase Setup
+          path: vBase.ComShim.Setup\Release\

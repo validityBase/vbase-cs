@@ -7,15 +7,23 @@ on:
     branches:
       - main # publish the docs only when the main branch is updated
 
+permissions:
+  contents: read
+
 jobs:
   update-main-docs:
     runs-on: windows-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js (for Docs patch script)
+        uses: actions/setup-node@v6
+        with:
+          node-version: "20"
 
       - name: Setup MSBuild.exe
-        uses: microsoft/setup-msbuild@v2
+        uses: microsoft/setup-msbuild@v3
 
       - name: Restore nuget  packages for the solution
         run: nuget restore vBase.sln
@@ -30,7 +38,7 @@ jobs:
       # to make them compatible with GitBook
       # 1 - all tags should be lowercase eg
       # - [AssemblyResolver](#T-vBase-Infrastructure-AssemblyResolver 'vBase.Infrastructure.AssemblyResolver')
-      # should be replaced with 
+      # should be replaced with
       # - [AssemblyResolver](#t-vbase-infrastructure-assemblyresolver 'vBase.Infrastructure.AssemblyResolver')
       # 2 - anchors should be moved next to the title eg
       # <a name='T-vBase-Infrastructure-AssemblyResolver'></a>
@@ -48,3 +56,4 @@ jobs:
         uses: validityBase/docs/publish-docs-action@main
         with:
           docs-repo-access-token: ${{ secrets.DOCS_REPO_ACCESS_TOKEN }}
+          source-docs-path: Docs
