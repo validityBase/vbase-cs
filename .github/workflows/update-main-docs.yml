@@ -53,7 +53,8 @@ jobs:
         run: node ./.github/workflows/patch-ms.js
 
       - name: Publish Documents
-        uses: validityBase/docs/publish-docs-action@7ff5d27a96d8c6802d1f19c6897068238d1c5691
+        uses: validityBase/vbase-github-actions/.github/actions/publish-docs@v1
         with:
           docs-repo-access-token: ${{ secrets.DOCS_REPO_ACCESS_TOKEN }}
           source-docs-path: Docs
+          target-repository-branch: main
