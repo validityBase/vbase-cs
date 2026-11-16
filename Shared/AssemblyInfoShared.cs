@@ -2,7 +2,7 @@
 
 [assembly: AssemblyCompany("validityBase")]
 [assembly: AssemblyProduct("vBase SDK")]
-[assembly: AssemblyCopyright("Copyright © 2024, validityBase, www.vbase.com")]
+[assembly: AssemblyCopyright("Copyright © 2023-2026 PIT Labs Inc., www.vbase.com")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
